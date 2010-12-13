@@ -3,6 +3,7 @@
 ------------------------------------
 
 Major Changes:
+* PrettyFaces is now licensed under the Apache Software License v2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
 * Added 'parentId' for Hierarchical Mappings in pretty-config.xml (#72)
 * Can now be run in a pure servlet environment (without JSF and related JARs)
 
