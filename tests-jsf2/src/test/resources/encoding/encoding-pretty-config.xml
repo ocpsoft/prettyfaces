@@ -28,4 +28,14 @@
       <view-id> /encoding.jsf </view-id>
    </url-mapping>
    
+   <rewrite match="^/virtual$" url="/virtuální" redirect="301" />
+   <!-- 
+   <rewrite match="^/virtualencoded$" url="/virtu%C3%A1ln%C3%AD" redirect="301" />
+    -->
+    
+   <url-mapping id="virtual">
+      <pattern value="/virtuální"></pattern>
+      <view-id>/encoding.jsf</view-id>
+   </url-mapping>
+   
 </pretty-config>

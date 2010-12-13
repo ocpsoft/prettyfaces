@@ -193,9 +193,9 @@ public class PrettyFilter implements Filter
                          * This is a custom location - don't URLEncode, just
                          * redirect
                          */
-                        String redirectURL = resp.encodeRedirectURL(newUrl);
-                        resp.setHeader("Location", redirectURL);
+                        resp.setHeader("Location", newUrl);
                         resp.setStatus(rule.getRedirect().getStatus());
+                        resp.setCharacterEncoding(url.getEncoding());
                         resp.flushBuffer();
                         break;
                      }

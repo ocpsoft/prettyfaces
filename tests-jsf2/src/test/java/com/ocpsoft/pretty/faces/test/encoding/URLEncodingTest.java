@@ -54,6 +54,26 @@ public class URLEncodingTest
    }
 
    @Test
+   // http://code.google.com/p/prettyfaces/issues/detail?id=76
+   public void testRewriteEncoding() throws Exception
+   {
+      String target = "/virtual";
+      String expected = "/virtuální";
+
+      JSFSession jsfSession = new JSFSession(target);
+      JSFServerSession server = jsfSession.getJSFServerSession();
+
+      JSFClientSession client = jsfSession.getJSFClientSession();
+      String action = client.getElement("form").getAttribute("action");
+
+      FacesContext context = server.getFacesContext();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+
+      assertEquals(expected, prettyContext.getRequestURL().toString());
+      assertEquals(prettyContext.getContextPath() + expected, action);
+   }
+
+   @Test
    public void testPrettyFacesFormActionURLEncodesProperly() throws Exception
    {
       String expected = "/custom/form";
@@ -139,7 +159,7 @@ public class URLEncodingTest
    @Test
    public void testQueryWithGermanUmlaut() throws Exception
    {
-      
+
       // query parameter contains a German 'ü' encoded with UTF8
       JSFSession jsfSession = new JSFSession("/encoding/Vračar?dis=%C3%BC");
       JSFServerSession server = jsfSession.getJSFServerSession();
@@ -149,7 +169,7 @@ public class URLEncodingTest
       Object val2 = server.getManagedBeanValue("#{encodingBean.queryText}");
       assertEquals("\u00fc", val2);
    }
-   
+
    @Test
    public void testPatternDecoding() throws Exception
    {
