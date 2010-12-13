@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<section id="config.annotations">
+
+  <title>Annotation based configuration</title>
+
+  <para>
+    Recently PrettyFaces added support to configure URL mappings via
+    annotations. This feature is primarily intended for people who don't
+    want to maintain a separate XML configuration file for the mappings 
+    and instead prefer to declare them directly on the affected classes.
+  </para>
+
+  <!-- ========================================================== -->
+  <!--                   Basic Setup                              -->
+  <!-- ========================================================== -->
+
+  <section id="config.annotations.setup">
+
+    <title>Basic setup</title>
+  
+    <para>
+      PrettyFaces supports configuration via annotations out of the box.
+      Nevertheless it is strongly recommended to manually specify the java packages 
+      that contain your annotated classes. In this case the annotation scanner 
+      isn't required to scan the complete classpath, which might be a performance
+      problem when you have many dependencies.
+    </para>
+    
+    <para>  
+       You can specify the packages to scan for annotations by adding a 
+       comma-separated list of packages to your <code>web.xml</code>:
+    </para>
+    
+    <programlisting><![CDATA[<context-param>
+   <param-name>com.ocpsoft.pretty.BASE_PACKAGES</param-name>
+   <param-value>com.example.myapp,com.ocpsoft</param-value>
+</context-param>]]></programlisting>
+ 
+    <para>
+      PrettyFaces will scan these packages recursively. So typically 
+      you will only have to add the top-level package of your web application here.
+    </para>
+    
+    <para>
+      If you don't want to use PrettyFaces annotations at all, you can completely 
+      disable the annotation scanning by setting the package configuration parameter
+      to <code>none</code>.
+    </para>
+
+    <programlisting><![CDATA[<context-param>
+   <param-name>com.ocpsoft.pretty.BASE_PACKAGES</param-name>
+   <param-value>none</param-value>
+</context-param>]]></programlisting>
+
+    <para>
+      In the default configuration PrettyFaces will only scan for annotations in the 
+      <code>/WEB-INF/classes</code> directory of your web application. If you want 
+      the JAR files in <code>/WEB-INF/lib</code> to be scanned as well, add the 
+      following entry to your <code>web.xml</code>:
+    </para>
+
+    <programlisting><![CDATA[<context-param>
+   <param-name>com.ocpsoft.pretty.SCAN_LIB_DIRECTORY</param-name>
+   <param-value>true</param-value>
+</context-param>]]></programlisting>
+
+  </section>
+
+
+  <!-- ========================================================== -->
+  <!--                   Simple URL mapping                       -->
+  <!-- ========================================================== -->
+  
+  <section id="config.annotations.mappings">
+
+    <title>Simple URL mappings</title>
+  
+    <para>
+      To create a simple URL mapping, you must annotate one of your beans with a
+      <code>@URLMapping</code> annotation. You will typically want to place this
+      annotation on a class that is primarily responsible for the page.   
+    </para>
+    
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMapping(id = "store", pattern = "/store/", viewId = "/faces/shop/store.jsf")
+public class StoreBean {
+  /* your code */
+}
+]]></programlisting>    
+
+    <para>
+      You can see that the annotation attributes are very similar to the attributes of
+      the <code>url-mapping</code> element in the PrettyFaces XML configuration file.
+      Refer to <link linkend="config.mapping">Mapping a simple URL</link> for details
+      on the configuration of URL mappings. 
+    </para>
+    
+    <para>
+      If you want to use path parameters in the URL pattern, you can add these the 
+      same way as you would in <code>pretty-config.xml</code>.
+    </para>
+    
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMapping(id = "categoryBean", pattern = "/store/#{ bean.category }/", viewId = "/faces/shop/store.jsf")
+public class CategoryBean {
+  
+  private String category;
+  
+  /* Getters & Setters */ 
+}
+]]></programlisting>
+
+  </section>
+
+
+  <!-- ========================================================== -->
+  <!--                   Page actions                             -->
+  <!-- ========================================================== -->
+    
+  <section id="config.annotations.action">
+
+    <title>Page actions</title>
+    
+    <para>
+      PrettyFaces offers a very intuitive way to specify page actions with 
+      annotations. All you have to do is add a <code>@URLAction</code> 
+      annotation to the method you want to be executed.
+    </para>
+    
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMapping(id = "viewItem", pattern = "/store/item/#{ bean.itemId }/", viewId = "/faces/shop/item.jsf")
+public class CategoryBean {
+
+  private String itemId;
+
+  private Item item;
+
+  @Inject 
+  StoreItems items;
+
+  @URLAction
+  public String loadItem() {
+    if ( itemId != null ) {
+      this.item = items.findById(itemId);
+      return null;
+    }
+
+    // Add a message here, "The item {..} could not be found."
+    return "pretty:store";
+  }
+
+  /* Getters & Setters */
+}]]></programlisting>
+  
+  <note>
+    In some environments you may need to add an additional @URLBeanName annotation 
+    to the class containing the page action. Please refer to the chapter 
+    <link linkend="config.annotations.resolving">Bean name resolving</link> for details.
+  </note>
+  
+  <para>
+    The annotation supports all attributes that are available in the 
+    XML configuration file.
+  </para>
+  
+    <programlisting><![CDATA[@URLAction(phaseId=PhaseId.RENDER_RESPONSE, onPostback=false)
+public String loadItem() {
+  // do something
+}]]></programlisting>
+
+  <para>
+    Sometimes you might want to call methods on other beans than the bean
+    annotated with the @URLMapping. In this case just refer to the foreign mapping
+    using the <code>mappingId</code> attribute.
+  </para>
+  
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMapping(id = "viewItem", pattern = "/store/item/#{ bean.itemId }/", viewId = "/faces/shop/item.jsf")
+public class CategoryBean {
+  /* some code */
+}
+
+@Named("otherBean")
+@RequestScoped
+public class OtherBean {
+
+  @URLAction(mappingId = "viewItem")
+  public void myAction() {
+    /* your code */
+  }
+
+}]]></programlisting>
+  
+  </section>
+
+    
+  <!-- ========================================================== -->
+  <!--                   Query Parameters                         -->
+  <!-- ========================================================== -->
+
+  <section id="config.annotations.queryparams">
+
+    <title>Query Parameters</title>
+    
+    <para>
+      If you configure PrettyFaces using annotations, you can declare query
+      parameters by adding a <code>@URLQueryParameter</code> annotation to 
+      the target field. PrettyFaces will then inject the value of the
+      query parameter into that field.
+    </para>
+
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+public class LanguageBean {
+ 
+  @URLQueryParameter("language")
+  private String language;
+  
+  /* Getters + Setters */
+}]]></programlisting>
+
+  </section>
+  
+  <note>
+    Please not that the annotated field must be accessible by the 
+    expression language. This means that you'll have to create getters and
+    setters for the field, so that PrettyFaces can inject the value into
+    the object.
+  </note>
+
+  <note>
+    In some environments you may need to add an additional @URLBeanName annotation 
+    to the class containing the query parameter. Please refer to the chapter 
+    <link linkend="config.annotations.resolving">Bean name resolving</link> for details.
+  </note>
+
+
+  <!-- ========================================================== -->
+  <!--                 Parameters Validation                      -->
+  <!-- ========================================================== -->
+
+  <section id="config.annotations.validation">
+
+    <title>Parameter validation</title>
+
+    <para>
+      Validation is of major importance when processing any kind of user input. This
+      also applies to path and query parameters as they are directly modifiable by
+      the user.
+    </para>
+    
+    <para>
+      The declaration of validation rules is very simple when using PrettyFaces
+      annotations. To validate a query parameter with a standard JSF validator, 
+      you'll just have to add a <code>@URLValidator</code> annotation to the
+      field. 
+    </para>
+    
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+public class LanguageBean {
+ 
+  @URLQueryParameter("language")
+  @URLValidator(validatorIds="com.example.LanguageValidator")
+  private String language;
+  
+  /* Getters + Setters */
+}]]></programlisting>
+
+    <para>
+      This example shows how to attach the <code>com.example.LanguageValidator</code>
+      validator to the query parameter <code>language</code>. You can also specify
+      a mapping to redirect to if the validation fails or attach multiple
+      validators to the same query parameter.  
+    </para>
+
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+public class LanguageBean {
+ 
+  @URLQueryParameter("language")
+  @URLValidator(onError="pretty:error",
+      validatorIds= { "com.example.LanguageValidator", "com.example.OtherValidator" })
+  private String language;
+  
+  /* Getters + Setters */
+}]]></programlisting>
+
+    <para>
+      To validate path parameters, you have to add the <code>@URLValidator</code>
+      to the <code>@URLMapping</code> and specify the index of the
+      path parameter you are referring to.
+    </para>
+    
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMapping(id = "viewItem", pattern = "/store/item/#{ bean.itemId }/", viewId = "/faces/shop/item.jsf",
+  validation=@URLValidator(index=0, validatorIds="com.example.ItemIdValidator"))
+public class CategoryBean {
+  /* some code */
+}
+]]></programlisting>
+
+    <para>
+      This will tell PrettyFaces to validate the first path parameter 
+      <code>#{bean.itemId}</code> with the validator <code>com.example.ItemIdValidator</code>.
+    </para>
+
+  </section>
+
+
+  <!-- ========================================================== -->
+  <!--                   Bean name resolving                      -->
+  <!-- ========================================================== -->
+
+  <section id="config.annotations.resolving">
+
+    <title>Bean name resolving</title>
+    
+    <para>
+      PrettyFaces is required to access your managed beans in multiple ways.
+      If you declare a page action to be executed for a specific URL, the
+      framework will create a method expression and execute it. If you
+      want to inject a query parameter into your bean, a value expression
+      is created to write the value into the field. 
+    </para>
+    
+    <para>
+      All these actions require PrettyFaces to know the name of your beans
+      in the EL context. In most cases this can be done by an auto-detection
+      mechanism that supports the most common environments for defining
+      managed beans. Currently PrettyFaces supports:  
+    </para>
+
+    <itemizedlist>
+      <listitem>JSF standard mechanism (<code>faces-config.xml</code> and <code>@ManagedBean</code>)</listitem>
+      <listitem>CDI (Weld/OpenWebBean)</listitem>
+      <listitem>JBoss Seam 2.0</listitem>
+      <listitem>Spring</listitem>
+    </itemizedlist>
+    
+    <para>
+      If you are using a non-standard way of defining managed beans within your 
+      application, the auto-detection will not work. In this case you'll have
+      two options. 
+    </para>
+    
+    <para>
+      The first option is to use a <code>@URLBeanName</code> annotation on the
+      class to explicitly tell PrettyFaces the name of the bean. The framework will
+      then use this name to build EL expressions for this bean. 
+    </para>
+    
+    <programlisting><![CDATA[@URLBeanName("bean")
+public class LanguageBean {
+ 
+  @URLQueryParameter("language")
+  private String language;
+  
+  /* Getters + Setters */
+}]]></programlisting>
+
+    <para>
+      In this example PrettyFaces will create the EL expression 
+      <code>#{bean.language}</code> to access the language field.
+    </para>
+    
+    <para>
+      The other option to tell PrettyFaces about your beans names is
+      to implement a custom <code>BeanNameResolver</code>. PrettyFaces already
+      ships with resolver implementations for the most common environments.
+      If your environment is not supported, you can easily <link linkend="ELBeanNameResolver">create your own resolver</link>.
+    </para>
+    
+  </section>
+  
+</section>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="inbound_rewriting">
+	<title>Inbound URL Rewriting</title>
+
+	<para>
+		PrettyFaces inbound URL rewriting provides seamless URL rewriting to all Servlets within the 
+		Context. This is the capability of intercepting and changing the location of the client's 
+		browser URL, modifying or replacing that URL entirely, and displaying a resource.
+	</para>
+	
+	<section id="inbound_rewriting.common">
+		<title>Common rewriting features</title>
+		<para>
+			There are several commonly used rewriting features that PrettyFaces provides for you: 
+			manipulating trailing slashes, upper and lower-casing, custom regex search and replace, 
+			and redirect types such as <code>'301 - Permanent'</code> and <code>'302 - Temporary'</code>.
+			
+			<programlisting><![CDATA[<rewrite trailingSlash="append" toCase="lowercase" redirect="301"/>
+<rewrite match="/foo" substitute="/bar" redirect="301"/>]]></programlisting>
+			
+			The two rules above will cause ALL inbound and outbound URLs be appended with a trailing slash 
+			(if necessary,) but because of the "match" attribute, only URLs containing <code>'/foo'</code>
+			will be replaced with <code>'/bar/</code>. Inbound URL-rewriting changes the browser URL 
+			unless the redirect attribute is set to “chain”:
+			
+			<programlisting><![CDATA[<rewrite toCase="lowercase" redirect="chain" />]]></programlisting>
+		</para>
+	</section>
+	
+	<section id="inbound_rewriting.matching">
+		<title>Rewriting URLs that match a specific pattern</title>
+		<para>
+			Each <code><![CDATA[<rewrite />]]></code> rule may specify a <code>match="..."</code>
+			attribute. This attribute defines which URLs will and will not be transformed by a given
+			rewrite rule.
+			
+			<programlisting><![CDATA[<rewrite match="/foo" trailingSlash="append" toCase="lowercase" />]]></programlisting>
+			
+			Once a URL has been matched, regex groups may be used to perform value-substitution on the
+			URL; this effectively takes parts of the original URL, and makes them availible in its
+			replacement.
+			
+			<programlisting><![CDATA[<rewrite match="/foo/(\w+)/" substitute="/bar/$1/" />]]></programlisting>
+			
+			This is equivalent to calling the String method <code>url.replaceAll("/foo/(\w+)/", "/bar/$1/");</code>
+			Note, also, that the same type of substitution is available when issuing an external redirect
+			from a rewrite-rule:
+			
+			<programlisting><![CDATA[<rewrite match="/foo/(\w+)/" url="http://example.com/$1/" />]]></programlisting>
+			
+			Click <ulink url="http://ocpsoft.com/opensource/guide-to-regular-expressions-in-java-part-1/">
+			here</ulink> for more detailed information on regular expressions in Java.
+		</para>
+	</section>
+	
+	
+	<section id="inbound_rewriting.options">
+		<title>Rewrite options</title>
+		<para>The table below outlines each of the individual rewrite-rule options:
+		
+				<informaltable>
+					<tgroup cols="3">
+						<colspec colnum="1" colwidth="1*" />
+						<colspec colnum="2" colwidth="1*" />
+						<colspec colnum="3" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>Option</entry>
+								<entry>Allowed values</entry>
+								<entry>Usage</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>inbound</entry>
+								<entry>true/false</entry>
+								<entry>
+									(Default: true) Enable or disable inbound URL rewriting for this rule. 
+									Setting this value to false means that this rule will be ignored on incoming requests.
+								</entry>
+							</row>
+							<row>
+								<entry>match</entry>
+								<entry>a regex</entry>
+								<entry>
+									(Optional) Describes, via a regular expression pattern, when this 'rewrite' rule 
+									should trigger on an inbound or outbound URL. If empty, this rule will match all URLs.
+								</entry>
+							</row>
+							<row>
+								<entry>outbound</entry>
+								<entry>true/false</entry>
+								<entry>
+									(Default: true) Enable or disable outbound URL rewriting for this rule. If enabled,
+									any matching links encoded using HttpServletResponse.encodeURL() will be rewritten 
+									according to the rules specified.
+								</entry>
+							</row>
+							<row>
+								<entry>processor</entry>
+								<entry>qualified class name</entry>
+								<entry>
+									(Optional.) Specify a custom processor class to perform more complex, custom URL-rewriting. 
+									This class must implement the interface: 'com.ocpsoft.pretty.faces.rewrite.Processor'
+									<programlisting>public class CustomClassProcessor implements Processor {
+	public static final String RESULT = "I PROCESSED!";
+
+	public String process(final RewriteRule rewrite, final String url) {
+		return RESULT;
+	}
+}</programlisting>
+								</entry>
+							</row>
+							<row>
+								<entry>redirect</entry>
+								<entry>301, 301, chain</entry>
+								<entry>
+									(Default: 301) Specifies which type of redirect should be issued when this rule triggers.
+									If 'chain' is specified, a Servlet forward will be issued to the new URL instead of a
+									redirect.
+								</entry>
+							</row>
+							<row>
+								<entry>substitute</entry>
+								<entry>lifecycle</entry>
+								<entry>
+									(Optional.) The regular expression substitution value of the "match" attribute. 
+									This effectively enables a "search and replace" functionality. 
+									
+									Regular expression back-references to the 
+									match="..." attribute are supported in the URL, so using '$' and '/' characters may 
+									change the value of the result. 
+									
+									See <link linkend="inbound_rewriting.matching">Rewriting URLs that match a specific 
+									pattern</link>, for more details.
+								</entry>
+							</row>
+							<row>
+								<entry>toCase</entry>
+								<entry>uppercase, lowercase, ignore</entry>
+								<entry>
+								(Default: ignore) Change the entire URL (excluding context-path and query- parameters) 
+								to 'UPPERCASE' or 'lowercase'.
+								</entry>
+							</row>
+							<row>
+								<entry>trailingSlash</entry>
+								<entry>append, remove, ignore</entry>
+								<entry>
+									(Default: ignore) Control whether trailing slashes on a URL should be appended if 
+									missing, or removed if present.
+								</entry>
+							</row>
+							<row>
+								<entry>url</entry>
+								<entry>a well-formed URL</entry>
+								<entry>
+									(Optional.) Specify an well-formed URL to replace the current URL. This will overwrite
+									the context-path and query-parameters. This attribute should usually be combined with
+									redirect="301" (default), which is recommended to prevent adverse SEO effects,
+									loss of page- rank.) Note: You must provide a fully qualified URL, including scheme 
+									(such as 'http://", 'ftp://', 'mailto:'). Regular expression back-references to the 
+									match="..." attribute are supported in the URL, so using '$' and '/' characters may 
+									change the value of the result.
+									
+									See <link linkend="inbound_rewriting.matching">Rewriting URLs that match a specific 
+									pattern</link>, for more details.
+								</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</informaltable>
+		
+		</para>
+	</section>
+	<tip><para>Rewrite rules must be defined in <code>pretty-config.xml</code>.</para></tip>
+</chapter>

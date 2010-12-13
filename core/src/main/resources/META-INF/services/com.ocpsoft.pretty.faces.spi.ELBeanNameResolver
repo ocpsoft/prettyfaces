@@ -1,0 +1,4 @@
+com.ocpsoft.pretty.faces.el.resolver.FacesConfigBeanNameResolver
+com.ocpsoft.pretty.faces.el.resolver.SpringBeanNameResolver
+com.ocpsoft.pretty.faces.el.resolver.SeamBeanNameResolver
+com.ocpsoft.pretty.faces.el.resolver.CDIBeanNameResolver

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="GettingStarted">
+	<title>Get Started</title>
+
+	<para>It should not be difficult to install PrettyFaces into any new or
+		existing Servlet-based application. Follow the next few steps and you
+		should have a working configuration in only a few minutes.
+	</para>
+
+	<section id="getstarted.getprettyfaces">
+		<title>Get PrettyFaces</title>
+		<para>
+			This step is pretty straight-forward, right? Copy necessary JAR files into 
+			your /WEB-INF/lib directory, or include a <ulink url="http://maven.apache.org/">
+			Maven</ulink> dependency in your pom.xml (recommended):
+		</para>
+		<para>
+			Non-Maven users may download JAR files manually from one of the following repositories: 
+			(<ulink url="http://repo1.maven.org/maven2/com/ocpsoft/">Central</ulink>, 
+			<ulink url="http://ocpsoft.com/repository/com/ocpsoft/">OcpSoft</ulink>). Be sure to
+			select the correct package for your version of JSF.
+		</para>
+		<note>
+			<para>
+				Non-Maven Users must also include the following required JAR dependencies
+				(downloaded separately) in addition to the PrettyFaces JAR file:
+				<itemizedlist>
+					<listitem><para><ulink url="http://commons.apache.org/beanutils/">commons-beanutils.jar (1.x)</ulink></para></listitem>
+					<listitem><para><ulink url="http://commons.apache.org/digester/">commons-digester.jar (2.x)</ulink></para></listitem>
+					<listitem><para><ulink url="http://commons.apache.org/collections/">commons-collections.jar (2.x)</ulink></para></listitem>
+					<listitem><para><ulink url="http://commons.apache.org/logging/">commons-logging.jar (1.1.x)</ulink></para></listitem>
+				</itemizedlist>
+			</para>
+		</note>
+		
+		<para>
+			<command>List of Maven Dependencies:</command>
+			<programlisting><![CDATA[<!-- for JSF 2.x -->
+<dependency>
+   <groupId>com.ocpsoft</groupId>
+   <artifactId>prettyfaces-jsf2</artifactId>
+   <version>${latest.prettyfaces.version}</version>
+</dependency>
+
+<!-- for JSF 1.2.x -->
+<dependency>
+   <groupId>com.ocpsoft</groupId>
+   <artifactId>prettyfaces-jsf12</artifactId>
+   <version>${latest.prettyfaces.version}</version>
+</dependency>
+
+<!-- for JSF 1.1.x (UNSUPPORTED) -->
+<dependency>
+   <groupId>com.ocpsoft</groupId>
+   <artifactId>prettyfaces-jsf11</artifactId>
+   <version>${latest.prettyfaces.version}</version>
+</dependency>]]></programlisting>
+
+		</para>
+	</section>
+	<section id="getstarted.webxml">
+	
+		<title>Configure PrettyFaces in web.xml</title>
+		<para>
+			If you are using a Servlet 3.0 compliant container, you may skip this
+			step because PrettyFaces will automatically register the required Servlet
+			Filter; otherwise, make sure PrettyFilter is the first filter in your
+			web.xml file. (The dispatcher elements are required to ensure
+			PrettyFaces intercepts both internal and external requests.)
+		</para>
+		
+		<example>
+			<title>/WEB-INF/web.xml (Ignore if using Servlet 3.0)</title>
+		<programlisting><![CDATA[<filter>
+   <filter-name>Pretty Filter</filter-name>
+   <filter-class>com.ocpsoft.pretty.PrettyFilter</filter-class>
+</filter>
+
+<filter-mapping> 
+   <filter-name>Pretty Filter</filter-name> 
+   <url-pattern>/*</url-pattern> 
+   <dispatcher>FORWARD</dispatcher> 
+   <dispatcher>REQUEST</dispatcher> 
+   <dispatcher>ERROR</dispatcher>
+</filter-mapping>]]></programlisting>
+		</example>
+	</section>
+	<section id="getstarted.prettyconfigxml">
+
+		<title>Create /WEB-INF/pretty-config.xml</title>
+		<para>
+			This is where you'll tell PrettyFaces what to do, which URLs to
+			rewrite. Each URL-mapping contained in the configuration must specify
+			a pattern and a viewId. The pattern specifies which inbound URL to
+			match, and the viewId specifies the location that URL should resolve
+			-be redirected- to.
+		</para>
+
+
+		<example>
+			<title>/WEB-INF/pretty-config.xml (You will need to customize this)</title>
+			<programlisting><![CDATA[<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.1.1-SNAPSHOT" 
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+               xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.1.1-SNAPSHOT
+                                   		http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.1.1-SNAPSHOT.xsd">
+
+   <!-- Begin Example RewriteRules 
+   
+      // These are custom rewrite-rules, and are probably not necessary for your application.
+
+      <rewrite match="^/old-url/(\w+)/$" substitute="/new_url/$1/" redirect="301" />
+
+   -->
+   
+   <!-- Begin UrlMappings 
+      // These are examples of URL mappings, and should be customized for your application.
+
+      <url-mapping id="home"> 
+          <pattern value="/" /> 
+          <view-id>/faces/index.jsf</view-id>
+      </url-mapping> 
+      
+      <url-mapping id="store"> 
+          <pattern value="/store/" /> 
+          <view-id>/faces/shop/store.jsf</view-id>
+      </url-mapping> 
+      
+      <url-mapping id="viewCategory">
+          <pattern value="/store/#{ cat : bean.category }/" />
+          <view-id>/faces/shop/store.jsf</view-id> 
+      </url-mapping>
+      
+      <url-mapping id="viewItem">
+          <pattern value="/store/#{ cat : bean.category }/#{ iid : bean.itemId }/" />
+          <view-id>/faces/shop/item.jsf</view-id> 
+          <action>#{bean.loadItem}</action>
+      </url-mapping>
+   
+   -->
+
+</pretty-config>]]></programlisting>
+		</example>
+	</section>
+
+	<tip>
+		<para>
+			In JAR files, pretty-config.xml may also be placed in
+			/META-INF/pretty-config.xml - additionally, comma-separated
+			configuration file locations may be specified in web.xml, using the
+			servlet context-param configuration API:
+
+			<programlisting><![CDATA[<context-param>
+	<param-name>com.ocpsoft.pretty.CONFIG_FILES</param-name>
+	<param-value>/WEB-INF/custom-mappings.xml,/META-INF/another-config.xml</param-value>
+</context-param>]]></programlisting>
+		</para>
+	</tip>
+	
+	<para>
+		Congratulations! That's all you should have to do in order to use
+		PrettyFaces. The rest of this reference guide covers detailed
+		configuration options, framework integration with JavaServer Faces, and
+		special use-cases.
+	</para>
+</chapter>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<section id="config.dynaview">
+	<title>* Dynamic view-IDs (DynaView)</title>
+	<para>
+		Dynamic view-IDs (referred to as DynaView) allow us to determine (at the time the page is 
+		requested) the page our users should see for a given URL-mapping pattern.
+		
+		<programlisting><![CDATA[<url-mapping id="home">
+	<pattern value="/home/" />
+	<view-id> #{bean.getViewPath} </view-id>
+</url-mapping>
+		]]></programlisting>
+		
+		Notice that we've used an EL method-expression where we would normally have specified a view-ID.
+		PrettyFaces will invoke this method-expression, and use the result of the method as a final URL
+		to be displayed by the server. In a sense, we're asking the system to figure out which page to
+		display, and telling it that it can get the answer by calling our method:
+		
+		<programlisting>@Named("bean")
+@RequestScoped
+public class HomeBean {
+	
+	@Inject CurrentUser user;
+	
+	public String getViewPath() {
+		if ( user.isLoggedIn() )
+		{
+			return "/faces/home/home.jsf";
+		}
+		
+		return "/faces/login.jsf";
+	}
+}</programlisting>
+
+		Here, our method <code>#{bean.getViewPath}</code> is going to check the current user's logged-in
+		status, display the home page if he/she is logged in, or display the login page if they are not.
+	</para>
+	<caution>
+		<para>
+ 			Automatic <link linkend="Outbound_rewriting">out-bound URL-rewriting</link> will not function
+ 			on pages with dynamic view-ID's.
+		</para>
+	</caution>
+</section>

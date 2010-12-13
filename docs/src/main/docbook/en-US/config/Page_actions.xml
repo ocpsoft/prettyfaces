@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<section id="config.actions">
+	<title>* Load data when accessing mapped URLs (Page-action methods)</title>
+	
+	<caution>
+		<para>This feature is currently only available for URL mappings that target a JSF view-ID.</para>
+	</caution>
+	
+	<para>
+		Most of the time, when creating bookmarkable URLs, it is not enough to simply display a page
+		to the user; we also need to load data to be shown on that page - allowing for pages to appear
+		completely stateless to the end-user. This would typically be difficult in JSF, but PrettyFaces
+		has another option to satisfy this requirement that breaks the coupling typically associated
+		with other solutions such as using @SessionScoped data beans to save data across pages, or 
+		passing values across views using: &lt;f:setPropertyActionListener/&gt;.
+	</para>
+
+	<para>
+		Consider, for a moment, that we have a web-store, and would like to map a URL to display
+		one specific item in that store:
+		
+		<example>
+			<title>Displaying a single item in a web-store.</title>
+			<para>
+
+				Here we have defined a page-action to be executed on a bean, <code>#{bean.loadItem}</code>, 
+				when a URL matching our pattern is requested. For example: <code>/store/item/32</code>.
+				
+				<programlisting><![CDATA[<url-mapping id="viewItem">
+  <pattern value="/store/item/#{ iid : bean.itemId }/" />
+  <view-id>/faces/shop/item.jsf</view-id> 
+  <action>#{bean.loadItem}</action>
+</url-mapping>]]></programlisting>
+
+					And the corresponding managed-bean, here shown using CDI/Weld annotations:
+				
+					<programlisting>@Named("bean")
+@RequestScoped
+public class CategoryBean {
+	private String itemId;
+	private String category;
+	
+	private Item item;
+	
+	@Inject StoreItems items;
+	
+	public String loadItem() {
+		if ( itemId != null ) {
+			this.item = items.findById(itemId);
+			return null;
+		}
+
+		// Add a message here, "The item {..} could not be found."
+		return "pretty:store";
+	}
+	
+	/* Getters &amp; Setters */
+}</programlisting>
+	
+				</para>
+			</example>
+		</para>
+
+	<section id="config.actions.navigation">
+		<title>Invoking navigation from a page-action</title>
+		<para>			
+			Once we have defined our action method, it is very likely that situations will arise where
+			we do not want to continue displaying the current page, say, when data could not be loaded,
+			or if the user does not have sufficient permissions to perform the action; instead, we want
+			to redirect the user to another page in our site.
+		</para>
+		<para>
+			This can be done by returning a JSF navigation-string, just like we would do from a normal
+			JSF action-method. PrettyFaces <link linkend="navigation.actions">integrated navigation</link>
+			can also be used to perform dynamic redirection.
+		</para>
+		
+		
+		<example>
+			<title>Invoking JSF navigation from a page-action method</title>
+			<para>
+				Here we have defined a page-action to be executed on a bean, <code>#{bean.loadItem}</code>, 
+				when a URL matching our pattern is requested. For example: <code>/store/item/32</code>.
+				
+				<programlisting><![CDATA[<url-mapping id="viewItem">
+  <pattern value="/store/item/#{ iid : bean.itemId }/" />
+  <view-id>/faces/shop/item.jsf</view-id> 
+  <action>#{bean.loadItem}</action>
+</url-mapping>]]></programlisting>
+
+				The corresponding managed-bean is shown here using CDI/Weld annotations. If the item
+				cannot be found, we will invoke JSF navigation for the outcome: "failure". This outcome
+				must be defined in <code>faces-config.xml</code>, or JSF will not know how to process
+				it.
+
+				<programlisting>@Named("bean")
+@RequestScoped
+public class CategoryBean {
+	
+	public String loadItem() {
+		if ( itemId != null ) {
+			this.item = items.findById(itemId);
+			return null;
+		}
+
+		return "failure";
+	}
+}</programlisting>
+				
+				If a PrettyFaces URL-mapping ID is returned in this manner (e.g: "pretty:mappingId"), 
+				PrettyFaces  <link linkend="navigation.actions">integrated navigation</link> will be 
+				invoked instead of JSF navigation.
+			</para>
+		</example>
+		
+		
+	</section>
+	
+	
+	<section id="config.actions.phases">
+		<title>Invoking during specific JSF Phases</title>
+		<para>
+			
+			By default, actions are executed after the Faces RESTORE_VIEW phase, but actions may also be 
+			triggered <command>before</command> other JSF phases, using the optional <code>phaseId="..."</code>
+			attribute.
+			
+			<programlisting><![CDATA[<action phaseId="RENDER_RESPONSE">#{bean.loadItem}</action>]]></programlisting>
+		</para>
+		<caution>
+			<para>
+				If the JSF Phase does not occur, page-actions associated with that phase will not execute; in
+				this case -for example- if no validation is required, this action will never be called:
+					
+				<programlisting><![CDATA[<action phaseId="PROCESS_VALIDATIONS">#{bean.loadItem}</action>]]></programlisting>
+			</para>
+		</caution>
+	</section>
+	<section id="config.actions.postback">
+		<title>Toggling invocation on postback</title>
+		<para>			
+			Sometimes we only need to trigger a page-action the first time a page is requested, and not when
+			the user submits forms on that page. In order to accomplish this, we use the optional <code>
+			onPostback="false"</code> attribute.
+			
+			<programlisting><![CDATA[<action onPostback="false">#{bean.loadItem}</action>]]></programlisting>
+			
+			This will ensure that the action is never executed if the user is submitting a JSF form via POST
+			(otherwise referred to as a postback.) The action will only be executed if the page is accessed 
+			via a HTTP GET request.
+		</para>
+	</section>
+</section>

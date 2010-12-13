@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="Extensions">
+	<title>Extend PrettyFaces</title>
+
+	<para>
+      As a modern web-framework, it is important to provide extension and integration points,
+      enabling complex functionality that goes beyond the scope of the core framework itself.
+      
+      In order to do this, PrettyFaces provides several extension points, described below:   
+	</para>
+   
+   <section id="ConfigurationProvider">
+      <title>com.ocpsoft.pretty.faces.spi.ConfigurationProvider</title>
+      
+       <para>
+         It may sometimes be necessary to provide custom <link linkend="Configuration">configuration</link>
+         options in PrettyFaces. Loading URL-mappings from a database, for example, or generating
+         mappings based on the state of the file-system. Due to this requirement, PrettyFaces offers
+         an extension point for configuration providers to supply their own additional configuration
+         to be merged with the master configuration at the time when PrettyFaces boots up. 
+         This is when you would implement a custom <literal>ConfigurationProvider</literal>.
+       </para>
+       
+       <programlisting><![CDATA[public class MyConfigurationProvider implements ConfigurationProvider {
+   
+   public PrettyConfig loadConfiguration(ServletContext servletContext)
+   {
+      // add new configuration elements here
+      return new PrettyConfig(); 
+   }
+}]]></programlisting>
+   
+       <para>
+         To let PrettyFaces know about your provider, you'll have to register your
+         implementation by creating a file named 
+         <code>META-INF/services/com.ocpsoft.pretty.faces.spi.ConfigurationProvider</code>
+         in your classpath and add the fully-qualified class name of your implementation
+         class there.
+       </para>
+       
+       <programlisting>
+         <filename>META-INF/services/com.ocpsoft.pretty.faces.spi.ConfigurationProvider</filename>
+         com.example.MyConfigurationProvider
+       </programlisting>
+   
+   </section>
+   
+   <section id="ConfigurationPostProcessor">
+      <title>com.ocpsoft.pretty.faces.spi.ConfigurationPostProcessor</title>
+      
+       <para>
+         After all configurations have been loaded and merged from any built-in or registered 
+         <link linkend="ConfigurationProvider">ConfigurationProvider</link> sources, there is an
+         additional opportunity to post-process the entire configuration, for instance, if you
+         wanted to programmatically add security constraints to mappings based on various patterns.
+          This is when you would implement a custom <literal>ConfigurationPostProcessor</literal>.
+       </para>
+       
+       <programlisting><![CDATA[public class MyPostProcessor implements ConfigurationPostProcessor {
+   
+   public PrettyConfig processConfiguration(ServletContext servletContext, PrettyConfig config)
+   {
+      // make changes to the configuration here
+      return config; 
+   }
+}]]></programlisting>
+   
+       <para>
+         To let PrettyFaces know about your post-processor, you'll have to register your
+         implementation by creating a file named 
+         <code>META-INF/services/com.ocpsoft.pretty.faces.spi.ConfigurationPostProcessor</code>
+         in your classpath and add the fully-qualified class name of your implementation
+         class there.
+       </para>
+       
+       <programlisting>
+         <filename>META-INF/services/com.ocpsoft.pretty.faces.spi.ConfigurationPostProcessor</filename>
+         com.example.MyPostProcessor
+       </programlisting>
+   
+   </section>
+   
+   <section id="ELBeanNameResolver">
+      <title>com.ocpsoft.pretty.faces.spi.ELBeanNameResolver</title>
+      
+       <para>
+         As part of the <link linkend="config.annotations.resolving">Annotations scanning</link> 
+         (one of PrettyFaces' configuration methods,) it may sometimes be necessary to integrate
+         with a custom bean-container that is not one of the built in containers supported natively.
+         
+         It is in these cases when you should implement a custom ELBeanNameResolver. The following 
+         example shows a resolver that will resolve the bean name by searching for a <code>@Named</code> 
+         annotation.
+       </para>
+       
+       <programlisting><![CDATA[public class MyBeanNameResolver implements ELBeanNameResolver {
+   
+      public boolean init(ServletContext servletContext, ClassLoader classLoader) {
+         // tell PrettyFaces that initialization was successful
+         return true;
+      }
+   
+      public String getBeanName(Class<?> clazz) {
+         
+         // try to find @Named annotation
+         Named annotation = clazz.getAnnotation(Named.class);
+         
+         // return name attribute if annotation has been found
+         if(annotation != null) {
+            return annotation.value();
+         }
+         
+         // we don't know the name
+         return null;
+         
+      }
+      
+   }]]></programlisting>
+   
+       <para>
+         To let PrettyFaces know about your resolver, you'll have to register your
+         implementation by creating a file named 
+         <code>META-INF/services/com.ocpsoft.pretty.faces.spi.ELBeanNameResolver</code>
+         in your classpath and add the fully-qualified class name of your implementation
+         class there.
+       </para>
+       
+       <programlisting>
+         <filename>META-INF/services/com.ocpsoft.pretty.faces.spi.ELBeanNameResolver</filename>
+         com.example.MyBeanNameResolver
+       </programlisting>
+   
+   </section>
+
+</chapter>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="navigation">
+	<title>Simplify Navigation</title>
+
+	<para>
+		Navigation is a critical part of any web-application, and PrettyFaces provides simple integrated
+		navigation - both with JSF, and in non-JSF environments (such as Servlets) that only have access 
+		to the <code>HttpRequest</code> object. PrettyFaces navigation is non-intrusive, and may be used
+		optionally at your discretion. 
+	</para>
+	
+	<section id="navigation.actions">
+		<title>* Integrating with JSF action methods</title>
+		<para>
+			Typically when navigating in JSF, one must define navigation cases (in JSF 1.x) or 
+			return the path to a view (in JSF 2.x). PrettyFaces, however, lets us simply reference the
+			URL-mapping ID in these scenarios. Since the URL-mapping pattern already contains the
+			locations of all required values (path-parameter EL expressions), these values are extracted
+			from managed beans and used in URL generation.
+		</para>
+		
+		
+		<para>
+			Simply return a URL-mapping ID from any JSF action-method just as you would when using
+			an  <code><![CDATA[<h:commandLink action="..." />]]></code>. This outcome string should be
+			prefixed by "pretty:" followed e.g.: "pretty:store", where "store" is our URL-mapping ID.
+			
+			<programlisting><![CDATA[<url-mapping id="viewItem">
+  <pattern value="/store/item/#{ iid : bean.itemId }/" />
+  <view-id>/faces/shop/item.jsf</view-id> 
+  <action>#{bean.loadItem}</action>
+</url-mapping>]]></programlisting>
+			
+			Now look at our action-method; notice that if the item is found, we return null, signaling
+			that no navigation should occur, but if the item cannot be loaded, we return 
+			<code>"pretty:store"</code> which is a PrettyFaces navigation outcome; PrettyFaces will 
+			intercept this outcome string, and redirect the user to the URL-mapping identified by 
+			"store" in <code>pretty-config.xml</code>.
+			
+			<programlisting>public String loadItem() {
+	if(itemId != null) {
+		this.item = items.findById(itemId);
+		return null;
+	}
+
+	// Add a message here, "The item {..} could not be found."
+	return "pretty:store";
+}</programlisting>
+		</para>
+		
+		<tip>
+			<para>
+				Returning "pretty:", without a URL-mapping ID will cause the current page to be 
+				refreshed.
+			</para>
+		</tip>
+		
+		<para>
+			If any action method (JSF action-method or PrettyFaces page-actions) returns a 
+			mapping-ID that specifies  <link linkend="config.pathparams">path-parameters</link> in the
+			pattern, PrettyFaces will automatically extract values from bean locations specified in the
+			pattern. The client browser will be redirected to the URL built using these values injected
+			back into the pattern. For example:
+					
+			<programlisting><![CDATA[<pattern value="/store/#{ cat : bean.category }/" />]]></programlisting>
+			
+			Let's assume for a moment that <code>#{ bean.category }</code> contains the value, "shoes". if we return
+			<code>"pretty:viewCategory"</code> from our action method, where "viewCategory" is the
+			<code>id</code> of a URL-mapping in pretty-config.xml, PrettyFaces will extract the current 
+			value  from the bean <code>#{ bean.category }</code> and use that value to generate a new URL: 
+			
+			<programlisting>/store/shoes/</programlisting>
+		</para>
+		<para>
+			This means that we can control the generated URLs directly from Java code. Simply set
+			the value of the bean field (the field used in the URL pattern) to control the outcome:
+		
+			<programlisting>public String loadItem() {
+	...
+	// Add a message here, "The item {..} could not be found."
+	this.setCategory("shoes");
+	return "pretty:viewCategory";
+}</programlisting>
+		</para>
+		<tip>
+			<para>
+				It is generally good practice to dedicate a separate bean to store page-parameters,
+				this way, the same bean can be used throughout the application when setting values for
+				PrettyFaces navigation.
+			</para>
+		</tip>
+		
+		
+		
+	</section>
+	
+	<section id="navigation.commands">
+		<title>* Integrating with JSF commandLink and commandButton</title>
+		<para>
+			It is also possible to navigate without needing a bean action method at all; this is done by
+			referencing the URL-mapping ID in the command component directly. Similar to 
+			<link linkend="components.jsf"> generating HTML links and URLs</link>, for example:
+		</para>
+		
+		
+		<example>
+			<title>Navigating directly from <code><![CDATA[<h:commandLink>]]></code> or <code><![CDATA[<h:commandButton>]]></code></title>
+			<programlisting><![CDATA[<url-mapping id="viewItem">
+	<pattern value="/store/#{ cat : bean.category }/#{ iid : bean.itemId }/" />
+	<query-param name="language"> #{ bean.language } </query-param>
+	<view-id>/faces/shop/item.jsf</view-id> 
+	<action>#{bean.loadItem}</action>
+</url-mapping>]]></programlisting>
+			<para>
+				Note that if the specified URL-mapping ID requires any parameters, the current values
+				found in the required managed bean locations will be used when navigating.
+			</para>
+			<programlisting><![CDATA[<h:commandLink action="pretty:home"> Go home. </h:commandLink> ]]></programlisting>
+			<para>
+				Navigating directly from a command component is most commonly used for refreshing a page:
+			</para>
+			<programlisting><![CDATA[<h:commandLink action="pretty:"> Refresh this page. </h:commandLink> ]]></programlisting>
+		</example>
+		
+	</section>
+
+	<section id="navigation.redirects">
+		<title>Redirecting from non-JSF application Java code</title>
+		<para>
+			Often there you might find yourself somewhere in a custom Servlet, or in a situation where
+			you do not have access to the Faces <code>NavigationHandler</code>. For these situations,
+			PrettyFaces provides the <code>PrettyURLBuilder</code>, which can be used to generate the 
+			String representation of any URL-mapping; one need only have access to an 
+			<code>HttpServletRequest</code> object in order to get the current configuration, and the
+			current <code>HttpServletResponse</code> in order to issue a redirect.
+		</para>
+		<example>
+			<title>Redirecting from a custom Servlet</title>
+			<programlisting><![CDATA[public class CustomRedirector 
+{
+	public void redirect(HttpServletRequest request, HttpServletResponse response, 
+							String mappingId, Map<String, String[]>... params)
+	{
+		PrettyContext context = PrettyContext.getCurrentInstance(request);
+		PrettyURLBuilder builder = new PrettyURLBuilder();
+		
+		URLMapping mapping = context.getConfig().getMappingById(mappingId);
+		String targetURL = builder.build(mapping, params);
+		
+		targetURL = response.encodeRedirectURL(targetURL);
+		response.sendRedirect(targetURL);
+	}		
+}]]></programlisting>
+		</example>
+		
+	</section>
+
+
+</chapter>

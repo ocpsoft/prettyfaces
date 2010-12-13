@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+		/* * PrettyFaces is an OpenSource JSF library to create bookmarkable URLs. * *
+		Copyright (C) 2008 - Lincoln Baxter, III <lincoln@ocpsoft.com> * * This
+		program is free software: you can redistribute it and/or modify it under * the
+		terms of the GNU Lesser General Public License as published by the Free Software *
+		Foundation, either version 3 of the License, or (at your option) any later *
+		version. * * This program is distributed in the hope that it will be useful,
+		but WITHOUT * ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS * FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+		Public License for more * details. * * You should have received a copy of the
+		GNU Lesser General Public License along with * this program. If not, see the file
+		COPYING.LESSER3 or visit the GNU website at * <http://www.gnu.org/licenses/>. */
+	-->
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ocpsoft.com/prettyfaces-xsd"
+	xmlns:tns="http://ocpsoft.com/prettyfaces-xsd" elementFormDefault="qualified">
+
+	<element name="pretty-config" type="tns:pretty-config"></element>
+
+	<complexType name="pretty-config">
+		<sequence>
+			<element name="url-mapping" minOccurs="0" maxOccurs="unbounded" type="tns:url-mapping">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="url-mapping">
+		<sequence>
+			<element name="pattern" type="string" minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="query-param" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="name">
+								<simpleType>
+									<restriction base="string"></restriction>
+								</simpleType>
+							</attribute>
+							<attribute name="decode" type="boolean"></attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+			<element name="view-id" type="string" minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="action" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="phaseId">
+								<simpleType>
+									<restriction base="string">
+										<enumeration value="RESTORE_VIEW" />
+										<enumeration value="APPLY_REQUEST_VALUES" />
+										<enumeration value="PROCESS_VALIDATIONS" />
+										<enumeration value="UPDATE_MODEL_VALUES" />
+										<enumeration value="INVOKE_APPLICATION" />
+										<enumeration value="RENDER_RESPONSE" />
+										<enumeration value="ANY_PHASE" />
+									</restriction>
+								</simpleType>
+							</attribute>
+							<attribute name="onPostback" type="boolean"></attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+		</sequence>
+		<attribute name="id" use="required">
+		</attribute>
+	</complexType>
+</schema>

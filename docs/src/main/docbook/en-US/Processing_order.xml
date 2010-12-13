@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="Processing_order">
+	<title>Order of Events</title>
+
+	<para>
+		PrettyFaces follows a set order of events when processing each request. If a request is not
+		mapped, or does not match a rewrite-rule, then the request will not be processed
+		by PrettyFaces, and will continue normally.
+	</para>
+
+	<section id="request">
+		<title>Request processing order</title>
+		<procedure>
+			<step><para>URL-matching, <link linkend="config.pathparams">path-parameter</link> parsing, <link linkend="config.queryparams">query-parameter</link> handling, and <link linkend="config.pathparams.el">value injection</link> into managed beans.</para></step>
+			<step><para><link linkend="config.dynaview">DynaView</link> calculation (if a view Id is dynamic, the EL method will be called.)</para></step>
+			<step><para>PrettyFaces relinquishes control of the current request via RequestDispatcher.forward(“/context/faces/viewId.jsf”).</para></step>
+			<step><para>If the view-ID is a JSF view, <link linkend="config.actions">page-action</link> methods are called after RESTORE_VIEW phase, unless the optional phaseId attribute is specified.</para></step>
+			<step><para>The server continues to process the request as normal.</para></step>
+		</procedure>
+	</section>
+
+	<section id="configuration">
+		<title>Configuration processing order</title>
+		<procedure>
+			<step><para>Search for classpath resources named META-INF/pretty-config.xml in the ServletContext resource paths for this web application, and load each as a configuration resource.</para></step>
+			<step><para>Check for the existence of a context initialization parameter named com.ocpsoft.pretty.CONFIG_FILES. If it exists, treat it as a comma-delimited list of context relative resource paths (starting with a /), and load each of the specfied resources.</para></step>
+			<step><para>Check for the existence of a web application configuration resource named /WEB-INF/pretty-config.xml, and load it if the resource exists.</para></step>
+		</procedure>
+	</section>
+
+</chapter>

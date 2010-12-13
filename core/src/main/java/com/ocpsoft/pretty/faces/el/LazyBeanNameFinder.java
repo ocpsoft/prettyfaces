@@ -1,0 +1,117 @@
+package com.ocpsoft.pretty.faces.el;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
+import com.ocpsoft.pretty.faces.util.ServiceLoader;
+
+/**
+ * <p>
+ * Class implementing lazy resolving of bean names.
+ * </p>
+ * <p>
+ * This class is typically created once and is than supplied to
+ * {@link LazyExpression} instances in the
+ * {@link LazyExpression#LazyExpression(LazyBeanNameFinder, Class, String)}
+ * constructor.
+ * </p>
+ * 
+ * @author Christian Kaltepoth
+ */
+public class LazyBeanNameFinder
+{
+
+   private final static Log log = LogFactory.getLog(LazyBeanNameFinder.class);
+
+   /**
+    * List of all resolvers. Initialized once on object creation
+    */
+   private final List<ELBeanNameResolver> resolvers = new ArrayList<ELBeanNameResolver>();
+
+   /**
+    * Creates a new {@link LazyBeanNameFinder}. The constructor will find all
+    * implementations of {@link ELBeanNameResolver} by using the
+    * {@link ServiceLoader} mechanism.
+    * 
+    * @param servletContext The servlet context
+    */
+   public LazyBeanNameFinder(ServletContext servletContext)
+   {
+
+      // we use the context classloader
+      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+      // fallback, if no context classloader exists
+      if (classLoader == null)
+      {
+         classLoader = this.getClass().getClassLoader();
+      }
+
+      // find resolvers via ServiceLoader
+      Iterator<ELBeanNameResolver> beanNameFinderIterator = ServiceLoader.load(ELBeanNameResolver.class).iterator();
+
+      // call init() method on all resolvers
+      while (beanNameFinderIterator.hasNext())
+      {
+
+         // log resolver name
+         ELBeanNameResolver resolver = beanNameFinderIterator.next();
+         if (log.isTraceEnabled())
+         {
+            log.trace("Initializing BeanNameResolver: " + resolver.getClass().getName());
+         }
+
+         // call the resolver's init() method
+         boolean initialized = resolver.init(servletContext, classLoader);
+
+         // register resolver, if his initialization has completed
+         if (initialized)
+         {
+            resolvers.add(resolver);
+         }
+      }
+   }
+
+   /**
+    * Find the bean name of the supplied class. This method will try to resolve
+    * the bean name by calling all registered implementations of
+    * {@link ELBeanNameResolver}. This method will either return the resolved name
+    * or throw an {@link IllegalStateException}, if no resolver knows the name
+    * of the bean.
+    * 
+    * @param clazz The class of the bean
+    * @return The resolved bean name
+    * @throws IllegalStateException If the name of the bean cannot be resolved
+    */
+   public String findBeanName(Class<?> clazz) throws IllegalStateException
+   {
+
+      // process all resolvers
+      for (ELBeanNameResolver resolver : resolvers)
+      {
+
+         // try to resolve bean name with current resolver
+         String name = resolver.getBeanName(clazz);
+
+         // return the bean name, if the resolver was successful
+         if (name != null)
+         {
+            return name;
+         }
+
+      }
+
+      // No resolver knows the name of the bean
+      throw new IllegalStateException("Cannot find name of bean '" + clazz.getName()
+            + "'! You should place a @URLBeanName annotation on this class to let PrettyFaces know its name.");
+
+   }
+
+}

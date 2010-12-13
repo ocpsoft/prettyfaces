@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.1.1"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.1.1 
+	http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.1.1.xsd">
+
+   <url-mapping id="parent">
+      <pattern value="/parent" />
+      <view-id value="/parent.jsf" />
+   </url-mapping>
+
+   <url-mapping id="child" parentId="parent">
+      <pattern value="/child/#{name}">
+         <validate index="0" validatorIds="validator1" onError="#{validationBean.handle}" />
+      </pattern>
+      <view-id value="/child.jsf" />
+   </url-mapping>
+
+   <url-mapping id="grandchild" parentId="child">
+      <pattern value="/grandchild/#{gname}">
+         <validate index="0" validatorIds="validator2" onError="#{validationBean.handle2}" validator="#{validationBean.validateMethod}" />
+      </pattern>
+      <view-id value="/grandchild.jsf" />
+   </url-mapping>
+
+</pretty-config>

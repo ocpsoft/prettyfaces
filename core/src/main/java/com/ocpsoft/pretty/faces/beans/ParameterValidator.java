@@ -1,0 +1,253 @@
+/*
+ * PrettyFaces is an OpenSource JSF library to create bookmarkable URLs.
+ * Copyright (C) 2009 - Lincoln Baxter, III <lincoln@ocpsoft.com> This program
+ * is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version. This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+ * for more details. You should have received a copy of the GNU Lesser General
+ * Public License along with this program. If not, see the file COPYING.LESSER
+ * or visit the GNU website at <http://www.gnu.org/licenses/>.
+ */
+package com.ocpsoft.pretty.faces.beans;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.el.ELException;
+import javax.faces.FacesException;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.ocpsoft.pretty.PrettyContext;
+import com.ocpsoft.pretty.PrettyException;
+import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
+import com.ocpsoft.pretty.faces.config.mapping.PathValidator;
+import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
+import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
+import com.ocpsoft.pretty.faces.url.URL;
+import com.ocpsoft.pretty.faces.util.FacesElUtils;
+
+/**
+ * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
+ */
+public class ParameterValidator
+{
+   private static final Log log = LogFactory.getLog(ParameterInjector.class);
+   private static final FacesElUtils elUtils = new FacesElUtils();
+
+   public void validateParameters(final FacesContext context)
+   {
+      log.trace("Validating parameters.");
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      URL url = prettyContext.getRequestURL();
+      UrlMapping mapping = prettyContext.getConfig().getMappingForUrl(url);
+
+      if (mapping != null)
+      {
+         validatePathParams(context, url, mapping);
+         validateQueryParams(context, mapping);
+      }
+   }
+
+   private void validatePathParams(final FacesContext context, final URL url, final UrlMapping mapping)
+   {
+      List<PathParameter> params = mapping.getPatternParser().parse(url);
+
+      PathParameter currentParameter = new PathParameter();
+      PathValidator currentPathValidator = new PathValidator();
+      String currentValidatorId = "";
+      try
+      {
+         for (PathParameter param : params)
+         {
+            currentParameter = param;
+
+            List<PathValidator> validators = mapping.getValidatorsForPathParam(param);
+
+            if (!!"".equals(validators) && (validators != null))
+            {
+               String value = param.getValue();
+               Object coerced = elUtils.coerceToType(context, param.getExpression().getELExpression(), value);
+               for (PathValidator pv : validators)
+               {
+                  currentPathValidator = pv;
+                  for (String id : pv.getValidatorIdList())
+                  {
+                     currentValidatorId = id;
+                     Validator validator = context.getApplication().createValidator(id);
+                     validator.validate(context, new NullComponent(), coerced);
+                  }
+                  if (pv.getValidatorExpression() != null)
+                  {
+                     elUtils.invokeMethod(context, pv.getValidatorExpression().getELExpression(),
+                              new Class<?>[] { FacesContext.class, UIComponent.class, Object.class },
+                              new Object[] { context, new NullComponent(), coerced });
+                  }
+               }
+            }
+         }
+      }
+      catch (ELException e)
+      {
+         FacesMessage message = new FacesMessage("Could not coerce value [" + currentParameter.getValue()
+                  + "] on mappingId [" + mapping.getId() + "] to type in location [" + currentParameter.getExpression()
+                  + "]");
+         handleValidationFailure(context, message, currentPathValidator.getOnError());
+      }
+      catch (ValidatorException e)
+      {
+         handleValidationFailure(context, e.getFacesMessage(), currentPathValidator.getOnError());
+      }
+      catch (FacesException e)
+      {
+         FacesMessage message = new FacesMessage("Error occurred invoking validator with id [" + currentValidatorId
+                  + "] on mappingId [" + mapping.getId() + "] parameter [" + currentParameter.getExpression()
+                  + "] at position [" + currentParameter.getPosition() + "]");
+         handleValidationFailure(context, message, currentPathValidator.getOnError());
+      }
+   }
+
+   private void validateQueryParams(final FacesContext context, final UrlMapping mapping)
+   {
+      QueryParameter currentParameter = new QueryParameter();
+      String currentValidatorId = "";
+      try
+      {
+         List<QueryParameter> params = mapping.getQueryParams();
+         for (QueryParameter param : params)
+         {
+            if (param.hasValidators() || (param.getValidatorExpression() != null))
+            {
+               currentParameter = param;
+
+               String name = param.getName();
+               String el = param.getExpression().getELExpression();
+
+               if (elUtils.getExpectedType(context, el).isArray())
+               {
+                  String[] values = context.getExternalContext().getRequestParameterValuesMap().get(name);
+                  if (values != null)
+                  {
+                     Object coerced = elUtils.coerceToType(context, el, values);
+                     for (String id : param.getValidatorIdList())
+                     {
+                        currentValidatorId = id;
+                        Validator validator = context.getApplication().createValidator(id);
+                        validator.validate(context, new NullComponent(), coerced);
+                     }
+                     if (param.getValidatorExpression() != null)
+                     {
+                        elUtils.invokeMethod(context, param.getValidatorExpression().getELExpression(),
+                                 new Class<?>[] { FacesContext.class, UIComponent.class, Object.class },
+                                 new Object[] { context, new NullComponent(), coerced });
+                     }
+                  }
+               }
+               else
+               {
+                  String value = context.getExternalContext().getRequestParameterMap().get(name);
+                  if (value != null)
+                  {
+                     Object coerced = elUtils.coerceToType(context, el, value);
+                     for (String id : param.getValidatorIdList())
+                     {
+                        currentValidatorId = id;
+                        Validator validator = context.getApplication().createValidator(id);
+                        validator.validate(context, new NullComponent(), coerced);
+                     }
+                     if (param.getValidatorExpression() != null)
+                     {
+                        elUtils.invokeMethod(context, param.getValidatorExpression().getELExpression(),
+                                 new Class<?>[] { FacesContext.class, UIComponent.class, Object.class },
+                                 new Object[] { context, new NullComponent(), coerced });
+                     }
+                  }
+               }
+            }
+         }
+      }
+      catch (ELException e)
+      {
+         FacesMessage message = new FacesMessage("Could not coerce value [" + currentParameter.getValue()
+                  + "] on mappingId [" + mapping.getId() + "] to type ["
+                  + elUtils.getExpectedType(context, currentParameter.getExpression().getELExpression()) + "]");
+         handleValidationFailure(context, message, currentParameter.getOnError());
+      }
+      catch (ValidatorException e)
+      {
+         handleValidationFailure(context, e.getFacesMessage(), currentParameter.getOnError());
+      }
+      catch (FacesException e)
+      {
+         FacesMessage message = new FacesMessage("Error occurred invoking validator with id [" + currentValidatorId
+                  + "] on mappingId [" + mapping.getId() + "] parameter [" + currentParameter.getName() + "]");
+         handleValidationFailure(context, message, currentParameter.getOnError());
+      }
+   }
+
+   private void handleValidationFailure(final FacesContext context, final FacesMessage message, String onError)
+   {
+      boolean continueToFaces = false;
+      if ((onError != null) && !"".equals(onError.trim()))
+      {
+         if (elUtils.isEl(onError))
+         {
+            Object result = elUtils.invokeMethod(context, onError);
+            if (result == null)
+            {
+               continueToFaces = true;
+            }
+            else
+            {
+               onError = result.toString();
+            }
+         }
+
+         if (onError != null)
+         {
+            String viewId = context.getViewRoot().getViewId();
+            context.getApplication().getNavigationHandler().handleNavigation(context, viewId, onError);
+         }
+      }
+
+      if (!context.getResponseComplete() && !continueToFaces)
+      {
+         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+         try
+         {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+         }
+         catch (IOException e1)
+         {
+            throw new PrettyException(e1);
+         }
+      }
+   }
+
+   /**
+    * This component exists only to provide Path and Query Validators with a component for which they should not throw
+    * {@link NullPointerException}s
+    * 
+    * @author lb3
+    */
+   public static class NullComponent extends UIComponentBase
+   {
+      @Override
+      public String getFamily()
+      {
+         return "com.ocpsoft.pretty.NullComponent";
+      }
+   }
+
+}

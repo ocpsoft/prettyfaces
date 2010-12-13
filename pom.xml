@@ -1,0 +1,267 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <name>PrettyFaces Parent</name>
+   <groupId>com.ocpsoft</groupId>
+   <artifactId>prettyfaces-parent</artifactId>
+   <version>3.1.1-SNAPSHOT</version>
+   <packaging>pom</packaging>
+
+   <url>http://ocpsoft.com/prettyfaces/</url>
+
+   <modules>
+   </modules>
+
+   <profiles>
+      <profile>
+         <id>default</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>core</module>
+            <module>impl-jsf11</module>
+            <module>impl-jsf12</module>
+            <module>impl-jsf2</module>
+            <module>tests-jsf2</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>deploy</id>
+         <activation>
+            <property>
+               <name>deploy</name>
+            </property>
+         </activation>
+         <modules>
+            <module>impl-jsf11</module>
+            <module>impl-jsf12</module>
+            <module>impl-jsf2</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>distribution</id>
+         <activation>
+            <property>
+               <name>dist</name>
+            </property>
+         </activation>
+         <modules>
+            <module>docs</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>strict</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-compiler-plugin</artifactId>
+                  <version>2.0.2</version>
+                  <configuration>
+                     <source>1.5</source>
+                     <target>1.5</target>
+                     <fork>true</fork>
+                     <executable>${JAVA_5_HOME}/bin/javac</executable>
+                     <compilerVersion>1.5</compilerVersion>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+
+   <properties>
+   </properties>
+
+   <repositories>
+      <repository>
+         <id>Glassfish</id>
+         <name>Glassfish Maven2 Repository</name>
+         <url>http://download.java.net/maven/glassfish/</url>
+      </repository>
+   </repositories>
+
+   <dependencies>
+      <dependency>
+         <!-- Required until the Servlet 3.0 API can be resolved in Central -->
+         <groupId>org.glassfish</groupId>
+         <artifactId>javax.servlet</artifactId>
+         <version>3.0</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>javax.faces</groupId>
+         <artifactId>jsf-api</artifactId>
+         <version>1.2_02</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet.jsp</groupId>
+         <artifactId>jsp-api</artifactId>
+         <version>2.1</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.el</groupId>
+         <artifactId>el-api</artifactId>
+         <version>1.0</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>commons-digester</groupId>
+         <artifactId>commons-digester</artifactId>
+         <version>2.0</version>
+         <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>4.7</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.easymock</groupId>
+         <artifactId>easymock</artifactId>
+         <version>2.4</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.easymock</groupId>
+         <artifactId>easymockclassextension</artifactId>
+         <version>2.4</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+         <version>1.0</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-web</artifactId>
+         <version>3.0.2.RELEASE</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <developers>
+      <developer>
+         <id>lincolnbaxter</id>
+         <name>Lincoln Baxter, III</name>
+         <email>lincoln@ocpsoft.com</email>
+         <timezone>-5</timezone>
+      </developer>
+      <developer>
+         <id>chkalt</id>
+         <name>Christian Kaltepoth</name>
+         <email>christian@kaltepoth.de</email>
+         <url>http://chkal.blogspot.com/</url>
+         <timezone>+1</timezone>
+      </developer>
+      <developer>
+         <name>Dominik Dorn</name>
+         <email>dominik@dominikdorn.com</email>
+         <timezone>+2</timezone>
+      </developer>
+      <developer>
+         <name>Derek Hollis</name>
+         <email>derek@ocpsoft.com</email>
+      </developer>
+      <developer>
+         <name>Scott Carnett</name>
+      </developer>
+      <developer>
+         <name>Bram Van Dorn</name>
+      </developer>
+   </developers>
+
+   <licenses>
+      <license>
+         <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
+         <url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <distributionManagement>
+      <repository>
+         <id>ocpsoft.ftp.public</id>
+         <url>ftp://ocpsoft.com/ocpsoft.com/repository</url>
+      </repository>
+   </distributionManagement>
+
+   <scm>
+      <developerConnection>scm:svn:https://prettyfaces.googlecode.com/svn/prettyfaces/trunk</developerConnection>
+      <url>http://code.google.com/p/prettyfaces/source/browse/#svn/prettyfaces/trunk</url>
+   </scm>
+
+   <issueManagement>
+      <system>Google Code</system>
+      <url>http://code.google.com/p/prettyfaces/issues/list</url>
+   </issueManagement>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.0.2</version>
+            <configuration>
+               <source>1.5</source>
+               <target>1.5</target>
+					<encoding>UTF-8</encoding>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <version>2.0.2</version>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+      <extensions>
+         <extension>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-ftp</artifactId>
+            <version>1.0-beta-3</version>
+         </extension>
+      </extensions>
+   </build>
+
+   <reporting>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.0.2</version>
+            <configuration>
+               <keywords>true</keywords>
+               <destDir>${project.artifactId}/${project.version}</destDir>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.4</version>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>2.3.1</version>
+         </plugin>
+      </plugins>
+   </reporting>
+
+</project>

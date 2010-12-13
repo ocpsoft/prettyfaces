@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="Getting Started">
+	<title>Introduction</title>
+
+	<section>
+		<title>Using this guide</title>
+
+		<para>
+			While compatible with any Servlet 2.5+ container, some features are only available in 
+			JavaServer Faces.
+		</para>
+		<para>
+			Sections describing these features are marked with a '*'. This means that the feature 
+			either requires JSF, or requires an environment that has configured JSF in order to function;
+			otherwise, those marked features will not be available.
+		</para>
+	</section>
+	<section>
+		<title>What PrettyFaces provides</title>
+
+		<para>
+			PrettyFaces is an OpenSource extension for Servlet, Java EE, and
+			JSF, which enables creation of bookmarkable, REST-ful, "pretty" URLs.
+			PrettyFaces solves several problems elegantly, such as:
+			custom URL-rewriting, page-load actions, seamless integration with JSF
+			navigation and links, dynamic view-id assignment, managed parameter
+			parsing, and configuration-free compatibility with other JSF
+			frameworks.
+		</para>
+	</section>
+
+	<section>
+		<title>Business value of URL-rewriting</title>
+
+		<para>
+			Any business knows how important Search Engine Optimization can
+			be for sales. PrettyFaces allows SEO-friendly URLs, and improved
+			customer experience. Give your site a uniform, well understood
+			feeling, from the address bar to the buy button.
+		</para>
+		<para>
+			What is sometimes neglected, even when building web-sites that aren't for
+			external customers, is the consistency of the URL displayed to users in
+			the browser address bar. Keeping the URL tidy can make a big difference
+			in usability, providing that smooth web-browsing experience.
+		</para>
+		
+
+		<example>
+			<title>A URL rewritten using PrettyFaces</title>
+	
+			<para>
+				Consider the following URL.
+	
+				<programlisting>http://ocpsoft.com/index.jsf?post=docs?category=prettyfaces</programlisting>
+	
+				When presenting information to users (frequently your clients,) it is generally bad practice to show more
+				information than necessary; by hiding parameter names, we are able to
+				clean up the URL. The following URL-mapping accomplishes our goal:
+	
+				<programlisting>&lt;url-mapping&gt;
+   &lt;pattern value="/#{post}/#{category}" /&gt;
+   &lt;view-id&gt;/index.jsf&lt;/view-id&gt;
+&lt;/url-mapping&gt;</programlisting>
+	
+				Our final result looks like this:
+	
+				<programlisting>http://ocpsoft.com/prettyfaces/docs/</programlisting>
+			</para>
+	
+			<para>
+				This is just a simple example of the many features PrettyFaces
+				provides to standardize your URLs
+			</para>
+		</example>
+		
+		
+		<tip>
+			<para>
+				Notice that outbound links encoded using
+				<code>
+					<ulink url="http://java.sun.com/webservices/docs/1.6/api/javax/servlet/http/HttpServletResponse.html#encodeRedirectURL%28java.lang.String%29">
+						HttpServletResponse.encodeRedirectURL(url)
+					</ulink>
+				</code>
+				 will also be automatically rewritten to new URLs,
+				unless disabled	by using the <code>outbound="false"</code>
+				attribute on a given URL-mapping configuration.
+			</para>
+		</tip>
+	</section>
+</chapter>

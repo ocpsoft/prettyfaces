@@ -1,0 +1,53 @@
+------------------------------------
+           VERSION 3.1.1
+------------------------------------
+
+Major Changes:
+* Added 'parentId' for Hierarchical Mappings in pretty-config.xml (#72)
+* Can now be run in a pure servlet environment (without JSF and related JARs)
+
+Features & Enhancements:
+* Added 'onPostback' configuration parameter for query parameters (#24)
+* Added code-completion support for Eclipse Helios
+* Added 'pretty:location' client behavior 
+* Added 'onPostback' configuration parameter for path parameters (#24)
+* New method PrettyContext.sendError() to send custom HTTP status codes (#66)
+* Added SPI hooks for ConfigurationProvider and ConfigurationPostProcessor
+
+Regression Impact:
+* Changed some method signatures in PrettyContext
+* PrettyFilter no longer wraps application exceptions in ServletException
+* PrettyException no longer extends javax.faces.FacesException
+* Began deprecation of <view-id>/view.jsp</view-id> in favor of <view-id value="/view.jsp" />
+* com.ocpsoft.pretty.faces.el.BeanNameResolver SPI has moved to com.ocpsoft.pretty.faces.spi.ELBeanNameResolver
+
+Bugfixes:
+* Fixed compatibility with Java 1.5
+* Fixed EL method invocation in JSF 1.1 branch.
+* Removed HttpSession accesses that could potentially create an unwanted user session. (#62)
+* Prevent downloading of web.xml DTDs during configuration
+* Fixed FacesConfigBeanNameResolver regarding space characters in URLs 
+
+
+------------------------------------
+           VERSION 3.1.0
+------------------------------------
+
+Features & Enhancements:
+
+* Introducing: URL mapping configuration with annotations (http://ocpsoft.com/prettyfaces/annotations-support-is-coming-to-prettyfaces-url-rewriting/ + http://ocpsoft.com/docs/prettyfaces/snapshot/en-US/html/Configuration.html#config.annotations)
+* Added path and query-parameter validation wth managed bean methods (#50 + r353)
+* Added support for JSF2 redirects using ExternalContext (r305)
+* Added support for arrays as query parameters (r278)
+
+Regression impact:
+
+* The URL query string is now included in rewrite-rules; this allows for finer control of the rewriting engine (Any prior rewrite rules should be revised and re-tested)
+
+Bugfixes:
+
+* Resolved Mojarra warning "Request path '/faces/url.xhtml' begins with one or more occurrences of the FacesServlet prefix path mapping '/faces'." when using path mapping (#43 + r379)
+* Resolved Deployment warning on Geronimo (#58 + r364)
+* URL Path Expressions now match correctly when more than one expression is used between path segments (r362)
+* Resolved ClassNotFoundException with JSF 1.2 on JBoss6 (#54 + r360)
+* Resolved failed deployment due to ClassNotFoundException on Geronimo (#59 + r369)

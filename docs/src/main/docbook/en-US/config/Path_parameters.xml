@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+
+<section id="config.pathparams">
+	<title>Add Path-parameters to your mapped URL (REST)</title>
+	<para>
+		Suppose we want to create a URL mapping that allows users to access items in a  specific category
+		of a web-store, such as: <literal>/store/category/</literal>. In other words, we want to take a piece
+		of the URL string itself - for example: <literal>/store/[category]/</literal> and use that value: 
+		<literal>[category]</literal> in our application's logic.
+	</para>	
+		
+	<para>
+		This is commonly known as creating a REST-ful URL, but here we'll use the term "path-parameter"
+		to represent each individual data element created in our URL path.
+		
+		<tip>
+			<para>
+				Path-parameters are defined by using #{...} expressions in the pattern element. By default, 
+				these expressions match any character except for '/' in a URL. So the following pattern
+				will match <literal>/foo/</literal>, but it will not match <literal>/foo/bar/</literal>.
+				
+				<programlisting><![CDATA[<pattern value="/#{ name }/" />]]></programlisting>
+				
+				More specifically, path-parameter expressions such as <literal>#{ name }</literal> are replaced with the
+				regular expression <literal>[^/]+</literal> before being matched against the URL. 
+				<link linkend="config.pathparams.regex">Custom regular expressions</link> can also be supplied
+				if more control over parameter matching is required.
+			</para>
+		</tip>
+		
+      <programlisting><![CDATA[<url-mapping id="viewCategory">
+  <pattern value="/store/#{ cat }/" />
+  <view-id>/faces/shop/store.jsf</view-id> 
+</url-mapping>]]></programlisting>
+	
+		Here we've used PrettyFaces path-parameter syntax to capture values stored in part of inbound URLs
+		that match our pattern. Take, for instance, the following URL:
+		
+		<programlisting>/store/shoes/</programlisting>
+		
+		Part of this URL will be matched by the path-parameter expression: '#{ cat }',
+		making its value, 'shoes', available in the application logic, the rest of the URL will be matched
+		against the pattern, but ignored.
+		
+		<programlisting><![CDATA[<pattern value="/store/#{ cat }/" />]]></programlisting>
+		
+		The application can gain access to these path-parameters in a few ways, via 
+		<link linkend="config.pathparams.named"> request parameter naming</link>, or 
+		<link linkend="config.pathparams.el">EL bean injection</link>; both techniques will be covered 
+		below.
+	</para>
+	
+	<section id="config.pathparams.named">
+		<title>Named path parameters</title>
+		<para>
+			In order to gain access to a value matched by our path-parameter <literal>#{...}</literal>, 
+			we can use the named path-parameter syntax: <literal>#{ cat }</literal>, 
+			which means that the value in the URL will be available in the HTTP Servlet request parameter map:
+			<literal>HttpServletRequest.getParameter(String name); stored in the key 'cat'.</literal>
+		</para>
+		<para>
+			In our application code, we would access the URL just like we access request query-parameters, 
+			e.g.: <literal>url?cat=value</literal> , where 'cat' is the key, and 'value' is the value.
+			
+			<programlisting>String category = request.getParameter("cat");</programlisting>
+			
+			You could also use JSF 2.0 meta-data 
+			<ulink url="https://javaserverfaces.dev.java.net/nonav/docs/2.0/pdldocs/facelets/f/viewParam.html">
+			view-parameters</ulink> to propagate the named request parameter value to EL.
+		</para>
+		
+		<tip>
+			<para>
+				If you are adding PrettyFaces to an existing web-application, it is very likely that
+				you will want to use named path-parameters in order to tie in to existing application
+				features.
+			</para>
+			<para>
+				When starting a new application, it is good practice to always include a name for
+				each path-parameter, even if you are using <link linkend="config.pathparams.el">EL bean
+				injection</link> as well.
+			</para>
+		</tip>
+	</section>
+	
+	<section id="config.pathparams.el">
+		<title>* EL-injected path parameters</title>
+		<para>
+			Another method of accessing path-parameter values is via EL value injection, where PrettyFaces
+			can	inject the value of the URL parameter directly into a managed-bean. This requires a
+			syntax similar to specifying a named parameter, but PrettyFaces looks for '.' characters, an
+			easy way to distinguish a name from an EL value-injection expression:
+			
+			<programlisting><![CDATA[<pattern value="/store/#{ bean.location }/" />]]></programlisting>
+			
+			In this case, we must have a managed bean defined in our application; these beans can be 
+			registered either in JSF, Spring, Google Guice, or as shown here using CDI/Weld. Based on the
+			configuration in this particular example, the bean must be named "bean", and must have
+			an accessible field named "category". 
+		</para>
+		<para>
+			Any value matched by the path-parameter will be injected directly into the bean.
+
+<programlisting>@Named("bean")
+@RequestScoped
+public class CategoryBean {
+	private String category;
+	
+	/* Getters &amp; Setters */
+}</programlisting>
+	
+		</para>
+		
+		<tip>
+			<para>
+				Notice, you can specify both a name and an EL value-injection for the same path-parameter.
+				
+				<programlisting><![CDATA[<pattern value="/store/#{ cat : bean.location }/" />]]></programlisting>
+		  	</para>
+		</tip>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section id="config.pathparams.regex">
+		<title>Restrict what Path Parameters will accept (Custom regex patterns)</title>
+		<para>
+			In PrettyFaces, each url-pattern compiles into a regular expression that is used to match incoming
+			URLs. By default, any path-parameter expressions 
+			(<literal>#{...}</literal>) found in the URL pattern will be compiled into the regular expression:
+			<literal>[^/]+</literal>, meaning that path-parameters do not match over the '/'
+			character. 
+		</para>
+		<para>
+			The time will come when you need to make a URL match more selectively, for instance, when you have two 
+            URLs that share the same parameter order. Or perhaps you need to take a very complex URL and parse it
+            more selectively (matching across multiple '/' characters, for instance.) It is in scenarios like these
+			when you should consider using a custom regular expression within your url-mapping pattern.
+		</para>
+		<para>
+			Let's consider, for instance, that you are building a blog application, where the URLs: 
+			<literal>/blog/2010/12/</literal> and <literal>/blog/lincoln/23/</literal> have the same number of
+			parameters, but mean different things. One is going to display a list of articles from December 2010,
+			and the other is going to display Lincoln's 23rd post. There has to be a way for the system to tell
+			the two apart, and the answer is custum regex patterns.
+		
+			<programlisting><![CDATA[<url-mapping id="archives">
+  <pattern value="/#{ /\d{4}/ year }/#{ /\d{2}/ month }/" />
+  <view-id>/faces/blog/archives.jsf</view-id> 
+</url-mapping>]]></programlisting>
+
+			This pattern specifies custom regular expressions for each path-parameter, the former must
+			match exactly four digits (numbers 0-9), while the latter must match exactly two digits. In order to
+			understand what this means, it might make sense to think of what the pattern would look like once
+			it is compiled into a regular expression:
+			
+			<programlisting><![CDATA[/(\d{4})/(\d{2})/]]></programlisting> 
+			
+			Below we see how to map the second of our two example URLs.
+		
+			<programlisting><![CDATA[<url-mapping id="viewAuthorPost">
+  <pattern value="/#{ /[a-z]+/ blogger }/#{ /\d+/ postId }/" />
+  <view-id>/faces/blog/viewPost.jsf</view-id> 
+</url-mapping>]]></programlisting>
+			
+			Notice that this compiled pattern looks somewhat different from the first example URL:
+			
+			<programlisting><![CDATA[/([a-z]+)/(\d+)/]]></programlisting>
+			
+			This is how you can completely customize and parse complex URLs (even capture values that include
+			the '/' character.) Any path-parameter expression can accept a <literal>/custom-regex/</literal>, but
+			the custom regex must be placed before any name or EL injections.
+		</para>
+		
+		<warning>
+			<para>
+				Using custom regular expressions can lead to very difficult trouble-shooting, and is only
+				recommended in cases where basic path-parameter expressions are not sufficient. 
+			</para>
+		</warning>
+		
+		<para>
+			Sometimes you might want PrettyFaces to inject path parameters only on GET requests.
+			This could be the case if you inject path parameters into a view-scoped bean and want
+			to change these values at a later time.
+		</para>
+		
+		<para>
+			You can use the <code>onPostback</code> attribute of <code>url-mapping</code> to specifiy 
+			if values should be injected on postbacks. Please note that the default value of 
+			the attribute is <code>true</code>.
+		</para>
+		
+		<programlisting><![CDATA[<url-mapping id="viewCategory" onPostback="false">
+  <pattern value="/store/#{ cat }/" />
+  <view-id>/faces/shop/store.jsf</view-id> 
+</url-mapping>]]></programlisting>
+
+		<warning>
+			<para>
+				Please note that the bean properties bound to path parameters must never be 
+				<code>null</code> as they are required to build the URL for form postbacks. 
+			</para>
+		</warning>
+
+	</section>
+</section>

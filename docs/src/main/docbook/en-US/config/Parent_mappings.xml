@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+
+<section id="config.mapping.parents">
+	<title>Inherit from a parent URL-mapping</title>
+	<para>
+		Frequently, you may find that several - or all - of your mappings share a common base-URL.
+      It is on these occasions when you should consider using a parent URL-mapping by using the 
+      <literal>parentId</literal> attribute. 
+      
+      <programlisting><![CDATA[<url-mapping parentId="store" id="category"> ... </url-mapping>]]></programlisting> 
+      
+      Notice that the <literal>parentId</literal> attribute must refer to a <literal>mappingId</literal>
+      of another URL-mapping. See examples below:
+
+      <programlisting><![CDATA[<url-mapping id="store"> 
+   <pattern value="/store/" /> 
+   <~-- Result: /store/ -->
+   <view-id value="/faces/shop/store.jsf" />
+</url-mapping>
+
+<url-mapping parentId="store" id="category"> 
+   <pattern value="/#{category}" /> 
+   <~-- Result: /store/#{category} -->
+   <view-id value="/faces/shop/category.jsf" /> 
+</url-mapping>
+
+<url-mapping parentId="category" id="item"> 
+   <pattern value="/#{item}" /> 
+   <~-- Result: /store/#{category}/#{item} -->
+   <view-id value="/faces/shop/item.jsf" /> 
+</url-mapping>
+
+<url-mapping parentId="category" id="sales"> 
+   <pattern value="/sales" /> 
+   <~-- Result: /store/#{category}/sales -->
+   <view-id value="/faces/shop/sales.jsf" /> 
+</url-mapping>
+]]></programlisting>
+	
+	  At this time, only the pattern and path-parameter 
+      <link linkend="config.validation">validators</link> will be inherited by child mappings;
+      however, this may be enhanced in future versions.
+	</para>
+	
+</section>

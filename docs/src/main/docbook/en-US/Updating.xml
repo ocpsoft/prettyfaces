@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	
+<chapter id="Updating">
+	<title>Updating Notes</title>
+	
+	<section>
+		<title>Updating to 3.x.y from earlier versions</title>
+	
+		<simplesect>
+			<title>Maven Artifact</title>
+			
+			<para>
+				PrettyFaces uses new Maven artifact identifiers, changed from older versions. 
+				Please use the following artifacts depending on the JSF and Servlet versions 
+                you are using.
+			</para>
+
+			<simplesect>
+				<title>JSF 2.0 or Servlet 2.5/3.0</title>
+				<programlisting><![CDATA[<dependency>
+  <groupId>com.ocpsoft</groupId>
+  <artifactId>prettyfaces-jsf2</artifactId>
+  <version>3.1.1</version>
+</dependency>]]></programlisting>			
+			</simplesect>
+
+			<simplesect>
+				<title>JSF 1.2 or Servlet 2.5/3.0</title>
+				<programlisting><![CDATA[<dependency>
+  <groupId>com.ocpsoft</groupId>
+  <artifactId>prettyfaces-jsf12</artifactId>
+  <version>3.1.1</version>
+</dependency>]]></programlisting>			
+			</simplesect>
+			
+			<simplesect>
+				<title>JSF 1.1</title>
+				<programlisting><![CDATA[<dependency>
+  <groupId>com.ocpsoft</groupId>
+  <artifactId>prettyfaces-jsf11</artifactId>
+  <version>3.1.1</version>
+</dependency>]]></programlisting>			
+			</simplesect>
+
+		</simplesect>
+	
+	</section>
+	
+
+</chapter>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+
+<section id="config.mapping">
+	<title>Create your first bookmarkable URL (mapping a URL)</title>
+	<para>
+		The URL mapping element is the core configuration element for PrettyFaces
+		most applications. Let's consider, for instance, that we are building a web-store and we want
+		our users to access the store at the URL <code>/store/</code> - we only need the most basic
+		features of the URL-mapping to achieve this.
+
+      <programlisting><![CDATA[<url-mapping id="store"> 
+   <pattern value="/store/" /> 
+   <view-id>/faces/shop/store.jsf</view-id>
+</url-mapping>]]></programlisting>
+	
+		With these two simple lines of configuration, the user sees: <code>pattern="/store/"</code> 
+		in the browser URL and in the output HTML, but the server is actually rendering the resource: 
+		<code>/faces/shop/store.jsf</code> (the actual location of the page on the server.)
+	</para>
+	
+	<para>
+		Ignore the <code>id="store"</code> attribute for now, we'll cover that under
+		<link linkend="navigation"> navigation</link>. Which is useful when redirecting a user between
+		different pages in your application.
+	</para>
+	
+</section>

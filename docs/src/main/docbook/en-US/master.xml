@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+<book lang="en">
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Book_info.xml" />
+
+	<toc />
+	
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Introduction.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Get_started.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Configuration.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Processing_order.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Navigation.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Rewriting_inbound.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Rewriting_outbound.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Custom_components.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Extensions.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Feedback_contributing.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Updating.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="FAQ.xml" />
+
+</book>
