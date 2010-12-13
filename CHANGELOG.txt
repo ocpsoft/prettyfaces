@@ -28,6 +28,8 @@ Bugfixes:
 * Removed HttpSession accesses that could potentially create an unwanted user session. (#62)
 * Prevent downloading of web.xml DTDs during configuration
 * Fixed FacesConfigBeanNameResolver regarding space characters in URLs 
+* PrettyFacesWrappedResponse no longer depends on FacesContext (#78)
+* PrettyFaces no longer injects values into EL if the response has been marked complete (#79)
 
 
 ------------------------------------
