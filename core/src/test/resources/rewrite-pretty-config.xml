@@ -13,7 +13,7 @@
 
 	<url-mapping id="0">
 		<pattern value="/project/#{pid:viewProjectBean.projectId}/" />
-		<view-id>/faces/viewProject.xhtml</view-id>
+		<view-id value="/faces/viewProject.xhtml" />
 	</url-mapping>
 
 </pretty-config>
