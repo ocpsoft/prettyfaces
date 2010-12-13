@@ -1,24 +1,20 @@
+/*
+ * Copyright 2010 Lincoln Baxter, III
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ocpsoft.pretty.faces.application;
 
-/*
- * PrettyFaces is an OpenSource JSF library to create bookmarkable URLs.
- * 
- * Copyright (C) 2009 - Lincoln Baxter, III <lincoln@ocpsoft.com>
- * 
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see the file COPYING.LESSER or visit the GNU
- * website at <http://www.gnu.org/licenses/>.
- */
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -52,8 +48,9 @@ public class PrettyViewHandler extends ViewHandler
    private final ThreadLocal<Boolean> bookmarkable = new ThreadLocal<Boolean>();
 
    /**
-    * <b>NOTE:</b> This method should only be used by the getBookmarkableURL and getActionURL methods, for the purposes
-    * of rewriting form URLs (which do not include viewParameters.)
+    * <b>NOTE:</b> This method should only be used by the getBookmarkableURL and
+    * getActionURL methods, for the purposes of rewriting form URLs (which do
+    * not include viewParameters.)
     * 
     * @return Bookmarkable state - defaults to false if not previously set;
     */
@@ -113,8 +110,8 @@ public class PrettyViewHandler extends ViewHandler
    public String getActionURL(final FacesContext context, final String viewId)
    {
       /*
-       * When this method is called for forms, getBookmarkableURL is NOT called; therefore, we have a way to distinguish
-       * the two.
+       * When this method is called for forms, getBookmarkableURL is NOT called;
+       * therefore, we have a way to distinguish the two.
        */
       String result = parent.getActionURL(context, viewId);
       PrettyContext prettyContext = PrettyContext.getCurrentInstance();
@@ -133,7 +130,8 @@ public class PrettyViewHandler extends ViewHandler
             final Map<String, List<String>> parameters, final boolean includeViewParams)
    {
       /*
-       * When this method is called for <h:link> tags, getActionURL is called as part of the parent call
+       * When this method is called for <h:link> tags, getActionURL is called as
+       * part of the parent call
        */
       setBookmarkable(true);
       String result = parent.getBookmarkableURL(context, viewId, parameters, includeViewParams);
@@ -168,7 +166,8 @@ public class PrettyViewHandler extends ViewHandler
    }
 
    /**
-    * Canonicalize the given viewId, then pass that viewId to the next ViewHandler in the chain.
+    * Canonicalize the given viewId, then pass that viewId to the next
+    * ViewHandler in the chain.
     */
    @Override
    public String deriveViewId(final FacesContext context, final String rawViewId)
@@ -200,8 +199,8 @@ public class PrettyViewHandler extends ViewHandler
     */
 
    /**
-    * Add PrettyFaces UIViewParameters to the component tree. This is how we do value injection, conversion, and
-    * validation.
+    * Add PrettyFaces UIViewParameters to the component tree. This is how we do
+    * value injection, conversion, and validation.
     */
    private void addPrettyViewParameters(final FacesContext context, final UIViewRoot view)
    {
