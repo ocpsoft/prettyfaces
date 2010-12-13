@@ -91,8 +91,11 @@ public class PrettyPhaseListener implements PhaseListener
           * Parameter validation and injection must occur after RESTORE_VIEW in
           * order to participate in faces-navigation.
           */
-         validator.validateParameters(event.getFacesContext());
-         injector.injectParameters(event.getFacesContext());
+         if (!event.getFacesContext().getResponseComplete())
+         {
+            validator.validateParameters(event.getFacesContext());
+            injector.injectParameters(event.getFacesContext());
+         }
 
          if (prettyContext.shouldProcessDynaview())
          {
