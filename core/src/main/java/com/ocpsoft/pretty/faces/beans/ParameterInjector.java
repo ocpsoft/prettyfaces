@@ -27,6 +27,7 @@ import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
 import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
+import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
 import com.ocpsoft.pretty.faces.util.FacesStateUtils;
@@ -49,7 +50,7 @@ public class ParameterInjector
       if (mapping != null)
       {
          injectPathParams(context, url, mapping);
-         injectQueryParams(context, mapping);
+         injectQueryParams(context, mapping, prettyContext);
       }
    }
 
@@ -82,10 +83,11 @@ public class ParameterInjector
       }
    }
 
-   private void injectQueryParams(final FacesContext context, final UrlMapping mapping)
+   private void injectQueryParams(final FacesContext context, final UrlMapping mapping, final PrettyContext prettyContext)
    {
       boolean isPostback = FacesStateUtils.isPostback(context);
       List<QueryParameter> params = mapping.getQueryParams();
+      QueryString queryString = prettyContext.getRequestQueryString();
       for (QueryParameter param : params)
       {
          // check if to skip this QueryParameter due to onPostback attribute
@@ -98,18 +100,18 @@ public class ParameterInjector
          if ((el != null) && !"".equals(el.trim()))
          {
             String name = param.getName();
-            if (context.getExternalContext().getRequestParameterMap().containsKey(name))
+            if (queryString.getParameterMap().containsKey(name))
             {
                try
                {
                   if (elUtils.getExpectedType(context, el).isArray())
                   {
-                     String[] values = context.getExternalContext().getRequestParameterValuesMap().get(name);
+                     String[] values = queryString.getParameterValues(name);
                      elUtils.setValue(context, el, values);
                   }
                   else
                   {
-                     String value = context.getExternalContext().getRequestParameterMap().get(name);
+                     String value = queryString.getParameter(name);
                      elUtils.setValue(context, el, value);
                   }
                }
