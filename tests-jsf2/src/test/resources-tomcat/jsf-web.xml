@@ -76,6 +76,25 @@
       <url-pattern>*.jsf</url-pattern>
    </servlet-mapping>
 
+   <!-- We need this because the default web.xml is missing -->
+   <servlet>
+      <servlet-name>default</servlet-name>
+      <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+      <init-param>
+         <param-name>debug</param-name>
+         <param-value>0</param-value>
+      </init-param>
+      <init-param>
+         <param-name>listings</param-name>
+         <param-value>false</param-value>
+      </init-param>
+      <load-on-startup>1</load-on-startup>
+   </servlet>
+   <servlet-mapping>
+      <servlet-name>default</servlet-name>
+      <url-pattern>/</url-pattern>
+   </servlet-mapping>
+
    <welcome-file-list>
       <welcome-file>index.jsf</welcome-file>
    </welcome-file-list>
