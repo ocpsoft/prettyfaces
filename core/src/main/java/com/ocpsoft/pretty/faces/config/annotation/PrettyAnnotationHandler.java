@@ -113,7 +113,7 @@ public class PrettyAnnotationHandler
          // process annotations on public methods
          for (Method method : clazz.getMethods())
          {
-            processMethodAnnotations(method, classMappingId);
+            processMethodAnnotations(method, new String[] { classMappingId } );
          }
 
          // loop over fields to find URLQueryParameter annotations
@@ -247,16 +247,16 @@ public class PrettyAnnotationHandler
     * method.
     * 
     * @param method Method to scan
-    * @param classMappingId The mapping ID of the class this method belongs to
+    * @param classMappingIds The mapping IDs of the class this method belongs to
     */
-   private void processMethodAnnotations(Method method, String classMappingId)
+   private void processMethodAnnotations(Method method, String[] classMappingIds)
    {
 
       // is there a @URLAction annotation on the class?
       URLAction actionAnnotation = method.getAnnotation(URLAction.class);
       if (actionAnnotation != null)
       {
-         processPrettyActionAnnotation(actionAnnotation, method, classMappingId);
+         processPrettyActionAnnotation(actionAnnotation, method, classMappingIds);
       }
 
       // is there a @URLAction container annotation on the class?
@@ -266,7 +266,7 @@ public class PrettyAnnotationHandler
          // process all @URLAction annotations
          for (URLAction child : actionsAnnotation.actions())
          {
-            processPrettyActionAnnotation(child, method, classMappingId);
+            processPrettyActionAnnotation(child, method, classMappingIds);
          }
       }
    }
@@ -339,9 +339,9 @@ public class PrettyAnnotationHandler
     * 
     * @param actionAnnotation The annotation
     * @param method The method that was annotated
-    * @param classMappingId the mapping ID of the current class
+    * @param classMappingIds the mapping IDs of the current class
     */
-   private void processPrettyActionAnnotation(URLAction actionAnnotation, Method method, String classMappingId)
+   private void processPrettyActionAnnotation(URLAction actionAnnotation, Method method, String[] classMappingIds)
    {
 
       // Create ActionSpec
@@ -354,12 +354,12 @@ public class PrettyAnnotationHandler
       if (!isBlank(actionAnnotation.mappingId()))
       {
          // action belongs to the mapping mentioned with mappingId attribute
-         actionSpec.setMappingId(actionAnnotation.mappingId().trim());
+         actionSpec.setMappingIds(new String[] { actionAnnotation.mappingId().trim() });
       }
-      else if (!isBlank(classMappingId))
+      else if ( classMappingIds != null && classMappingIds.length > 0 )
       {
          // use the mapping found on the class
-         actionSpec.setMappingId(classMappingId.trim());
+         actionSpec.setMappingIds( classMappingIds );
       }
       else
       {
@@ -401,43 +401,48 @@ public class PrettyAnnotationHandler
       for (ActionSpec actionSpec : urlActions)
       {
 
-         // Get the mapping references by the action
-         UrlMapping mapping = urlMappings.get(actionSpec.getMappingId());
-
-         /*
-          * Fail for unresolved mappings. This may happen when the user places
-          * invalid mapping IDs in the mappingId attribute of
-          * 
-          * @URLAction or @URLQueryParameter
-          */
-         if (mapping == null)
+         // create an action for each referenced mapping
+         for (String mappingId : actionSpec.getMappingIds())
          {
-            throw new IllegalArgumentException("Unable to find the mapping '" + actionSpec.getMappingId()
-                  + "' referenced at method '" + actionSpec.getMethod().getName() + "' in class '"
-                  + actionSpec.getMethod().getDeclaringClass().getName() + "'.");
+
+            // Get the mapping references by the action
+            UrlMapping mapping = urlMappings.get(mappingId);
+
+            /*
+             * Fail for unresolved mappings. This may happen when the user places
+             * invalid mapping IDs in the mappingId attribute of
+             * 
+             * @URLAction or @URLQueryParameter
+             */
+            if (mapping == null)
+            {
+               throw new IllegalArgumentException("Unable to find the mapping '" + mappingId
+                     + "' referenced at method '" + actionSpec.getMethod().getName() + "' in class '"
+                     + actionSpec.getMethod().getDeclaringClass().getName() + "'.");
+            }
+
+            // build UrlMapping
+            UrlAction urlAction = new UrlAction();
+            urlAction.setPhaseId(actionSpec.getPhaseId());
+            urlAction.setOnPostback(actionSpec.isOnPostback());
+
+            // try to get bean name
+            Class clazz = actionSpec.getMethod().getDeclaringClass();
+
+            // build expression
+            PrettyExpression expression = buildPrettyExpression(clazz, actionSpec.getMethod().getName());
+            urlAction.setAction(expression);
+
+            // trace
+            if (log.isTraceEnabled())
+            {
+               log.trace("Adding action expression '" + urlAction.getAction() + "' to mapping: " + mapping.getId());
+            }
+
+            // register this action
+            mapping.addAction(urlAction);
+
          }
-
-         // build UrlMapping
-         UrlAction urlAction = new UrlAction();
-         urlAction.setPhaseId(actionSpec.getPhaseId());
-         urlAction.setOnPostback(actionSpec.isOnPostback());
-
-         // try to get bean name
-         Class clazz = actionSpec.getMethod().getDeclaringClass();
-
-         // build expression
-         PrettyExpression expression = buildPrettyExpression(clazz, actionSpec.getMethod().getName());
-         urlAction.setAction(expression);
-
-         // trace
-         if (log.isTraceEnabled())
-         {
-            log.trace("Adding action expression '" + urlAction.getAction() + "' to mapping: " + mapping.getId());
-         }
-
-         // register this action
-         mapping.addAction(urlAction);
-
       }
 
       for (QueryParamSpec queryParamSpec : queryParamList)
@@ -574,7 +579,7 @@ public class PrettyAnnotationHandler
       private Method method;
       private boolean onPostback;
       private PhaseId phaseId;
-      private String mappingId;
+      private String[] mappingIds;
 
       public boolean isOnPostback()
       {
@@ -596,16 +601,6 @@ public class PrettyAnnotationHandler
          this.phaseId = phaseId;
       }
 
-      public String getMappingId()
-      {
-         return mappingId;
-      }
-
-      public void setMappingId(String mappingId)
-      {
-         this.mappingId = mappingId;
-      }
-
       public Method getMethod()
       {
          return method;
@@ -614,6 +609,16 @@ public class PrettyAnnotationHandler
       public void setMethod(Method method)
       {
          this.method = method;
+      }
+
+      public String[] getMappingIds()
+      {
+         return mappingIds;
+      }
+
+      public void setMappingIds(String[] mappingIds)
+      {
+         this.mappingIds = mappingIds;
       }
 
    }
