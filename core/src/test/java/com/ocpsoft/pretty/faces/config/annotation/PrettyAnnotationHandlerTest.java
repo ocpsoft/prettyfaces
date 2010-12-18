@@ -18,6 +18,10 @@ package com.ocpsoft.pretty.faces.config.annotation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction;
@@ -25,6 +29,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLActions;
 import com.ocpsoft.pretty.faces.annotation.URLBeanName;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import com.ocpsoft.pretty.faces.annotation.URLQueryParameter;
 import com.ocpsoft.pretty.faces.annotation.URLValidator;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
@@ -335,6 +340,72 @@ public class PrettyAnnotationHandlerTest
 
    }
 
+   @Test
+   public void testClassWithMultipleMappings()
+   {
+
+      // create handler and process class
+      PrettyAnnotationHandler handler = new PrettyAnnotationHandler(null);
+      handler.processClass(ClassWithMultipleMappings.class);
+
+      // build configuration
+      PrettyConfigBuilder configBuilder = new PrettyConfigBuilder();
+      handler.build(configBuilder);
+      PrettyConfig config = configBuilder.build();
+
+      // no mappings added
+      assertNotNull(config.getMappings());
+      assertEquals(2, config.getMappings().size());
+
+      // validate mapping properties for mappingA
+      UrlMapping mappingA = config.getMappingById("mappingA");
+      assertNotNull(mappingA);
+      assertEquals("mappingA", mappingA.getId());
+      assertEquals("/some/url/a", mappingA.getPattern());
+      assertEquals("/view.jsf", mappingA.getViewId());
+      assertEquals(true, mappingA.isOutbound());
+      assertEquals(true, mappingA.isOnPostback());
+      assertEquals(1, mappingA.getActions().size());
+      assertEquals(2, mappingA.getQueryParams().size());
+      assertEquals(0, mappingA.getPathValidators().size());
+      assertEquals("#{multiMappingBean.actionForBoth}", 
+            mappingA.getActions().get(0).getAction().getELExpression());
+      
+      // we don't know the order in which the query parameters are added
+      List<String> queryParamExpressionsA = Arrays.asList(
+            mappingA.getQueryParams().get(0).getExpression().getELExpression(),
+            mappingA.getQueryParams().get(1).getExpression().getELExpression()
+      );
+      Collections.sort(queryParamExpressionsA);
+      assertEquals("#{multiMappingBean.queryParameterForA}", queryParamExpressionsA.get(0));
+      assertEquals("#{multiMappingBean.queryParameterForBoth}", queryParamExpressionsA.get(1));
+      
+      // validate mapping properties for mappingB
+      UrlMapping mappingB = config.getMappingById("mappingB");
+      assertNotNull(mappingB);
+      assertEquals("mappingB", mappingB.getId());
+      assertEquals("/some/url/b", mappingB.getPattern());
+      assertEquals("/view.jsf", mappingB.getViewId());
+      assertEquals(true, mappingB.isOutbound());
+      assertEquals(true, mappingB.isOnPostback());
+      assertEquals(2, mappingB.getActions().size());
+      assertEquals(1, mappingB.getQueryParams().size());
+      assertEquals(0, mappingB.getPathValidators().size());
+      assertEquals("#{multiMappingBean.queryParameterForBoth}", 
+            mappingB.getQueryParams().get(0).getExpression().getELExpression());
+      
+      // we don't know the order in which the actions are added
+      List<String> actionExpressionsB = Arrays.asList(
+            mappingB.getActions().get(0).getAction().getELExpression(),
+            mappingB.getActions().get(1).getAction().getELExpression()
+      );
+      Collections.sort(actionExpressionsB);
+      assertEquals("#{multiMappingBean.actionForBoth}", actionExpressionsB.get(0));
+      assertEquals("#{multiMappingBean.actionForB}", actionExpressionsB.get(1));
+
+   }
+   
+
    /**
     * Simple class without any PrettyFaces annotations
     */
@@ -447,4 +518,38 @@ public class PrettyAnnotationHandlerTest
 
    }
 
+   /*
+    * Class with two mappings
+    */
+   @URLMappings(mappings={
+         @URLMapping(id = "mappingA", pattern = "/some/url/a", viewId = "/view.jsf"),
+         @URLMapping(id = "mappingB", pattern = "/some/url/b", viewId = "/view.jsf")
+   })
+   @URLBeanName("multiMappingBean")
+   public class ClassWithMultipleMappings
+   {
+      
+      // assigned to both mappings
+      @URLQueryParameter("q1")
+      @SuppressWarnings("unused")
+      private String queryParameterForBoth;
+
+      // assigned to both mappings
+      @URLQueryParameter(value="q2", mappingId="mappingA")
+      @SuppressWarnings("unused")
+      private String queryParameterForA;
+
+      // assigned to both mappings
+      @URLAction
+      public void actionForBoth() {
+         // nothing
+      }
+
+      // assigned to both mappings
+      @URLAction(mappingId="mappingB")
+      public void actionForB() {
+         // nothing
+      }
+      
+   }
 }

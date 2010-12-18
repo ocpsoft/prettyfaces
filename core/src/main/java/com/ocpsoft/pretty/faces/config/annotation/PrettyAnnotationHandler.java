@@ -30,6 +30,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLActions;
 import com.ocpsoft.pretty.faces.annotation.URLBeanName;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import com.ocpsoft.pretty.faces.annotation.URLQueryParameter;
 import com.ocpsoft.pretty.faces.annotation.URLValidator;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
@@ -105,7 +106,7 @@ public class PrettyAnnotationHandler
 
          // scan for PrettyAnnotation class
          // returns the mapping ID, if an annotation was found
-         String classMappingId = processPrettyMappingAnnotation(clazz);
+         String[] classMappingIds = processClassMappingAnnotations(clazz);
 
          // scan for PrettyBean annotation
          processPrettyBeanAnnotation(clazz);
@@ -113,13 +114,13 @@ public class PrettyAnnotationHandler
          // process annotations on public methods
          for (Method method : clazz.getMethods())
          {
-            processMethodAnnotations(method, new String[] { classMappingId } );
+            processMethodAnnotations(method, classMappingIds);
          }
 
          // loop over fields to find URLQueryParameter annotations
          for (Field field : clazz.getDeclaredFields())
          {
-            processFieldAnnotations(field, new String[] { classMappingId } );
+            processFieldAnnotations(field, classMappingIds);
          }
 
       }
@@ -132,13 +133,17 @@ public class PrettyAnnotationHandler
    }
 
    /**
-    * Checks the class for a {@link URLMapping} annotation.
+    * Checks for PrettyFaces mapping annotations on a single class
     * 
-    * @param clazz Class to scan
-    * @return The mapping ID or <code>null</code> if no mapping was found
+    * @param clazz
+    *           Class to scan
+    * @return The IDs of the mappings found on the class
     */
-   private String processPrettyMappingAnnotation(Class clazz)
+   public String[] processClassMappingAnnotations(Class clazz)
    {
+
+      // list of all mapping IDs found on the class
+      List<String> classMappingIds = new ArrayList<String>();
 
       // get reference to @URLMapping annotation
       URLMapping mappingAnnotation = (URLMapping) clazz.getAnnotation(URLMapping.class);
@@ -146,72 +151,101 @@ public class PrettyAnnotationHandler
       // process annotation if it exists
       if (mappingAnnotation != null)
       {
+         String mappingId = processPrettyMappingAnnotation(clazz, mappingAnnotation);
+         classMappingIds.add(mappingId);
+      }
 
-         // log class name
-         if (log.isTraceEnabled())
+      // container annotation
+      URLMappings mappingsAnnotation = (URLMappings) clazz.getAnnotation(URLMappings.class);
+
+      if (mappingsAnnotation != null)
+      {
+
+         // process all contained @URLMapping annotations
+         for (URLMapping child : mappingsAnnotation.mappings())
          {
-            log.trace("Found @URLMapping annotation on class: " + clazz.getName());
+            String mappingId = processPrettyMappingAnnotation(clazz, child);
+            classMappingIds.add(mappingId);
          }
-
-         // create UrlMapping from annotation
-         UrlMapping mapping = new UrlMapping();
-         mapping.setId(mappingAnnotation.id());
-         mapping.setParentId(mappingAnnotation.parentId());
-         mapping.setPattern(mappingAnnotation.pattern());
-         mapping.setViewId(mappingAnnotation.viewId());
-         mapping.setOutbound(mappingAnnotation.outbound());
-         mapping.setOnPostback(mappingAnnotation.onPostback());
-
-         // register mapping
-         Object existingMapping = urlMappings.put(mapping.getId(), mapping);
-
-         // fail if a mapping with this ID already existed
-         if (existingMapping != null)
-         {
-            throw new IllegalArgumentException("Duplicated mapping id: " + mapping.getId());
-         }
-
-         // At bean name to lookup map if it has been specified
-         if ((mappingAnnotation.beanName() != null) && (mappingAnnotation.beanName().length() > 0))
-         {
-            beanNameMap.put(clazz, mappingAnnotation.beanName());
-         }
-
-         // process validations
-         for (URLValidator validationAnnotation : mappingAnnotation.validation())
-         {
-
-            // index attribute is required in this case
-            if (validationAnnotation.index() < 0)
-            {
-               throw new IllegalArgumentException(
-                     "Please set the index of the path parameter you want to validate with the @URLValidator specified on mapping: " + mapping.getId());
-            }
-
-            // prepare PathValidator
-            PathValidator pathValidator = new PathValidator();
-            pathValidator.setIndex(validationAnnotation.index());
-            pathValidator.setOnError(validationAnnotation.onError());
-            pathValidator.setValidatorIds(join(validationAnnotation.validatorIds(), " "));
-
-            // optional validator method
-            if (!isBlank(validationAnnotation.validator()))
-            {
-               pathValidator.setValidatorExpression(new ConstantExpression(validationAnnotation.validator()));
-            }
-
-            // add PathValidator to the mapping
-            mapping.getPathValidators().add(pathValidator);
-
-         }
-
-         // return mapping id
-         return mapping.getId();
 
       }
 
-      // we have not found a mapping
-      return null;
+      // return list of mappings found
+      return classMappingIds.toArray(new String[classMappingIds.size()]);
+
+   }
+   
+   /**
+    * Process a single {@link URLMapping} annotation.
+    * 
+    * @param clazz The class that the annotation was found on
+    * @param mappingAnnotation The annotation to process
+    * @return The mapping ID of the mapping found
+    */
+   private String processPrettyMappingAnnotation(Class clazz, URLMapping mappingAnnotation)
+   {
+
+      // log class name
+      if (log.isTraceEnabled())
+      {
+         log.trace("Found @URLMapping annotation on class: " + clazz.getName());
+      }
+
+      // create UrlMapping from annotation
+      UrlMapping mapping = new UrlMapping();
+      mapping.setId(mappingAnnotation.id());
+      mapping.setParentId(mappingAnnotation.parentId());
+      mapping.setPattern(mappingAnnotation.pattern());
+      mapping.setViewId(mappingAnnotation.viewId());
+      mapping.setOutbound(mappingAnnotation.outbound());
+      mapping.setOnPostback(mappingAnnotation.onPostback());
+
+      // register mapping
+      Object existingMapping = urlMappings.put(mapping.getId(), mapping);
+
+      // fail if a mapping with this ID already existed
+      if (existingMapping != null)
+      {
+         throw new IllegalArgumentException("Duplicated mapping id: " + mapping.getId());
+      }
+
+      // At bean name to lookup map if it has been specified
+      if ((mappingAnnotation.beanName() != null) && (mappingAnnotation.beanName().length() > 0))
+      {
+         beanNameMap.put(clazz, mappingAnnotation.beanName());
+      }
+
+      // process validations
+      for (URLValidator validationAnnotation : mappingAnnotation.validation())
+      {
+
+         // index attribute is required in this case
+         if (validationAnnotation.index() < 0)
+         {
+            throw new IllegalArgumentException(
+                  "Please set the index of the path parameter you want to validate with the @URLValidator specified on mapping: " + mapping.getId());
+         }
+
+         // prepare PathValidator
+         PathValidator pathValidator = new PathValidator();
+         pathValidator.setIndex(validationAnnotation.index());
+         pathValidator.setOnError(validationAnnotation.onError());
+         pathValidator.setValidatorIds(join(validationAnnotation.validatorIds(), " "));
+
+         // optional validator method
+         if (!isBlank(validationAnnotation.validator()))
+         {
+            pathValidator.setValidatorExpression(new ConstantExpression(validationAnnotation.validator()));
+         }
+
+         // add PathValidator to the mapping
+         mapping.getPathValidators().add(pathValidator);
+
+      }
+
+      // return mapping id
+      return mapping.getId().trim();
+
    }
 
    /**
