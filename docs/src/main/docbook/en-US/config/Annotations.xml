@@ -115,6 +115,27 @@ public class CategoryBean {
 }
 ]]></programlisting>
 
+    <para>
+      Sometimes you may want to declare multiple URL mappings on a single class. Unfortunately 
+      Java does not allow to add the same annotation to a class more than once. PrettyFaces
+      offers a simple container annotation called <code>@URLMapping</code> that can be used
+      in this case.
+    </para>
+
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMappings(mappings={
+  @URLMapping(id = "categoryBean", pattern = "/store/#{ bean.category }/", viewId = "/faces/shop/store.jsf"),
+  @URLMapping(id = "categoryBean2", pattern = "/shop/#{ bean.category }/", viewId = "/faces/shop/store.jsf")
+})
+public class CategoryBean {
+
+  private String category;
+
+  /* Getters & Setters */
+}
+]]></programlisting>
+
   </section>
 
 
@@ -162,6 +183,11 @@ public class CategoryBean {
     In some environments you may need to add an additional @URLBeanName annotation 
     to the class containing the page action. Please refer to the chapter 
     <link linkend="config.annotations.resolving">Bean name resolving</link> for details.
+  </note>
+
+  <note>
+    If the class the annotated method belongs to declares multiple URL mappings using the
+    <code>@URLMappings</code> annotation, the action will be used for each of the mappings.
   </note>
   
   <para>
@@ -239,6 +265,12 @@ public class LanguageBean {
     In some environments you may need to add an additional @URLBeanName annotation 
     to the class containing the query parameter. Please refer to the chapter 
     <link linkend="config.annotations.resolving">Bean name resolving</link> for details.
+  </note>
+
+  <note>
+    If the class the annotated field belongs to declares multiple URL mappings using the
+    <code>@URLMappings</code> annotation, the query parameter will be used for each of 
+    the mappings.
   </note>
 
 
