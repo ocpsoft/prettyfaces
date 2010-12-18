@@ -119,7 +119,7 @@ public class PrettyAnnotationHandler
          // loop over fields to find URLQueryParameter annotations
          for (Field field : clazz.getDeclaredFields())
          {
-            processFieldAnnotations(field, classMappingId);
+            processFieldAnnotations(field, new String[] { classMappingId } );
          }
 
       }
@@ -275,9 +275,9 @@ public class PrettyAnnotationHandler
     * Searches for {@link URLQueryParameter} annotations on a single field.
     * 
     * @param field Field to scan
-    * @param classMappingId The mapping ID of the class this method belongs to
+    * @param classMappingIds The mapping IDs of the class this method belongs to
     */
-   private void processFieldAnnotations(Field field, String classMappingId)
+   private void processFieldAnnotations(Field field, String[] classMappingIds)
    {
       // Is there a @URLQueryParameter annotation?
       URLQueryParameter queryParamAnnotation = field.getAnnotation(URLQueryParameter.class);
@@ -295,14 +295,13 @@ public class PrettyAnnotationHandler
          // check which mapping the action belongs to
          if (!isBlank(queryParamAnnotation.mappingId()))
          {
-            // action belongs to the mapping mentioned with mappingId
-            // attribute
-            queryParam.setMappingId(queryParamAnnotation.mappingId().trim());
+            // action belongs to the mapping mentioned with mappingId attribute
+            queryParam.setMappingIds(new String[] { queryParamAnnotation.mappingId().trim() });
          }
-         else if (!isBlank(classMappingId))
+         else if (classMappingIds != null && classMappingIds.length > 0)
          {
-            // use the mapping found on the class
-            queryParam.setMappingId(classMappingId.trim());
+            // use the mappings found on the class
+            queryParam.setMappingIds(classMappingIds);
          }
          else
          {
@@ -448,46 +447,52 @@ public class PrettyAnnotationHandler
       for (QueryParamSpec queryParamSpec : queryParamList)
       {
 
-         // Get the mapping references by the query param
-         UrlMapping mapping = urlMappings.get(queryParamSpec.getMappingId());
-
-         // fail for unresolved mappings
-         if (mapping == null)
+         // create a query param for each referenced mapping
+         for (String mappingId : queryParamSpec.getMappingIds())
          {
-            throw new IllegalArgumentException("Unable to find the mapping '" + queryParamSpec.getMappingId()
-                  + "' referenced at field '" + queryParamSpec.getFieldName() + "' in class '"
-                  + queryParamSpec.getOwnerClass().getName() + "'.");
+
+            // Get the mapping references by the query param
+            UrlMapping mapping = urlMappings.get(mappingId);
+
+            // fail for unresolved mappings
+            if (mapping == null)
+            {
+               throw new IllegalArgumentException("Unable to find the mapping '" + mappingId
+                     + "' referenced at field '" + queryParamSpec.getFieldName() + "' in class '"
+                     + queryParamSpec.getOwnerClass().getName() + "'.");
+            }
+
+            // build UrlMapping
+            QueryParameter queryParam = new QueryParameter();
+            queryParam.setName(queryParamSpec.getName());
+            queryParam.setOnError(queryParamSpec.getOnError());
+            queryParam.setValidatorIds(join(queryParamSpec.getValidatorIds(), " "));
+            queryParam.setOnPostback(queryParamSpec.isOnPostback());
+
+            // optional validator method
+            if (!isBlank(queryParamSpec.getValidator()))
+            {
+               queryParam.setValidatorExpression(new ConstantExpression(queryParamSpec.getValidator()));
+            }
+
+            // try to get bean name
+            Class<?> clazz = queryParamSpec.getOwnerClass();
+
+            // build expression
+            PrettyExpression expression = buildPrettyExpression(clazz, queryParamSpec.getFieldName());
+            queryParam.setExpression(expression);
+
+            // trace
+            if (log.isTraceEnabled())
+            {
+               log.trace("Registered query-param '" + queryParam.getName() + "' to '" + expression + "' in mapping: "
+                     + mapping.getId());
+            }
+
+            // register this action
+            mapping.addQueryParam(queryParam);
+
          }
-
-         // build UrlMapping
-         QueryParameter queryParam = new QueryParameter();
-         queryParam.setName(queryParamSpec.getName());
-         queryParam.setOnError(queryParamSpec.getOnError());
-         queryParam.setValidatorIds(join(queryParamSpec.getValidatorIds(), " "));
-         queryParam.setOnPostback(queryParamSpec.isOnPostback());
-
-         // optional validator method
-         if (!isBlank(queryParamSpec.getValidator()))
-         {
-            queryParam.setValidatorExpression(new ConstantExpression(queryParamSpec.getValidator()));
-         }
-
-         // try to get bean name
-         Class<?> clazz = queryParamSpec.getOwnerClass();
-
-         // build expression
-         PrettyExpression expression = buildPrettyExpression(clazz, queryParamSpec.getFieldName());
-         queryParam.setExpression(expression);
-
-         // trace
-         if (log.isTraceEnabled())
-         {
-            log.trace("Registered query-param '" + queryParam.getName() + "' to '" + expression + "' in mapping: "
-                  + mapping.getId());
-         }
-
-         // register this action
-         mapping.addQueryParam(queryParam);
 
       }
 
@@ -632,7 +637,7 @@ public class PrettyAnnotationHandler
    {
       private String fieldName;
       private Class<?> ownerClass;
-      private String mappingId;
+      private String[] mappingIds;
       private String name;
       private String onError;
       private String[] validatorIds = {};
@@ -647,16 +652,6 @@ public class PrettyAnnotationHandler
       public void setValidator(String validator)
       {
          this.validator = validator;
-      }
-
-      public String getMappingId()
-      {
-         return mappingId;
-      }
-
-      public void setMappingId(String mappingId)
-      {
-         this.mappingId = mappingId;
       }
 
       public String getName()
@@ -717,6 +712,16 @@ public class PrettyAnnotationHandler
       public void setOnPostback(boolean onPostback)
       {
          this.onPostback = onPostback;
+      }
+
+      public String[] getMappingIds()
+      {
+         return mappingIds;
+      }
+
+      public void setMappingIds(String[] mappingIds)
+      {
+         this.mappingIds = mappingIds;
       }
    }
 
