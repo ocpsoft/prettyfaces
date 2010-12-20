@@ -190,10 +190,12 @@ public class PrettyFilter implements Filter
                      else if ((ruleUrl != null) && !"".equals(ruleUrl.trim()))
                      {
                         /*
-                         * This is a custom location - don't URLEncode, just
-                         * redirect
+                         * This is a custom location - don't call encodeRedirectURL(),
+                         * just redirect to the encoded URL
                          */
-                        resp.setHeader("Location", newUrl);
+                        URL encodedNewUrl = new URL(newUrl).encode();
+                        String location = req.getContextPath() + encodedNewUrl.toURL();
+                        resp.setHeader("Location", location);
                         resp.setStatus(rule.getRedirect().getStatus());
                         resp.setCharacterEncoding(url.getEncoding());
                         resp.flushBuffer();
