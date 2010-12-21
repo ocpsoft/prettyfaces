@@ -170,16 +170,16 @@ public class PrettyFilter implements Filter
                          */
                         // TODO fix this garbage
                         String[] parts = newUrl.split("\\?", 2);
-                        URL path = new URL(parts[0]);
-                        path.setEncoding(url.getEncoding());
+                        URL encodedPath = new URL(parts[0]).encode();
+                        encodedPath.setEncoding(url.getEncoding());
                         if (parts.length == 2)
                         {
-                           newUrl = path.toURL() + ((parts[1] == null) || "".equals(parts[1]) ? "" : "?")
+                           newUrl = encodedPath.toURL() + ((parts[1] == null) || "".equals(parts[1]) ? "" : "?")
                                     + parts[1];
                         }
                         else
                         {
-                           newUrl = path.toURL();
+                           newUrl = encodedPath.toURL();
                         }
                         String redirectURL = resp.encodeRedirectURL(req.getContextPath() + newUrl);
                         resp.setHeader("Location", redirectURL);
