@@ -28,11 +28,16 @@
       <view-id> /encoding.jsf </view-id>
    </url-mapping>
    
-   <rewrite match="^/virtual$" substitute="/virtuální" redirect="301" />
+   <!-- Rewrite using substitute -->
+   <rewrite match="^/virtual/rewrite/substitute$" substitute="/virtuální" redirect="301" />
+   
+   <!-- Rewrite using new URL -->
+   <rewrite match="^/virtual/rewrite/url$" url="/test/virtuální" redirect="301" />
+
    <!-- 
    <rewrite match="^/virtualencoded$" url="/virtu%C3%A1ln%C3%AD" redirect="301" />
     -->
-    
+
    <url-mapping id="virtual">
       <pattern value="/virtuální"></pattern>
       <view-id>/encoding.jsf</view-id>

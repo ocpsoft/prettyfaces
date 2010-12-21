@@ -53,11 +53,42 @@ public class URLEncodingTest
                .setWebXML("jsf-web.xml");
    }
 
+   /**
+    * Test a rewrite rule using the 'substitute' attribute to
+    * modify the URL.
+    *
+    * @see http://code.google.com/p/prettyfaces/issues/detail?id=76
+    */
    @Test
-   // http://code.google.com/p/prettyfaces/issues/detail?id=76
-   public void testRewriteEncoding() throws Exception
+   public void testRewriteEncodingSubstitute() throws Exception
    {
-      String target = "/virtual";
+      String target = "/virtual/rewrite/substitute";
+      String expected = "/virtuální";
+
+      JSFSession jsfSession = new JSFSession(target);
+      JSFServerSession server = jsfSession.getJSFServerSession();
+
+      JSFClientSession client = jsfSession.getJSFClientSession();
+      String action = client.getElement("form").getAttribute("action");
+
+      FacesContext context = server.getFacesContext();
+      PrettyContext prettyContext =
+      PrettyContext.getCurrentInstance(context);
+
+      assertEquals(expected, prettyContext.getRequestURL().toString());
+      assertEquals(prettyContext.getContextPath() + expected, action);
+   }
+
+   /**
+    * Test a rewrite rule using the 'url' attribute to
+    * create a completely new URL.
+    *
+    * @see http://code.google.com/p/prettyfaces/issues/detail?id=76
+    */
+   @Test
+   public void testRewriteEncodingUrl() throws Exception
+   {
+      String target = "/virtual/rewrite/url";
       String expected = "/virtuální";
 
       JSFSession jsfSession = new JSFSession(target);
