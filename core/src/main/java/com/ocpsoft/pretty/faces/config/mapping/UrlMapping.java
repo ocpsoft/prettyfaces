@@ -16,7 +16,6 @@
 package com.ocpsoft.pretty.faces.config.mapping;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import com.ocpsoft.pretty.faces.el.Expressions;
@@ -39,22 +38,6 @@ public class UrlMapping
    private boolean onPostback = true;
    private URLPatternParser parser;
    private boolean dirty = true;
-
-   public static final Comparator<UrlMapping> ORDINAL_COMPARATOR = new Comparator<UrlMapping>()
-   {
-      public int compare(final UrlMapping l, final UrlMapping r)
-      {
-         if (l.getPatternParser().getParameterCount() < r.getPatternParser().getParameterCount())
-         {
-            return 1;
-         }
-         else if (l.getPatternParser().getParameterCount() > r.getPatternParser().getParameterCount())
-         {
-            return -1;
-         }
-         return 0;
-      }
-   };
 
    /**
     * Return whether or not this Mapping requires DynaView capabilities
@@ -228,7 +211,9 @@ public class UrlMapping
    @Override
    public String toString()
    {
-      return "UrlMapping [ " + "id=" + id + ", pattern=" + pattern + ", parentId=" + parentId + ", viewId=" + viewId + ", actions=" + actions + ", outbound=" + outbound + ", parser=" + parser + ", pathValidators=" + pathValidators + ", queryParams=" + queryParams + "]";
+      return "UrlMapping [ " + "id=" + id + ", pattern=" + pattern + ", parentId=" + parentId + ", viewId=" + viewId
+               + ", actions=" + actions + ", outbound=" + outbound + ", parser=" + parser + ", pathValidators="
+               + pathValidators + ", queryParams=" + queryParams + "]";
    }
 
    public boolean isOutbound()
@@ -246,7 +231,7 @@ public class UrlMapping
       return onPostback;
    }
 
-   public void setOnPostback(boolean onPostback)
+   public void setOnPostback(final boolean onPostback)
    {
       this.onPostback = onPostback;
    }
@@ -256,7 +241,7 @@ public class UrlMapping
       return parentId;
    }
 
-   public void setParentId(String parentId)
+   public void setParentId(final String parentId)
    {
       this.parentId = parentId;
    }

@@ -142,6 +142,16 @@ public class CategoryBean {
             more selectively (matching across multiple '/' characters, for instance.) It is in scenarios like these
 			when you should consider using a custom regular expression within your url-mapping pattern.
 		</para>
+      <tip>
+         <para>
+            When using any escape sequences in a custom regular expression, be sure to "double-escape" the 
+            backslash character '\', otherwise the pattern will not be properly compiled, just as you would in
+            Java itself.
+            
+            For example, in order to match digits: "<literal>\d+</literal>", you would actually need to add an
+            additional backslash, like so: "<literal>\\d+</literal>"
+         </para>
+      </tip>
 		<para>
 			Let's consider, for instance, that you are building a blog application, where the URLs: 
 			<literal>/blog/2010/12/</literal> and <literal>/blog/lincoln/23/</literal> have the same number of
@@ -150,7 +160,7 @@ public class CategoryBean {
 			the two apart, and the answer is custum regex patterns.
 		
 			<programlisting><![CDATA[<url-mapping id="archives">
-  <pattern value="/#{ /\d{4}/ year }/#{ /\d{2}/ month }/" />
+  <pattern value="/#{ /\\d{4}/ year }/#{ /\\d{2}/ month }/" />
   <view-id>/faces/blog/archives.jsf</view-id> 
 </url-mapping>]]></programlisting>
 
@@ -159,18 +169,19 @@ public class CategoryBean {
 			understand what this means, it might make sense to think of what the pattern would look like once
 			it is compiled into a regular expression:
 			
-			<programlisting><![CDATA[/(\d{4})/(\d{2})/]]></programlisting> 
-			
+			<programlisting><![CDATA[/(\\d{4})/(\\d{2})/]]></programlisting> 
+		</para>
+         <para>
 			Below we see how to map the second of our two example URLs.
 		
 			<programlisting><![CDATA[<url-mapping id="viewAuthorPost">
-  <pattern value="/#{ /[a-z]+/ blogger }/#{ /\d+/ postId }/" />
+  <pattern value="/#{ /[a-z]+/ blogger }/#{ /\\d+/ postId }/" />
   <view-id>/faces/blog/viewPost.jsf</view-id> 
 </url-mapping>]]></programlisting>
 			
 			Notice that this compiled pattern looks somewhat different from the first example URL:
 			
-			<programlisting><![CDATA[/([a-z]+)/(\d+)/]]></programlisting>
+			<programlisting><![CDATA[/([a-z]+)/(\\d+)/]]></programlisting>
 			
 			This is how you can completely customize and parse complex URLs (even capture values that include
 			the '/' character.) Any path-parameter expression can accept a <literal>/custom-regex/</literal>, but

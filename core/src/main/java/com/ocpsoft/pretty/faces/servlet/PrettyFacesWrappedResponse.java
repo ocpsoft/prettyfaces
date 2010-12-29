@@ -18,6 +18,7 @@ package com.ocpsoft.pretty.faces.servlet;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,8 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
 
    private final String contextPath;
 
-   public PrettyFacesWrappedResponse(final String contextPath, final HttpServletResponse response, final PrettyConfig config)
+   public PrettyFacesWrappedResponse(final String contextPath, final HttpServletResponse response,
+            final PrettyConfig config)
    {
       super(response);
       this.contextPath = contextPath;
@@ -84,6 +86,22 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
       return super.encodeURL(result);
    }
 
+   private static final Comparator<UrlMapping> ORDINAL_COMPARATOR = new Comparator<UrlMapping>()
+   {
+      public int compare(final UrlMapping l, final UrlMapping r)
+      {
+         if (l.getPatternParser().getParameterCount() < r.getPatternParser().getParameterCount())
+         {
+            return 1;
+         }
+         else if (l.getPatternParser().getParameterCount() > r.getPatternParser().getParameterCount())
+         {
+            return -1;
+         }
+         return 0;
+      }
+   };
+
    private String rewritePrettyMappings(final String url)
    {
       String result = url;
@@ -101,7 +119,7 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
             }
          }
 
-         Collections.sort(matches, UrlMapping.ORDINAL_COMPARATOR);
+         Collections.sort(matches, ORDINAL_COMPARATOR);
 
          Iterator<UrlMapping> iterator = matches.iterator();
          while (iterator.hasNext())
@@ -186,10 +204,10 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
       }
       return result;
    }
-   
+
    /**
-    * If the given URL is prefixed with this request's context-path, return the
-    * URI without the context path. Otherwise return the URI unchanged.
+    * If the given URL is prefixed with this request's context-path, return the URI without the context path. Otherwise
+    * return the URI unchanged.
     */
    private String stripContextPath(String uri)
    {
@@ -198,5 +216,5 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
          uri = uri.substring(contextPath.length());
       }
       return uri;
-   }   
+   }
 }

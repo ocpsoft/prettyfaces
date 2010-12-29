@@ -34,20 +34,18 @@ public class PrettyConfig
    private String dynaviewId = "";
 
    /**
-    * Set the current DynaView ID. This is used when calculating dynamic viewIds
-    * specified in pretty-config.xml (Do not change unless you know what you are
-    * doing - this maps directly to your Faces Servlet mapping and is discovered
+    * Set the current DynaView ID. This is used when calculating dynamic viewIds specified in pretty-config.xml (Do not
+    * change unless you know what you are doing - this maps directly to your Faces Servlet mapping and is discovered
     * automatically when {@link PrettyFilter} starts up.
     */
-   public void setDynaviewId(String facesDynaViewId)
+   public void setDynaviewId(final String facesDynaViewId)
    {
       this.dynaviewId = facesDynaViewId;
    }
 
    /**
-    * Get the current DynaView ID. This is the viewId to which
-    * {@link PrettyFilter} will issue a servlet forward when the developer has
-    * requested a dynamic view-id in a url-mapping.
+    * Get the current DynaView ID. This is the viewId to which {@link PrettyFilter} will issue a servlet forward when
+    * the developer has requested a dynamic view-id in a url-mapping.
     */
    public String getDynaviewId()
    {
@@ -55,8 +53,7 @@ public class PrettyConfig
    }
 
    /**
-    * Return the currently configured List of {@link RewriteRule} as an
-    * unmodifiable collection.
+    * Return the currently configured List of {@link RewriteRule} as an unmodifiable collection.
     */
    public List<RewriteRule> getGlobalRewriteRules()
    {
@@ -72,8 +69,7 @@ public class PrettyConfig
    }
 
    /**
-    * Get the currently configured list of {@link UrlMapping} as an unmodifiable
-    * List
+    * Get the currently configured list of {@link UrlMapping} as an unmodifiable List
     */
    public List<UrlMapping> getMappings()
    {
@@ -85,13 +81,11 @@ public class PrettyConfig
     */
    public void setMappings(final List<UrlMapping> mappings)
    {
-      Collections.sort(mappings, UrlMapping.ORDINAL_COMPARATOR);
       this.mappings = Collections.unmodifiableList(mappings);
    }
 
    /**
-    * Search through all currently configured {@link UrlMapping} objects for the
-    * first one that matches the given URL.
+    * Search through all currently configured {@link UrlMapping} objects for the first one that matches the given URL.
     * 
     * @return the first appropriate {@link UrlMapping} for a given URL.
     */
@@ -108,8 +102,7 @@ public class PrettyConfig
    }
 
    /**
-    * Discover if the given id is a {@link UrlMapping} id specified in the
-    * current configuration.
+    * Discover if the given id is a {@link UrlMapping} id specified in the current configuration.
     * 
     * @return True if the id is found, false if not.
     */
@@ -120,8 +113,7 @@ public class PrettyConfig
    }
 
    /**
-    * Discover if the given URL is mapped by any {@link UrlMapping} specified in
-    * the current configuration.
+    * Discover if the given URL is mapped by any {@link UrlMapping} specified in the current configuration.
     * 
     * @return True if the URL is mapped, false if not.
     */
@@ -132,11 +124,9 @@ public class PrettyConfig
    }
 
    /**
-    * Discover if the given ViewId is mapped by any {@link UrlMapping} specified
-    * in the current configuration.
+    * Discover if the given ViewId is mapped by any {@link UrlMapping} specified in the current configuration.
     * <p>
-    * <b>Note:</b>This will not match if a #{dynamicView.id} method is
-    * configured.
+    * <b>Note:</b>This will not match if a #{dynamicView.id} method is configured.
     * 
     * @return True if the ViewId is mapped, false if not.
     */
