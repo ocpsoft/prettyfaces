@@ -115,7 +115,7 @@
 							</row>
 							<row>
 								<entry>redirect</entry>
-								<entry>301, 301, chain</entry>
+								<entry>301, 302, chain</entry>
 								<entry>
 									(Default: 301) Specifies which type of redirect should be issued when this rule triggers.
 									If 'chain' is specified, a Servlet forward will be issued to the new URL instead of a

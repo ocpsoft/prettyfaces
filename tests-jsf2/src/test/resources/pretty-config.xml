@@ -13,6 +13,16 @@
       <view-id>/form.jsf</view-id>
    </url-mapping>
 
+   <url-mapping id="index">
+      <pattern value="/default/#{digits}"></pattern>
+      <view-id>/index.jsf</view-id>
+   </url-mapping>
+
+   <url-mapping id="index">
+      <pattern value="/digits/#{/\\d+/ digits}"></pattern>
+      <view-id>/index.jsf</view-id>
+   </url-mapping>
+   
    <!-- Begin Encoding Mappings -->
    <url-mapping id="encoding">
       <pattern value="/encoding/#{encodingBean.pathText}" />
