@@ -157,5 +157,44 @@
 		
 	</section>
 
+  <section id="navigation.faces_messages">
+
+    <title>* Preserving FacesMessages across redirects</title>
+
+    <para>
+      Many users add <code>FacesMessages</code> to the <code>FacesContext</code> in their action methods to
+      display them on the resulting page. The messages stored this way are saved in the the current request
+      so that they are available during page rendering.
+    </para>
+
+    <para>
+      Adding messages to the page this way won't work anymore if your are returning an action outcome with the
+      <code>pretty:</code> prefix. In this case the page won't be rendered in the same request but the user will
+      be redirected to a completely new URL. As the messages added to the FacesContext are stored on request level
+      they won't be available in the new request and so will get lost.
+    </para>
+
+    <para>
+      Fortunately there is a way to work around this issue. PrettyFaces contains a phase listener called
+      <code>MultiPageMessagesSupport</code> that will save the FacesMessages before the redirect occurs
+      and restore them on the next request.
+    </para>
+
+    <para>
+      To include the <code>MultiPageMessagesSupport</code> phase listener in your application, just add the following
+      lines to your <code>faces-config.xml</code>.
+    </para>
+
+    <programlisting><![CDATA[<lifecycle>
+  <phase-listener>com.ocpsoft.pretty.faces.event.MultiPageMessagesSupport</phase-listener>
+</lifecycle>]]></programlisting>
+
+    <note>
+      Please refer to <ulink url="http://ocpsoft.com/java/persist-and-pass-facesmessages-over-page-redirects/">
+      this article</ulink> for a detailed description of the way the <code>MultiPageMessagesSupport</code> uses to
+      solve the redirect problem.
+    </note>
+
+  </section>
 
 </chapter>

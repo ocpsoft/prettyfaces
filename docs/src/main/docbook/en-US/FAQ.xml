@@ -106,8 +106,9 @@ log4j.logger.com.ocpsoft=debug</programlisting>
 				Messaging API that goes above and beyond JSF, providing this feature automatically.
 			</para>
 			<para>
-				See <ulink url="http://ocpsoft.com/java/persist-and-pass-facesmessages-over-page-redirects/">
-				this article</ulink> for a full  explanation of how this works.
+			  See <link linkend="navigation.faces_messages">Preserving FacesMessages across redirects</link> 
+				or <ulink url="http://ocpsoft.com/java/persist-and-pass-facesmessages-over-page-redirects/">
+				this article</ulink> for a full explanation of how this works.
 			</para>
 		</step>
 
