@@ -191,7 +191,7 @@ public class PrettyURLBuilder
             }
          }
 
-         result = parser.getMappedURL(pathParams.toArray()).toURL() + QueryString.build(queryParams).toQueryString();
+         result = parser.getMappedURL(pathParams.toArray()).encode().toURL() + QueryString.build(queryParams).toQueryString();
       }
       return result;
    }
