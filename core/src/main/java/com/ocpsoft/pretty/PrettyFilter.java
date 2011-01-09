@@ -168,19 +168,26 @@ public class PrettyFilter implements Filter
                         /*
                          * The current URL has been rewritten - do redirect
                          */
-                        // TODO fix this garbage
+
+                        // search for the '?' character
                         String[] parts = newUrl.split("\\?", 2);
+
+                        // build URL from everything before the '?'
                         URL encodedPath = new URL(parts[0]).encode();
                         encodedPath.setEncoding(url.getEncoding());
-                        if (parts.length == 2)
-                        {
-                           newUrl = encodedPath.toURL() + ((parts[1] == null) || "".equals(parts[1]) ? "" : "?")
-                                    + parts[1];
-                        }
-                        else
+
+                        // no query parameters, just a plain URL
+                        if (parts.length < 2 || parts[1] == null || "".equals(parts[1]))
                         {
                            newUrl = encodedPath.toURL();
                         }
+                        // we found query parameters, so we append them in encoded representation
+                        else
+                        {
+                           newUrl = encodedPath.toURL() + QueryString.build(parts[1]).toQueryString();
+                        }
+
+                        // send redirect
                         String redirectURL = resp.encodeRedirectURL(req.getContextPath() + newUrl);
                         resp.setHeader("Location", redirectURL);
                         resp.setStatus(rule.getRedirect().getStatus());
