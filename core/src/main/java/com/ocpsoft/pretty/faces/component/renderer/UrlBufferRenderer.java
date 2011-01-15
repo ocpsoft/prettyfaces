@@ -59,7 +59,7 @@ public class UrlBufferRenderer extends Renderer
       PrettyConfig prettyConfig = prettyContext.getConfig();
       UrlMapping urlMapping = prettyConfig.getMappingById(mappingId);
 
-      String href = context.getExternalContext().getRequestContextPath() + urlBuilder.build(urlMapping, urlBuilder.extractParameters(component));
+      String href = context.getExternalContext().getRequestContextPath() + urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
 
       context.getExternalContext().getRequestMap().put(var, href);
    }

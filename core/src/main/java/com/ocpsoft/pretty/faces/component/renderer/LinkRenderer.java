@@ -69,7 +69,7 @@ public class LinkRenderer extends Renderer
       PrettyConfig prettyConfig = prettyContext.getConfig();
       UrlMapping urlMapping = prettyConfig.getMappingById(mappingId);
 
-      String href = context.getExternalContext().getRequestContextPath() + urlBuilder.build(urlMapping, urlBuilder.extractParameters(component));
+      String href = context.getExternalContext().getRequestContextPath() + urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
 
       if ((link.getAnchor() != null) && link.getAnchor().length() > 0)
       {

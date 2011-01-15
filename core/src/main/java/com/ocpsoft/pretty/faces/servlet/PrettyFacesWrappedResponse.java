@@ -168,7 +168,7 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
                if (pathParams.size() == pathParamsFound)
                {
                   PrettyURLBuilder builder = new PrettyURLBuilder();
-                  result = contextPath + builder.build(m, uiParams);
+                  result = contextPath + builder.build(m, true, uiParams);
                   break;
                }
             }

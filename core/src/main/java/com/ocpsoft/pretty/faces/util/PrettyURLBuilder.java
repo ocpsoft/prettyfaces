@@ -62,8 +62,22 @@ public class PrettyURLBuilder
 
    /**
     * Build a Pretty URL for the given UrlMapping and parameters.
+    * 
+    * @deprecated Use {@link #build(UrlMapping, boolean, Map)} instead.
     */
+   @Deprecated
    public String build(final UrlMapping mapping, final Map<String, String[]> parameters)
+   {
+      return build(mapping, false, parameters);
+   }
+
+   
+   /**
+    * Build a Pretty URL for the given UrlMapping and parameters.
+    * 
+    * @since 3.2.0
+    */
+   public String build(final UrlMapping mapping, final boolean encodeUrl, final Map<String, String[]> parameters)
    {
       List<UIParameter> list = new ArrayList<UIParameter>();
       for (Entry<String, String[]> e : parameters.entrySet())
@@ -73,13 +87,27 @@ public class PrettyURLBuilder
          p.setValue(e.getValue());
          list.add(p);
       }
-      return build(mapping, list);
+      return build(mapping, false, list);
    }
 
    /**
     * Build a Pretty URL for the given UrlMapping and parameters.
+    * 
+    * @deprecated Use {@link #build(UrlMapping, boolean, Object...)} instead.
     */
+   @Deprecated
    public String build(final UrlMapping mapping, final Object... parameters)
+   {
+      return build(mapping, false, parameters);
+   }
+   
+   
+   /**
+    * Build a Pretty URL for the given UrlMapping and parameters.
+    * 
+    * @since 3.2.0 
+    */
+   public String build(final UrlMapping mapping, final boolean encodeUrl, final Object... parameters)
    {
       List<UIParameter> list = new ArrayList<UIParameter>();
       for (Object e : parameters)
@@ -91,13 +119,27 @@ public class PrettyURLBuilder
          }
          list.add(p);
       }
-      return build(mapping, list);
+      return build(mapping, encodeUrl, list);
    }
 
    /**
     * Build a Pretty URL for the given UrlMapping and parameters.
+    * 
+    * @deprecated Use {@link #build(UrlMapping, boolean, RequestParameter...)} instead.
     */
+   @Deprecated
    public String build(final UrlMapping mapping, final RequestParameter... parameters)
+   {
+      return build(mapping, false, parameters);
+   }
+
+   
+   /**
+    * Build a Pretty URL for the given UrlMapping and parameters.
+    * 
+    * @since 3.2.0 
+    */
+   public String build(final UrlMapping mapping, final boolean encodeUrl, final RequestParameter... parameters)
    {
       List<UIParameter> list = new ArrayList<UIParameter>();
       for (RequestParameter param : parameters)
@@ -110,13 +152,26 @@ public class PrettyURLBuilder
          }
          list.add(p);
       }
-      return build(mapping, list);
+      return build(mapping, false, list);
    }
 
    /**
     * Build a Pretty URL for the given Mapping ID and parameters.
+    * 
+    * @deprecated Use {@link #build(UrlMapping, boolean, List)} instead.
     */
+   @Deprecated
    public String build(final UrlMapping urlMapping, final List<UIParameter> parameters)
+   {
+      return build(urlMapping, false, parameters);
+   }
+   
+   /**
+    * Build a Pretty URL for the given Mapping ID and parameters.
+    * 
+    * @since 3.2.0
+    */
+   public String build(final UrlMapping urlMapping, final boolean encodeUrl, final List<UIParameter> parameters)
    {
       String result = "";
       if (urlMapping != null)
@@ -191,7 +246,15 @@ public class PrettyURLBuilder
             }
          }
 
-         result = parser.getMappedURL(pathParams.toArray()).encode().toURL() + QueryString.build(queryParams).toQueryString();
+         // build URL object for given path parameter set
+         URL mappedURL = parser.getMappedURL(pathParams.toArray());
+         
+         // create encoded/unicode URL 
+         String url = encodeUrl ? mappedURL.encode().toURL() : mappedURL.toURL();
+         
+         // append query string
+         result = url + QueryString.build(queryParams).toQueryString();
+         
       }
       return result;
    }
