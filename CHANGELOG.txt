@@ -23,9 +23,11 @@ Regression Impact:
 * Began deprecation of <view-id>/view.jsp</view-id> in favor of <view-id value="/view.jsp" />
 * com.ocpsoft.pretty.faces.el.BeanNameResolver SPI has moved to com.ocpsoft.pretty.faces.spi.ELBeanNameResolver
 * URL-mapping order is now properly respected in pretty-config.xml (and other config sources.)
+* Began deprecation of PrettyURLBuilder methods without the new 'encodeUrl' argument.
 
 Bugfixes:
 * Fixed compatibility with Java 1.5
+* Fixed handling of non-ASCII characters in URLs
 * Fixed EL method invocation in JSF 1.1 branch.
 * Removed HttpSession accesses that could potentially create an unwanted user session. (#62)
 * Prevent downloading of web.xml DTDs during configuration
@@ -33,6 +35,7 @@ Bugfixes:
 * PrettyFacesWrappedResponse no longer depends on FacesContext (#78)
 * PrettyFaces no longer injects values into EL if the response has been marked complete (#79)
 * Added documentation specifying the need to "double-escape" backslashes in custom regexes (#83)
+* Fixed annotation scanning if application is run with jetty-maven-plugin
 
 
 ------------------------------------
