@@ -176,7 +176,13 @@ public class PrettyURLBuilderTest
       assertTrue(unicodeUrl.startsWith("/test/\u20ac/mapping/\u0142?"));
       assertTrue(unicodeUrl.contains("key1=%C2%A3"));
       assertTrue(unicodeUrl.contains("key2=%D9%84"));
-      
+
+      // unicode
+      String oldUrl = builder.build(mapping, false, params);
+      assertTrue(oldUrl.startsWith("/test/\u20ac/mapping/\u0142?"));
+      assertTrue(oldUrl.contains("key1=%C2%A3"));
+      assertTrue(oldUrl.contains("key2=%D9%84"));
+
    }
    
    private final static UIParameter createUIParameter(String name, Object value) {
