@@ -52,7 +52,6 @@ public class WebLibFinder extends AbstractClassFinder
     * com.ocpsoft.pretty.faces.config.annotation.ClassFinder#findClasses(com
     * .ocpsoft.pretty.faces.config.annotation.PrettyAnnotationHandler)
     */
-   @SuppressWarnings("unchecked")
    public void findClasses(PrettyAnnotationHandler classHandler)
    {
 
@@ -70,11 +69,8 @@ public class WebLibFinder extends AbstractClassFinder
             return;
          }
 
-         // build directory name relative to webapp root
-         String relativeName = getWebappRelativeName(libFolderUrl, LIB_FOLDER);
-
          // call getResourcePaths to get directory entries
-         Set paths = servletContext.getResourcePaths(relativeName);
+         Set<?> paths = servletContext.getResourcePaths(LIB_FOLDER);
 
          // loop over all entries of the directory
          for (Object relativePath : paths)
@@ -135,7 +131,7 @@ public class WebLibFinder extends AbstractClassFinder
             {
 
                // generate FQCN from entry
-               String className = getClassName(jarEntry.getName(), null);
+               String className = getClassName(jarEntry.getName());
 
                // check name against PackageFilter
                if (mustProcessClass(className))

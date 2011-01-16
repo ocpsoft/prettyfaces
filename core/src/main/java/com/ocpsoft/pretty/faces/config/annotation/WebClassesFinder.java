@@ -65,7 +65,7 @@ public class WebClassesFinder extends AbstractClassFinder
          }
 
          // call recursive directory processing method
-         processDirectory(classesFolderUrl, handler);
+         processDirectory(classesFolderUrl, classesFolderUrl, handler);
 
       }
       catch (MalformedURLException e)
@@ -88,20 +88,23 @@ public class WebClassesFinder extends AbstractClassFinder
     * @throws MalformedURLException
     *            for invalid URLs
     */
-   @SuppressWarnings("unchecked")
-   protected void processDirectory(URL directoryUrl, PrettyAnnotationHandler handler) throws MalformedURLException
+   protected void processDirectory(URL classesFolderUrl, URL directoryUrl, PrettyAnnotationHandler handler) throws MalformedURLException
    {
+      
+      // only the path of the classes folder URL is required in this method
+      String classesFolderPath = classesFolderUrl.getPath();
+      
       // log directory name on trace level
       if (log.isTraceEnabled())
       {
          log.trace("Processing directory: " + directoryUrl.toString());
       }
 
-      // build directory name relative to webapp root
-      String relativeName = getWebappRelativeName(directoryUrl, CLASSES_FOLDER);
-
+      // get the directory name relative to the '/WEB-INF/classes/' folder
+      String relativeDirectoryName = getPathRelativeToClassesFolder(directoryUrl.getPath(), classesFolderPath);
+      
       // call getResourcePaths to get directory entries
-      Set paths = servletContext.getResourcePaths(relativeName);
+      Set<?> paths = servletContext.getResourcePaths(CLASSES_FOLDER+relativeDirectoryName);
 
       // loop over all entries of the directory
       for (Object relativePath : paths)
@@ -114,8 +117,11 @@ public class WebClassesFinder extends AbstractClassFinder
          if (entryUrl.getPath().endsWith(".class"))
          {
 
-            // get class name
-            String className = getClassName(entryUrl.toString(), CLASSES_FOLDER);
+            // the name of the entry relative to the '/WEB-INF/classes/' folder
+            String entryRelativeName = getPathRelativeToClassesFolder(entryUrl.getPath(), classesFolderPath);
+            
+            // build class name from relative name
+            String className = getClassName(entryRelativeName);
 
             // check filter
             if (mustProcessClass(className))
@@ -174,10 +180,48 @@ public class WebClassesFinder extends AbstractClassFinder
          {
 
             // walk down the directory
-            processDirectory(entryUrl, handler);
+            processDirectory(classesFolderUrl, entryUrl, handler);
 
          }
       }
+   }
+
+   /**
+    * This method will create a path relative to the '/WEB-INF/classes/' folder
+    * for the given path. It will first try to find the '/WEB-INF/classes/'
+    * suffix in the path to do so. If this suffix cannot be found (can happen
+    * when using the jetty-maven-plugin with 'jetty:run' goal), the method will
+    * try to build the relative name by stripping the path of the
+    * '/WEB-INF/classes/' folder which must be supplied to the method. The
+    * method will throw an {@link IllegalArgumentException} if the relative path
+    * could not be build.
+    * 
+    * @param path
+    *           The path to build the relative path for
+    * @param classesFolderPath
+    *           the known path of the '/WEB-INF/classes/' folder.
+    * @return the relative name of the path
+    */
+   private String getPathRelativeToClassesFolder(String path, String classesFolderPath)
+   {
+
+      // first try to find the '/WEB-INF/classes' suffix
+      String result = stripKnownPrefix(path, CLASSES_FOLDER);
+
+      // alternative: try to strip the full path of the '/WEB-INF/classes/' folder 
+      if (result == null)
+      {
+         result = stripKnownPrefix(path, classesFolderPath);
+      }
+
+      // none of the two methods worked?
+      if (result == null)
+      {
+         throw new IllegalArgumentException("Unable to build path relative to '/WEB-INF/classes/' from: "+path);
+      }
+
+      return result;
+
    }
 
 }

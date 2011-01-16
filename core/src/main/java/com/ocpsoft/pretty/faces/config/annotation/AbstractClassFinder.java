@@ -78,83 +78,45 @@ public abstract class AbstractClassFinder implements ClassFinder
    }
 
    /**
-    * Creates a webapp relative name from an URL. This method requires the
-    * caller do supply a known prefix of the resulting name. Class files for
-    * example would have a prefix like <code>/WEB-INF/classes</code>
+    * Strip everything up to and including a given prefix from a string.
     * 
+    * @param str
+    *           The string to process
     * @param prefix
-    *           The first part of the resulting name.
-    * @param url
-    *           An {@link URL} pointing to a webapp resources
-    * @return the webapp relative name
+    *           The prefix
+    * @return the stripped string or <code>null</code> if the prefix has not
+    *         been found
     */
-   protected static String getWebappRelativeName(URL url, String prefix)
+   protected String stripKnownPrefix(String str, String prefix)
    {
 
-      // we are only interested in the path
-      String directoryPath = url.getPath();
-
-      // we remove everything up to the prefix
-      // (Example for the prefix: "/WEB-INF/classes/")
-      int startIndex = directoryPath.lastIndexOf(prefix);
-
-      // prefix not found?
-      if (startIndex == -1)
+      int startIndex = str.lastIndexOf(prefix);
+      if (startIndex != -1)
       {
-         throw new IllegalArgumentException("Cannot find prefix '" + prefix + "' in URL: " + url.toString());
+         return str.substring(startIndex + prefix.length());
       }
 
-      return directoryPath.substring(startIndex);
-
+      return null;
    }
-
+   
    /**
     * <p>
     * Creates a FQCN from an {@link URL} representing a <code>.class</code>
     * file.
     * </p>
-    * <p>
-    * You may optionally supply a prefix. In this case all characters up to the
-    * prefix and the prefix itself will be removed from the file name. For
-    * classes in a web application you may for example use
-    * <code>/WEB-INF/lib/</code> as a prefix.
-    * </p>
-    * 
+    *
     * @param url
     *           The path of the class file
-    * @param prefix
-    *           optional prefix
     * @return the FQCN of the class
     */
-   protected static String getClassName(String filename, String prefix)
+   protected static String getClassName(String filename)
    {
-
-      // start index
-      int startIndex = 0;
-
-      // optional: remove prefix
-      if (prefix != null && prefix.length() > 0)
-      {
-
-         // find prefix position
-         int prefixLastIndex = filename.lastIndexOf(prefix);
-
-         // prefix not found?
-         if (prefixLastIndex == -1)
-         {
-            throw new IllegalArgumentException("Cannot find prefix '" + prefix + "' in filename: " + filename);
-         }
-
-         // set correct startIndex
-         startIndex = prefixLastIndex + prefix.length();
-
-      }
 
       // end index is just before ".class"
       int endIndex = filename.length() - ".class".length();
 
       // extract relevant part of the path
-      String relativePath = filename.substring(startIndex, endIndex);
+      String relativePath = filename.substring(0, endIndex);
 
       // replace / by . to create FQCN
       return relativePath.replace('/', '.');
