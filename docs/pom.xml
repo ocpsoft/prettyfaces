@@ -22,7 +22,7 @@
 
 	<groupId>com.ocpsoft</groupId>
 	<artifactId>prettyfaces-docs</artifactId>
-	<version>3.1.1-SNAPSHOT</version>
+	<version>3.2.1-SNAPSHOT</version>
 	<packaging>jdocbook</packaging>
 
 	<name>PrettyFaces Reference Guide</name>
@@ -127,23 +127,6 @@
 			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
-
-	<licenses>
-		<license>
-			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007
-			</name>
-			<url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<scm>
-		<developerConnection>scm:svn:https://prettyfaces.googlecode.com/svn/trunk/prettyfaces/ocpsoft-pretty-faces-2
-		</developerConnection>
-		<tag>HEAD</tag>
-		<url>http://code.google.com/p/prettyfaces/source/browse/#svn/trunk/prettyfaces/
-		</url>
-	</scm>
 
 	<issueManagement>
 		<system>Google Code</system>

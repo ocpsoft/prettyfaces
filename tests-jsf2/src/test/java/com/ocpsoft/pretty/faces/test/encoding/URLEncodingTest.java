@@ -48,15 +48,13 @@ public class URLEncodingTest
                .addWebResource("encoding/encoding-pretty-config.xml", "pretty-config.xml")
                .addWebResource("faces-config.xml")
                .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.1.1-SNAPSHOT"
-                        ))
+                        "com.ocpsoft:prettyfaces-jsf2:3.2.1-SNAPSHOT"))
                .setWebXML("jsf-web.xml");
    }
 
    /**
-    * Test a rewrite rule using the 'substitute' attribute to
-    * modify the URL.
-    *
+    * Test a rewrite rule using the 'substitute' attribute to modify the URL.
+    * 
     * @see http://code.google.com/p/prettyfaces/issues/detail?id=76
     */
    @Test
@@ -73,16 +71,15 @@ public class URLEncodingTest
 
       FacesContext context = server.getFacesContext();
       PrettyContext prettyContext =
-      PrettyContext.getCurrentInstance(context);
+               PrettyContext.getCurrentInstance(context);
 
       assertEquals(expected, prettyContext.getRequestURL().toString());
       assertEquals(prettyContext.getContextPath() + expected, action);
    }
 
    /**
-    * Test a rewrite rule using the 'url' attribute to
-    * create a completely new URL.
-    *
+    * Test a rewrite rule using the 'url' attribute to create a completely new URL.
+    * 
     * @see http://code.google.com/p/prettyfaces/issues/detail?id=76
     */
    @Test
@@ -99,7 +96,7 @@ public class URLEncodingTest
 
       FacesContext context = server.getFacesContext();
       PrettyContext prettyContext =
-      PrettyContext.getCurrentInstance(context);
+               PrettyContext.getCurrentInstance(context);
 
       assertEquals(expected, prettyContext.getRequestURL().toString());
       assertEquals(prettyContext.getContextPath() + expected, action);

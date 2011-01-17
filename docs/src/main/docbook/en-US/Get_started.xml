@@ -101,10 +101,10 @@
 
 		<example>
 			<title>/WEB-INF/pretty-config.xml (You will need to customize this)</title>
-			<programlisting><![CDATA[<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.1.1-SNAPSHOT" 
+			<programlisting><![CDATA[<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.2.1-SNAPSHOT" 
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-               xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.1.1-SNAPSHOT
-                                   		http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.1.1-SNAPSHOT.xsd">
+               xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.2.1-SNAPSHOT
+                                   		http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.2.1-SNAPSHOT.xsd">
 
    <!-- Begin Example RewriteRules 
    

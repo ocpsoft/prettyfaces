@@ -2,6 +2,7 @@
 *.project
 *.settings
 *.DS_Store
-*/target/*
+target/
+bin/
 *.iml
 *.ipr

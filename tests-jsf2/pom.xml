@@ -22,7 +22,7 @@
 
    <groupId>com.ocpsoft</groupId>
    <artifactId>prettyfaces-tests-jsf2</artifactId>
-   <version>3.1.1-SNAPSHOT</version>
+   <version>3.2.1-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <name>PrettyFaces JSF 2.0.x - Tests</name>
@@ -277,15 +277,10 @@
             <configuration>
                <source>1.6</source>
                <target>1.6</target>
-					<encoding>UTF-8</encoding>
+               <encoding>UTF-8</encoding>
             </configuration>
          </plugin>
       </plugins>
    </build>
-
-   <scm>
-      <developerConnection>scm:svn:https://prettyfaces.googlecode.com/svn/prettyfaces/trunk/tests-jsf2</developerConnection>
-      <url>http://code.google.com/p/prettyfaces/source/browse/#svn/prettyfaces/trunk/tests-jsf2</url>
-   </scm>
 
 </project>

@@ -23,7 +23,7 @@
    <name>PrettyFaces Parent</name>
    <groupId>com.ocpsoft</groupId>
    <artifactId>prettyfaces-parent</artifactId>
-   <version>3.1.1-SNAPSHOT</version>
+   <version>3.2.0</version>
    <packaging>pom</packaging>
 
    <url>http://ocpsoft.com/prettyfaces/</url>
@@ -201,8 +201,8 @@
 
    <licenses>
       <license>
-         <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
-         <url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
+         <name>Apache License</name>
+         <url>http://www.apache.org/licenses/</url>
          <distribution>repo</distribution>
       </license>
    </licenses>
