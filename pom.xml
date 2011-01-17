@@ -214,8 +214,7 @@
    </distributionManagement>
 
    <scm>
-      <developerConnection>scm:svn:https://prettyfaces.googlecode.com/svn/prettyfaces/trunk</developerConnection>
-      <url>http://code.google.com/p/prettyfaces/source/browse/#svn/prettyfaces/trunk</url>
+      <url>scm:git:ssh://git@github.com:ocpsoft/prettyfaces.git</url>
    </scm>
 
    <issueManagement>
