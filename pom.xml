@@ -214,6 +214,7 @@
    </distributionManagement>
 
    <scm>
+      <developerConnection>scm:git:ssh://git@github.com:ocpsoft/prettyfaces.git</developerConnection>
       <url>scm:git:ssh://git@github.com:ocpsoft/prettyfaces.git</url>
    </scm>
 
