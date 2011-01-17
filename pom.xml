@@ -249,6 +249,14 @@
                </execution>
             </executions>
          </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<version>2.1</version>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<pushChanges>false</pushChanges>
+				</configuration>
+			</plugin>
       </plugins>
       <extensions>
          <extension>
