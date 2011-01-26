@@ -94,7 +94,7 @@
 			syntax similar to specifying a named parameter, but PrettyFaces looks for '.' characters, an
 			easy way to distinguish a name from an EL value-injection expression:
 			
-			<programlisting><![CDATA[<pattern value="/store/#{ bean.location }/" />]]></programlisting>
+			<programlisting><![CDATA[<pattern value="/store/#{ bean.category }/" />]]></programlisting>
 			
 			In this case, we must have a managed bean defined in our application; these beans can be 
 			registered either in JSF, Spring, Google Guice, or as shown here using CDI/Weld. Based on the
@@ -118,7 +118,7 @@ public class CategoryBean {
 			<para>
 				Notice, you can specify both a name and an EL value-injection for the same path-parameter.
 				
-				<programlisting><![CDATA[<pattern value="/store/#{ cat : bean.location }/" />]]></programlisting>
+				<programlisting><![CDATA[<pattern value="/store/#{ cat : bean.category }/" />]]></programlisting>
 		  	</para>
 		</tip>
 		

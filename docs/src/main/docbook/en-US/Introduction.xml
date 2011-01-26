@@ -54,7 +54,7 @@
 			<para>
 				Consider the following URL.
 	
-				<programlisting>http://ocpsoft.com/index.jsf?post=docs?category=prettyfaces</programlisting>
+				<programlisting>http://ocpsoft.com/index.jsf?post=docs&amp;category=prettyfaces</programlisting>
 	
 				When presenting information to users (frequently your clients,) it is generally bad practice to show more
 				information than necessary; by hiding parameter names, we are able to
@@ -67,7 +67,7 @@
 	
 				Our final result looks like this:
 	
-				<programlisting>http://ocpsoft.com/prettyfaces/docs/</programlisting>
+				<programlisting>http://ocpsoft.com/docs/prettyfaces/</programlisting>
 			</para>
 	
 			<para>
