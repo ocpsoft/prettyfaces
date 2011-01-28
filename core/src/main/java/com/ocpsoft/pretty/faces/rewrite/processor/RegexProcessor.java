@@ -18,6 +18,9 @@ package com.ocpsoft.pretty.faces.rewrite.processor;
 
 import java.util.regex.Matcher;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.Processor;
 
@@ -27,21 +30,35 @@ import com.ocpsoft.pretty.faces.rewrite.Processor;
 public class RegexProcessor implements Processor
 {
 
-    public String process(final RewriteRule rule, final String url)
-    {
-        if (url == null || rule.getMatch().length() == 0 || rule.getSubstitute().length() == 0)
-        {
-            return url;
-        }
+   private String process(final HttpServletRequest request, final HttpServletResponse response, final RewriteRule rule,
+            final String url)
+   {
+      if ((url == null) || (rule.getMatch().length() == 0) || (rule.getSubstitute().length() == 0))
+      {
+         return url;
+      }
 
-        Matcher m = rule.getPattern().matcher(url);
-        StringBuffer result = new StringBuffer();
-        while (m.find())
-        {
-            m.appendReplacement(result, rule.getSubstitute());
-        }
-        m.appendTail(result);
-        return result.toString();
-    }
+      Matcher m = rule.getPattern().matcher(url);
+      StringBuffer result = new StringBuffer();
+      while (m.find())
+      {
+         m.appendReplacement(result, rule.getSubstitute());
+      }
+      m.appendTail(result);
+      return result.toString();
+   }
+
+   public String processInbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule,
+            final String url)
+   {
+      return process(request, response, rule, url);
+   }
+
+   public String processOutbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule, final String url)
+   {
+      return process(request, response, rule, url);
+   }
 
 }

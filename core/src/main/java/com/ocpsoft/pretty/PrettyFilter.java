@@ -54,16 +54,16 @@ public class PrettyFilter implements Filter
    private ServletContext servletContext;
 
    /**
-    * Determine if the current request is mapped using PrettyFaces. If it is,
-    * process the pattern, storing parameters into the request map, then forward
-    * the request to the specified viewId.
+    * Determine if the current request is mapped using PrettyFaces. If it is, process the pattern, storing parameters
+    * into the request map, then forward the request to the specified viewId.
     */
    public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain)
             throws IOException, ServletException
    {
       HttpServletRequest request = (HttpServletRequest) req;
 
-      HttpServletResponse response = new PrettyFacesWrappedResponse(request.getContextPath(), (HttpServletResponse) resp, getConfig());
+      HttpServletResponse response = new PrettyFacesWrappedResponse(request.getContextPath(), request,
+               (HttpServletResponse) resp, getConfig());
       req.setAttribute(PrettyContext.CONFIG_KEY, getConfig());
 
       PrettyContext context = PrettyContext.newDetachedInstance(request);
@@ -118,10 +118,9 @@ public class PrettyFilter implements Filter
    }
 
    /**
-    * Apply the given list of {@link RewriteRule}s to the URL (in order,)
-    * perform a redirect/forward if required. Canonicalization is only invoked
-    * if it has not previously been invoked on this request. This method
-    * operates on the requestUri, excluding contextPath.
+    * Apply the given list of {@link RewriteRule}s to the URL (in order,) perform a redirect/forward if required.
+    * Canonicalization is only invoked if it has not previously been invoked on this request. This method operates on
+    * the requestUri, excluding contextPath.
     * 
     * @return True if forward/redirect occurred, false if not.
     */
@@ -155,12 +154,12 @@ public class PrettyFilter implements Filter
             {
                if (rule.matches(newUrl))
                {
-                  newUrl = rewriteEngine.processInbound(rule, newUrl);
+                  newUrl = rewriteEngine.processInbound(req, resp, rule, newUrl);
                   if (!Redirect.CHAIN.equals(rule.getRedirect()))
                   {
                      /*
-                      * An HTTP redirect has been triggered; issue one if we
-                      * have a url or if the current url has been modified.
+                      * An HTTP redirect has been triggered; issue one if we have a url or if the current url has been
+                      * modified.
                       */
                      String ruleUrl = rule.getUrl();
                      if (((ruleUrl == null) || "".equals(ruleUrl.trim())) && !originalUrl.equals(newUrl))
@@ -177,7 +176,7 @@ public class PrettyFilter implements Filter
                         encodedPath.setEncoding(url.getEncoding());
 
                         // no query parameters, just a plain URL
-                        if (parts.length < 2 || parts[1] == null || "".equals(parts[1]))
+                        if ((parts.length < 2) || (parts[1] == null) || "".equals(parts[1]))
                         {
                            newUrl = encodedPath.toURL();
                         }
@@ -197,8 +196,8 @@ public class PrettyFilter implements Filter
                      else if ((ruleUrl != null) && !"".equals(ruleUrl.trim()))
                      {
                         /*
-                         * This is a custom location - don't call encodeRedirectURL()
-                         * and don't add context path, just redirect to the encoded URL
+                         * This is a custom location - don't call encodeRedirectURL() and don't add context path, just
+                         * redirect to the encoded URL
                          */
                         URL encodedNewUrl = new URL(newUrl).encode();
                         resp.setHeader("Location", encodedNewUrl.toURL());
@@ -214,8 +213,7 @@ public class PrettyFilter implements Filter
             if (!originalUrl.equals(newUrl) && !resp.isCommitted())
             {
                /*
-                * The URL was modified, but no redirect occurred; forward
-                * instead.
+                * The URL was modified, but no redirect occurred; forward instead.
                 */
                req.getRequestDispatcher(newUrl).forward(req, resp);
             }

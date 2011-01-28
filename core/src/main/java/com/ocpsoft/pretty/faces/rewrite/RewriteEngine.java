@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.processor.CaseProcessor;
 import com.ocpsoft.pretty.faces.rewrite.processor.CustomClassProcessor;
@@ -34,58 +37,56 @@ import com.ocpsoft.pretty.faces.rewrite.processor.UrlProcessor;
  */
 public class RewriteEngine
 {
-    private static List<Processor> processors;
+   private static List<Processor> processors;
 
-    static
-    {
-        List<Processor> list = new ArrayList<Processor>();
-        list.add(new RegexProcessor());
-        list.add(new CaseProcessor());
-        list.add(new TrailingSlashProcessor());
-        list.add(new CustomClassProcessor());
-        list.add(new UrlProcessor());
-        processors = Collections.unmodifiableList(list);
-    }
+   static
+   {
+      List<Processor> list = new ArrayList<Processor>();
+      list.add(new RegexProcessor());
+      list.add(new CaseProcessor());
+      list.add(new TrailingSlashProcessor());
+      list.add(new CustomClassProcessor());
+      list.add(new UrlProcessor());
+      processors = Collections.unmodifiableList(list);
+   }
 
-    /**
-     * Rewrite the given URL using the provided {@link RewriteRule} object
-     * as a
-     * set of rules.
-     * 
-     * @return The rewritten URL, or the unchanged URL if no action was
-     *         taken.
-     */
-    public String processInbound(final RewriteRule rule, final String url)
-    {
-        String result = url;
-        if (rule != null && rule.isInbound() && rule.matches(url))
-        {
-            for (Processor p : processors)
-            {
-                result = p.process(rule, result);
-            }
-        }
-        return result;
-    }
+   /**
+    * Rewrite the given URL using the provided {@link RewriteRule} object as a set of rules.
+    * 
+    * @return The rewritten URL, or the unchanged URL if no action was taken.
+    */
+   public String processInbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule, final String url)
+   {
+      String result = url;
+      if ((rule != null) && rule.isInbound() && rule.matches(url))
+      {
+         for (Processor p : processors)
+         {
+            result = p.processInbound(request, response, rule, result);
+         }
+      }
+      return result;
+   }
 
-    /**
-     * Rewrite the given URL using the provided {@link RewriteRule} object.
-     * Process the URL only if the rule is set to outbound="true"
-     * 
-     * @return The rewritten URL, or the unchanged URL if no action was
-     *         taken.
-     */
-    public String processOutbound(final RewriteRule rule, final String url)
-    {
-        String result = url;
-        if (rule != null && rule.isOutbound() && rule.matches(url))
-        {
-            for (Processor p : processors)
-            {
-                result = p.process(rule, result);
-            }
-        }
-        return result;
-    }
+   /**
+    * Rewrite the given URL using the provided {@link RewriteRule} object. Process the URL only if the rule is set to
+    * outbound="true"
+    * 
+    * @return The rewritten URL, or the unchanged URL if no action was taken.
+    */
+   public String processOutbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule, final String url)
+   {
+      String result = url;
+      if ((rule != null) && rule.isOutbound() && rule.matches(url))
+      {
+         for (Processor p : processors)
+         {
+            result = p.processOutbound(request, response, rule, result);
+         }
+      }
+      return result;
+   }
 
 }

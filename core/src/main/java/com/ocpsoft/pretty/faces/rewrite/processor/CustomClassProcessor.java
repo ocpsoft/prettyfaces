@@ -16,6 +16,9 @@
 
 package com.ocpsoft.pretty.faces.rewrite.processor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.Processor;
@@ -26,24 +29,47 @@ import com.ocpsoft.pretty.faces.rewrite.Processor;
 public class CustomClassProcessor implements Processor
 {
 
-    public String process(final RewriteRule rule, final String url)
-    {
-        String result = url;
-        if (rule.getProcessor().length() > 0)
-        {
-            try
-            {
-                Class<?> processorClass = Class.forName(rule.getProcessor());
-                Processor processor = (Processor) processorClass.newInstance();
-                result = processor.process(rule, url);
-            }
-            catch (Exception e)
-            {
-                throw new PrettyException("Error occurred exececuting processor of type: " + rule.getProcessor()
+   public String processInbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule,
+            final String url)
+   {
+      String result = url;
+      if (rule.getProcessor().length() > 0)
+      {
+         try
+         {
+            Class<?> processorClass = Class.forName(rule.getProcessor());
+            Processor processor = (Processor) processorClass.newInstance();
+            result = processor.processInbound(request, response, rule, url);
+         }
+         catch (Exception e)
+         {
+            throw new PrettyException("Error occurred exececuting processor of type: " + rule.getProcessor()
                         + ", for input URL <[" + url + "]>", e);
-            }
-        }
-        return result;
-    }
+         }
+      }
+      return result;
+   }
+
+   public String processOutbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule, final String url)
+   {
+      String result = url;
+      if (rule.getProcessor().length() > 0)
+      {
+         try
+         {
+            Class<?> processorClass = Class.forName(rule.getProcessor());
+            Processor processor = (Processor) processorClass.newInstance();
+            result = processor.processOutbound(request, response, rule, url);
+         }
+         catch (Exception e)
+         {
+            throw new PrettyException("Error occurred exececuting processor of type: " + rule.getProcessor()
+                        + ", for input URL <[" + url + "]>", e);
+         }
+      }
+      return result;
+   }
 
 }

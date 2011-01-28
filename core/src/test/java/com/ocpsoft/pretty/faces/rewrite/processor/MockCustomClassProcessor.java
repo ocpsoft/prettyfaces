@@ -15,15 +15,32 @@
  */
 package com.ocpsoft.pretty.faces.rewrite.processor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.Processor;
 
 public class MockCustomClassProcessor implements Processor
 {
-    public static final String RESULT = "I_PROCESSED";
+   public static final String RESULT = "I_PROCESSED";
 
-    public String process(final RewriteRule rule, final String url)
-    {
-        return RESULT;
-    }
+   private String process(final HttpServletRequest req, final HttpServletResponse resp, final RewriteRule rule,
+            final String url)
+   {
+      return RESULT;
+   }
+
+   public String processInbound(final HttpServletRequest request, final HttpServletResponse response,
+             final RewriteRule rule,
+             final String url)
+   {
+      return process(request, response, rule, url);
+   }
+
+   public String processOutbound(final HttpServletRequest request, final HttpServletResponse response,
+             final RewriteRule rule, final String url)
+   {
+      return process(request, response, rule, url);
+   }
 }

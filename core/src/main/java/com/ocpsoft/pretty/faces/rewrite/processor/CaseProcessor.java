@@ -16,6 +16,9 @@
 
 package com.ocpsoft.pretty.faces.rewrite.processor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.Processor;
 
@@ -25,21 +28,35 @@ import com.ocpsoft.pretty.faces.rewrite.Processor;
 public class CaseProcessor implements Processor
 {
 
-    public String process(final RewriteRule rule, final String url)
-    {
-        String result = url;
-        switch (rule.getToCase())
-            {
-            case LOWERCASE:
-                result = result.toLowerCase();
-                break;
-            case UPPERCASE:
-                result = result.toUpperCase();
-                break;
-            default:
-                break;
-            }
-        return result;
-    }
+   private String process(final HttpServletRequest request, final HttpServletResponse response, final RewriteRule rule,
+            final String url)
+   {
+      String result = url;
+      switch (rule.getToCase())
+      {
+      case LOWERCASE:
+         result = result.toLowerCase();
+         break;
+      case UPPERCASE:
+         result = result.toUpperCase();
+         break;
+      default:
+         break;
+      }
+      return result;
+   }
+
+   public String processInbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule,
+            final String url)
+   {
+      return process(request, response, rule, url);
+   }
+
+   public String processOutbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule, final String url)
+   {
+      return process(request, response, rule, url);
+   }
 
 }

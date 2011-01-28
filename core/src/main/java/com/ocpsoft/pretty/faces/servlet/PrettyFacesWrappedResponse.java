@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.faces.component.UIParameter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -48,10 +49,14 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
 
    private final String contextPath;
 
-   public PrettyFacesWrappedResponse(final String contextPath, final HttpServletResponse response,
+   private final HttpServletRequest request;
+
+   public PrettyFacesWrappedResponse(final String contextPath, final HttpServletRequest request,
+            final HttpServletResponse response,
             final PrettyConfig config)
    {
       super(response);
+      this.request = request;
       this.contextPath = contextPath;
       this.prettyConfig = config;
    }
@@ -193,7 +198,7 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
          {
             for (RewriteRule c : prettyConfig.getGlobalRewriteRules())
             {
-               strippedUrl = rewriteEngine.processOutbound(c, strippedUrl);
+               strippedUrl = rewriteEngine.processOutbound(request, this, c, strippedUrl);
             }
             result += strippedUrl;
          }

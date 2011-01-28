@@ -16,16 +16,31 @@
 
 package com.ocpsoft.pretty.faces.rewrite;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.ocpsoft.pretty.PrettyFilter;
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 
 /**
- * Perform a rewrite operation on a given URL, utilizing any necessary
- * information from the given {@link RewriteRule} configuration object from
- * which the processor was invoked.
+ * Perform a rewrite operation on a given URL, utilizing any necessary information from the given {@link RewriteRule}
+ * configuration object from which the processor was invoked.
  * 
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
 public interface Processor
 {
-    String process(RewriteRule rule, String url);
+   /**
+    * Process an inbound URL Rewrite request. This takes place when the request first comes in to the server and passes
+    * through {@link PrettyFilter}
+    */
+   String processInbound(HttpServletRequest request, HttpServletResponse response, RewriteRule rule, String url);
+
+   /**
+    * Process an outbound URL Rewrite request. This takes place when a URL is passed in to
+    * {@link HttpServletResponse#encodeRedirectURL(String)}, and since most frameworks ensure the call to
+    * 'encodeRedirectUrl()' occurs automatically, can be assumed to occur whenever a URL would be rendered to HTML
+    * output.
+    */
+   String processOutbound(HttpServletRequest request, HttpServletResponse response, RewriteRule rule, String url);
 }

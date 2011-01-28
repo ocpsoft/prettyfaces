@@ -16,13 +16,15 @@
 
 package com.ocpsoft.pretty.faces.rewrite.processor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.Processor;
 
 /**
- * A processor that replaces the current URL with the URL specified in {@link
- * RewriteRule.getURL()}, and provides Regex Backreferences into the match
- * expression if provided.
+ * A processor that replaces the current URL with the URL specified in {@link RewriteRule.getURL()}, and provides Regex
+ * Backreferences into the match expression if provided.
  * <p/>
  * Example: <br/>
  * match="^/foo/(\w+)/$"<br/>
@@ -33,26 +35,40 @@ import com.ocpsoft.pretty.faces.rewrite.Processor;
 public class UrlProcessor implements Processor
 {
 
-    public String process(final RewriteRule rule, final String url)
-    {
-        if (url == null || rule.getUrl().length() == 0)
-        {
-            return url;
-        }
+   private String process(final HttpServletRequest request, final HttpServletResponse response, final RewriteRule rule,
+            final String url)
+   {
+      if ((url == null) || (rule.getUrl().length() == 0))
+      {
+         return url;
+      }
 
-        String result = url;
+      String result = url;
 
-        if (rule.getMatch().length() > 0)
-        {
-            result = url.replaceAll(rule.getMatch(), rule.getUrl());
-        }
+      if (rule.getMatch().length() > 0)
+      {
+         result = url.replaceAll(rule.getMatch(), rule.getUrl());
+      }
 
-        else
-        {
-            result = rule.getUrl();
-        }
+      else
+      {
+         result = rule.getUrl();
+      }
 
-        return result;
-    }
+      return result;
+   }
+
+   public String processInbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule,
+            final String url)
+   {
+      return process(request, response, rule, url);
+   }
+
+   public String processOutbound(final HttpServletRequest request, final HttpServletResponse response,
+            final RewriteRule rule, final String url)
+   {
+      return process(request, response, rule, url);
+   }
 
 }
