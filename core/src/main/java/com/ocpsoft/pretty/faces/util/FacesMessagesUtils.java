@@ -16,10 +16,10 @@
 
 package com.ocpsoft.pretty.faces.util;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -29,24 +29,24 @@ import javax.faces.context.FacesContext;
  */
 public class FacesMessagesUtils
 {
-    private static final String token = "com.ocpsoft.pretty.SAVED_FACES_MESSAGES";
+    protected static final String token = "com.ocpsoft.pretty.SAVED_FACES_MESSAGES";
 
     @SuppressWarnings("unchecked")
     public int saveMessages(final FacesContext facesContext, final Map<String, Object> destination)
     {
-        int restoredCount = 0;
-        if (FacesContext.getCurrentInstance() != null)
+        int savedCount = 0;
+        if (facesContext != null)
         {
-            List<FacesMessage> messages = new ArrayList<FacesMessage>();
+            Set<FacesMessageWrapper> messages = new LinkedHashSet<FacesMessageWrapper>();
             for (Iterator<FacesMessage> iter = facesContext.getMessages(null); iter.hasNext();)
             {
-                messages.add(iter.next());
+                messages.add(new FacesMessageWrapper(iter.next()));
                 iter.remove();
             }
 
             if (messages.size() > 0)
             {
-                List<FacesMessage> existingMessages = (List<FacesMessage>) destination.get(token);
+                Set<FacesMessageWrapper> existingMessages = (LinkedHashSet<FacesMessageWrapper>) destination.get(token);
                 if (existingMessages != null)
                 {
                     existingMessages.addAll(messages);
@@ -55,31 +55,125 @@ public class FacesMessagesUtils
                 {
                     destination.put(token, messages);
                 }
-                restoredCount = messages.size();
+                savedCount = messages.size();
             }
         }
-        return restoredCount;
+        return savedCount;
     }
 
     @SuppressWarnings("unchecked")
     public int restoreMessages(final FacesContext facesContext, final Map<String, Object> source)
     {
         int restoredCount = 0;
-        if (FacesContext.getCurrentInstance() != null)
+        if (facesContext != null)
         {
-            List<FacesMessage> messages = (List<FacesMessage>) source.remove(token);
+            // get save messages from the session
+            Set<FacesMessageWrapper> messages = (LinkedHashSet<FacesMessageWrapper>) source.remove(token);
 
+            // nothing to do
             if (messages == null)
             {
                 return 0;
             }
 
-            restoredCount = messages.size();
-            for (Object element : messages)
+            // build set of message currently in the FacesContext
+            Set<FacesMessageWrapper> exitingMessages = new LinkedHashSet<FacesMessagesUtils.FacesMessageWrapper>();
+            for (Iterator<FacesMessage> iter = facesContext.getMessages(null); iter.hasNext();)
             {
-                facesContext.addMessage(null, (FacesMessage) element);
+               exitingMessages.add(new FacesMessageWrapper(iter.next()));
             }
+
+            // restore all messages not already in the FacesContext
+            for (FacesMessageWrapper message : messages)
+            {
+               if (exitingMessages.contains(message))
+               {
+                  facesContext.addMessage(null, message.getWrapped());
+                  restoredCount++;
+               }
+            }
+
         }
         return restoredCount;
     }
+
+    private static class FacesMessageWrapper {
+
+       private final FacesMessage wrapped;
+
+       public FacesMessageWrapper(FacesMessage wrapped)
+       {
+          this.wrapped = wrapped;
+       }
+
+       @Override
+       public int hashCode()
+       {
+          final int prime = 31;
+          int result = 1;
+          result = prime * result + ((wrapped.getSeverity() == null) ? 0 : wrapped.getSeverity().hashCode());
+          result = prime * result + ((wrapped.getSummary() == null) ? 0 : wrapped.getSummary().hashCode());
+          result = prime * result + ((wrapped.getDetail() == null) ? 0 : wrapped.getDetail().hashCode());
+          return result;
+       }
+
+       @Override
+       public boolean equals(Object obj)
+       {
+          if (this == obj)
+          {
+             return true;
+          }
+          if (obj == null)
+          {
+             return false;
+          }
+          if (getClass() != obj.getClass())
+          {
+             return false;
+          }
+          FacesMessageWrapper other = (FacesMessageWrapper) obj;
+          if (wrapped.getSeverity() == null)
+          {
+             if (other.wrapped.getSeverity() != null)
+             {
+                return false;
+             }
+          }
+          else if (!wrapped.getSeverity().equals(other.wrapped.getSeverity()))
+          {
+             return false;
+          }
+          if (wrapped.getSummary() == null)
+          {
+             if (other.wrapped.getSummary() != null)
+             {
+                return false;
+             }
+          }
+          else if (!wrapped.getSummary().equals(other.wrapped.getSummary()))
+          {
+             return false;
+          }
+          if (wrapped.getDetail() == null)
+          {
+             if (other.wrapped.getDetail() != null)
+             {
+                return false;
+             }
+          }
+          else if (!wrapped.getDetail().equals(other.wrapped.getDetail()))
+          {
+             return false;
+          }
+          return true;
+       }
+
+      public FacesMessage getWrapped()
+      {
+         return wrapped;
+      }
+
+    }
+
 }
