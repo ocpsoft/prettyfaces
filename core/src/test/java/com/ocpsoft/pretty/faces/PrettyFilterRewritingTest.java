@@ -68,7 +68,7 @@ public class PrettyFilterRewritingTest
 
       // set up the rewrite rule
       prettyConfig.setGlobalRewriteRules( Arrays.asList(
-            createRule("/redirect", "/a \u00fc")  // contains space and german umlaut
+            createRule("/redirect", "/\u00fc")  // german umlaut
       ));
 
       // call filter
@@ -77,7 +77,7 @@ public class PrettyFilterRewritingTest
       filter.doFilter(request, response, new MockFilterChain());
       
       // verify outcome
-      assertEquals("/a+%C3%BC", response.getHeader("Location"));
+      assertEquals("/%C3%BC", response.getHeader("Location"));
 
    }
    
@@ -95,8 +95,7 @@ public class PrettyFilterRewritingTest
       filter.doFilter(request, response, new MockFilterChain());
       
       // verify outcome
-      // TODO: Fix PrettyFilter
-      //assertEquals("http://www.google.com/", response.getHeader("Location"));
+      assertEquals("http://www.google.com/", response.getHeader("Location"));
 
    }
 
@@ -105,7 +104,7 @@ public class PrettyFilterRewritingTest
 
       // set up the rewrite rule
       prettyConfig.setGlobalRewriteRules( Arrays.asList(
-            createRule("/query/(\\w+)/(\\w+)", "http://www.google.de/search?hl=$1&q=$2")
+            createRule("/query/(\\w+)/(\\w+)", "http://www.google.com/search?hl=$1&q=$2")
       ));
 
       // call filter
@@ -114,8 +113,7 @@ public class PrettyFilterRewritingTest
       filter.doFilter(request, response, new MockFilterChain());
       
       // verify outcome
-      // TODO: Fix PrettyFilter
-      //assertEquals("http://www.google.com/search?hl=end&q=something", response.getHeader("Location"));
+      assertEquals("http://www.google.com/search?hl=en&q=something", response.getHeader("Location"));
 
    }
    
