@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,7 +38,7 @@ import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
  */
 public class QueryString
 {
-   private final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+   private final Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
 
    /**
     * Build a query string from the given map of name=value pairs. For parameters with more than one value, each value
