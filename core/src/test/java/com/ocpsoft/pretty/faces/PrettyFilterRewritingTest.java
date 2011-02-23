@@ -116,6 +116,24 @@ public class PrettyFilterRewritingTest
       assertEquals("http://www.google.com/search?hl=en&q=something", response.getHeader("Location"));
 
    }
+
+   @Test
+   public void testSpaceCharacterQueryParameter() throws Exception {
+
+      // set up the rewrite rule
+      prettyConfig.setGlobalRewriteRules( Arrays.asList(
+            createRule("/rewrite", "http://127.0.0.1/search?query=some query&other=something else")
+      ));
+
+      // call filter
+      MockHttpServletRequest request = createRequest("/rewrite");
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      filter.doFilter(request, response, new MockFilterChain());
+
+      // verify outcome
+      assertEquals("http://127.0.0.1/search?query=some+query&other=something+else", response.getHeader("Location"));
+
+   }
    
    private MockHttpServletRequest createRequest(String req) {
       MockHttpServletRequest request = new MockHttpServletRequest(servletContext, "GET", "/test"+req);

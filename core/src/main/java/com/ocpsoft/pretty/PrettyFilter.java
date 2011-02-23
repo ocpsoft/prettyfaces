@@ -195,20 +195,8 @@ public class PrettyFilter implements Filter
 
                      }
 
-                     /*
-                      * Try to encode the URL using the URI class
-                      */
-                     String encodedRedirectURL = null;
-                     try
-                     {
-                        encodedRedirectURL = new URI(redirectURL).toASCIIString();
-                     }
-                     catch (URISyntaxException e)
-                     {
-                        // warn and send 'redirectURL' instead
-                        log.warn("Failed to encode URL '" + redirectURL + "': " + e.getMessage());
-                        encodedRedirectURL = redirectURL;
-                     }
+                     // try to encode the redirect target
+                     String encodedRedirectURL = encodeUrlWithQueryString(redirectURL);
 
                      // send redirect
                      resp.setHeader("Location", encodedRedirectURL);
@@ -239,6 +227,51 @@ public class PrettyFilter implements Filter
             setRewriteOccurred(req);
          }
       }
+   }
+
+   /**
+    * Helper method that encodes an URL including a query string. If encoding is
+    * not possible due to errors related to the input URL, the method will
+    * return the unencoded input URL.
+    * 
+    * @param url
+    *           URL to encode (may contain a query string)
+    * @return encoded representation of the URL
+    */
+   private String encodeUrlWithQueryString(String url)
+   {
+
+      // we must take care of URISyntax exceptions
+      try
+      {
+
+         // split the input into the base URL and the query string.
+         String[] urlParts = url.split("\\?", 2);
+
+         // use the URI class to encode the base part of the url
+         String baseUrlEncoded = new URI(urlParts[0]).toASCIIString();
+
+         // is there a query string
+         if (urlParts.length > 1 && StringUtils.isNotBlank(urlParts[1]))
+         {
+            // return encoded base URL + the encoded query string
+            return baseUrlEncoded + QueryString.build(urlParts[1]).toQueryString();
+         }
+         else
+         {
+            // no query string -> just return the encoded URL
+            return baseUrlEncoded;
+         }
+
+      }
+      catch (URISyntaxException e)
+      {
+         // warn and return input URL
+         log.warn("Failed to encode URL '" + url + "': " + e.getMessage());
+         return url;
+
+      }
+
    }
 
    private void setRewriteOccurred(final ServletRequest req)
