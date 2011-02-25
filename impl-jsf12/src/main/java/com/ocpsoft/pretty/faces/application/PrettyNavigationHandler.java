@@ -47,7 +47,7 @@ public class PrettyNavigationHandler extends NavigationHandler
 
    private void processFacesNavigation(final FacesContext context, final String fromAction, final String outcome)
    {
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       log.debug("Not a PrettyFaces navigation string - passing control to default nav-handler");
       prettyContext.setInNavigation(true);
 

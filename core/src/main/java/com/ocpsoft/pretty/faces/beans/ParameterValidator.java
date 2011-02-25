@@ -51,7 +51,7 @@ public class ParameterValidator
    public void validateParameters(final FacesContext context)
    {
       log.trace("Validating parameters.");
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       URL url = prettyContext.getRequestURL();
       UrlMapping mapping = prettyContext.getConfig().getMappingForUrl(url);
 

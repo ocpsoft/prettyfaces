@@ -62,14 +62,16 @@ public class LinkRenderer extends Renderer
       String mappingId = (String) component.getAttributes().get("mappingId");
       if (mappingId == null)
       {
-         throw new PrettyException("Mapping id was null when attempting to build URL for component: " + component.toString() + " <" + component.getClientId(context) + ">");
+         throw new PrettyException("Mapping id was null when attempting to build URL for component: "
+                  + component.toString() + " <" + component.getClientId(context) + ">");
       }
 
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       PrettyConfig prettyConfig = prettyContext.getConfig();
       UrlMapping urlMapping = prettyConfig.getMappingById(mappingId);
 
-      String href = context.getExternalContext().getRequestContextPath() + urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
+      String href = context.getExternalContext().getRequestContextPath()
+               + urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
 
       if ((link.getAnchor() != null) && link.getAnchor().length() > 0)
       {

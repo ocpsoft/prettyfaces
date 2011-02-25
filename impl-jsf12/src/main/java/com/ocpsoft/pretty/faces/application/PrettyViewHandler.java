@@ -58,8 +58,9 @@ public class PrettyViewHandler extends ViewHandler
    @Override
    public String getActionURL(final FacesContext context, final String viewId)
    {
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
-      if (prettyContext.isPrettyRequest() && !prettyContext.isInNavigation() && (viewId != null) && viewId.equals(context.getViewRoot().getViewId()))
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+      if (prettyContext.isPrettyRequest() && !prettyContext.isInNavigation() && (viewId != null)
+               && viewId.equals(context.getViewRoot().getViewId()))
       {
          URL url = prettyContext.getRequestURL();
          QueryString query = prettyContext.getRequestQueryString();
