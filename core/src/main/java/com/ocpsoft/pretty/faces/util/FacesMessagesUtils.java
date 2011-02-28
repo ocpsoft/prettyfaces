@@ -86,7 +86,7 @@ public class FacesMessagesUtils
             // restore all messages not already in the FacesContext
             for (FacesMessageWrapper message : messages)
             {
-               if (exitingMessages.contains(message))
+               if (!exitingMessages.contains(message))
                {
                   facesContext.addMessage(null, message.getWrapped());
                   restoredCount++;

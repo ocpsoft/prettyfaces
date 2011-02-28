@@ -64,15 +64,16 @@ public class FacesMessagesUtilsTest
       FacesContextMock facesContext = new FacesContextMock();
       facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Summary A", "Detail A"));
       facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Summary B", "Detail B"));
+      facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Summary C", "Detail C"));
 
       // call saveMessages()
       Map<String, Object> sessionMap = new HashMap<String, Object>();
       int saved = utils.saveMessages(facesContext, sessionMap);
 
       // check message are saved
-      assertEquals(2, saved);
+      assertEquals(3, saved);
       assertNotNull(sessionMap.get(FacesMessagesUtils.token));
-      assertEquals(2, ((Collection<?>) sessionMap.get(FacesMessagesUtils.token)).size());
+      assertEquals(3, ((Collection<?>) sessionMap.get(FacesMessagesUtils.token)).size());
       
       // check that messages have been removed from the context
       assertEquals(0, facesContext.getAllMessages().size());
@@ -89,9 +90,9 @@ public class FacesMessagesUtilsTest
       // restore messages
       int restored = utils.restoreMessages(facesContext, sessionMap);
 
-      // check that only one of the two messages has been restored
-      assertEquals(1, restored);
-      assertEquals(3, facesContext.getAllMessages().size());
+      // check that two of the three messages have been restored
+      assertEquals(2, restored);
+      assertEquals(4, facesContext.getAllMessages().size());
 
    }
 
