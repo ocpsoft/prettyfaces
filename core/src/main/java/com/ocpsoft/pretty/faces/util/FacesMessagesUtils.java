@@ -16,6 +16,7 @@
 
 package com.ocpsoft.pretty.faces.util;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -96,9 +97,11 @@ public class FacesMessagesUtils
         return restoredCount;
     }
 
-    private static class FacesMessageWrapper {
+    private static class FacesMessageWrapper implements Serializable {
 
-       private final FacesMessage wrapped;
+      private static final long serialVersionUID = 1L;
+
+      private final FacesMessage wrapped;
 
        public FacesMessageWrapper(FacesMessage wrapped)
        {
