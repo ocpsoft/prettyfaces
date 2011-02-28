@@ -51,7 +51,7 @@ public class ActionExecutor
          {
             try
             {
-               PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+               PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
                log.trace("Invoking method: " + action + ", on request: " + prettyContext.getRequestURL());
                Object result = elUtils.invokeMethod(context, action.getAction().getELExpression());
                if (result != null)
@@ -68,7 +68,8 @@ public class ActionExecutor
             }
             catch (Exception e)
             {
-               throw new PrettyException("Exception occurred while processing <" + mapping.getId() + ":" + action.getAction() + "> " + e.getMessage(), e);
+               throw new PrettyException("Exception occurred while processing <" + mapping.getId() + ":"
+                        + action.getAction() + "> " + e.getMessage(), e);
             }
          }
       }
@@ -77,7 +78,8 @@ public class ActionExecutor
    boolean shouldExecute(final UrlAction action, final PhaseId currentPhaseId, final boolean isPostback)
    {
       boolean result = false;
-      if (PhaseIdComparator.equals(action.getPhaseId(), currentPhaseId) || PhaseIdComparator.equals(action.getPhaseId(), PhaseId.ANY_PHASE))
+      if (PhaseIdComparator.equals(action.getPhaseId(), currentPhaseId)
+               || PhaseIdComparator.equals(action.getPhaseId(), PhaseId.ANY_PHASE))
       {
          if (action.onPostback())
          {

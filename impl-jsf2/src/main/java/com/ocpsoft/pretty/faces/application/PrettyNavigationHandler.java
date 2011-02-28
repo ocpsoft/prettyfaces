@@ -51,7 +51,7 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
       if (!pr.redirect(context, outcome))
       {
          log.debug("Not a PrettyFaces navigation string - passing control to default nav-handler");
-         PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+         PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
          prettyContext.setInNavigation(true);
 
          String originalViewId = context.getViewRoot().getViewId();
@@ -59,8 +59,7 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
          String newViewId = context.getViewRoot().getViewId();
 
          /*
-          * Navigation is complete if the viewId has not changed or the response
-          * is complete
+          * Navigation is complete if the viewId has not changed or the response is complete
           */
          if ((true == context.getResponseComplete()) || originalViewId.equals(newViewId))
          {
@@ -74,7 +73,7 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
    @Override
    public NavigationCase getNavigationCase(final FacesContext context, final String fromAction, final String outcome)
    {
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       PrettyConfig config = prettyContext.getConfig();
       if ((outcome != null) && PrettyContext.PRETTY_PREFIX.equals(outcome))
       {
@@ -85,9 +84,8 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
       else if ((outcome != null) && outcome.startsWith(PrettyContext.PRETTY_PREFIX) && config.isMappingId(outcome))
       {
          /*
-          * FIXME this will not work with dynamic view IDs... figure out another
-          * solution (<rewrite-view>/faces/views/myview.xhtml</rewrite-view> ?
-          * For now. Do not support it.
+          * FIXME this will not work with dynamic view IDs... figure out another solution
+          * (<rewrite-view>/faces/views/myview.xhtml</rewrite-view> ? For now. Do not support it.
           */
          String viewId = config.getMappingById(outcome).getViewId();
          String normalizedViewId = FacesNavigationURLCanonicalizer.normalizeRequestURI(context, viewId);

@@ -43,7 +43,7 @@ public class ParameterInjector
    public void injectParameters(final FacesContext context)
    {
       log.trace("Injecting parameters");
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       URL url = prettyContext.getRequestURL();
       UrlMapping mapping = prettyContext.getConfig().getMappingForUrl(url);
 
@@ -83,7 +83,8 @@ public class ParameterInjector
       }
    }
 
-   private void injectQueryParams(final FacesContext context, final UrlMapping mapping, final PrettyContext prettyContext)
+   private void injectQueryParams(final FacesContext context, final UrlMapping mapping,
+            final PrettyContext prettyContext)
    {
       boolean isPostback = FacesStateUtils.isPostback(context);
       List<QueryParameter> params = mapping.getQueryParams();

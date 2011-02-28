@@ -48,9 +48,8 @@ public class PrettyViewHandler extends ViewHandler
    private final ThreadLocal<Boolean> bookmarkable = new ThreadLocal<Boolean>();
 
    /**
-    * <b>NOTE:</b> This method should only be used by the getBookmarkableURL and
-    * getActionURL methods, for the purposes of rewriting form URLs (which do
-    * not include viewParameters.)
+    * <b>NOTE:</b> This method should only be used by the getBookmarkableURL and getActionURL methods, for the purposes
+    * of rewriting form URLs (which do not include viewParameters.)
     * 
     * @return Bookmarkable state - defaults to false if not previously set;
     */
@@ -110,11 +109,11 @@ public class PrettyViewHandler extends ViewHandler
    public String getActionURL(final FacesContext context, final String viewId)
    {
       /*
-       * When this method is called for forms, getBookmarkableURL is NOT called;
-       * therefore, we have a way to distinguish the two.
+       * When this method is called for forms, getBookmarkableURL is NOT called; therefore, we have a way to distinguish
+       * the two.
        */
       String result = parent.getActionURL(context, viewId);
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       if (!isBookmarkable() && prettyContext.isPrettyRequest() && !prettyContext.isInNavigation() && (viewId != null)
                && viewId.equals(context.getViewRoot().getViewId()))
       {
@@ -130,8 +129,7 @@ public class PrettyViewHandler extends ViewHandler
             final Map<String, List<String>> parameters, final boolean includeViewParams)
    {
       /*
-       * When this method is called for <h:link> tags, getActionURL is called as
-       * part of the parent call
+       * When this method is called for <h:link> tags, getActionURL is called as part of the parent call
        */
       setBookmarkable(true);
       String result = parent.getBookmarkableURL(context, viewId, parameters, includeViewParams);
@@ -166,8 +164,7 @@ public class PrettyViewHandler extends ViewHandler
    }
 
    /**
-    * Canonicalize the given viewId, then pass that viewId to the next
-    * ViewHandler in the chain.
+    * Canonicalize the given viewId, then pass that viewId to the next ViewHandler in the chain.
     */
    @Override
    public String deriveViewId(final FacesContext context, final String rawViewId)
@@ -199,12 +196,12 @@ public class PrettyViewHandler extends ViewHandler
     */
 
    /**
-    * Add PrettyFaces UIViewParameters to the component tree. This is how we do
-    * value injection, conversion, and validation.
+    * Add PrettyFaces UIViewParameters to the component tree. This is how we do value injection, conversion, and
+    * validation.
     */
    private void addPrettyViewParameters(final FacesContext context, final UIViewRoot view)
    {
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       if (prettyContext.isPrettyRequest())
       {
          UIComponent metadata = view.getFacet(UIViewRoot.METADATA_FACET_NAME);

@@ -65,7 +65,7 @@ public class PrettyRedirector
             externalContext.redirect(redirectUrl);
             return true;
          }
-         else if (isPrettyNavigationCase(action))
+         else if (isPrettyNavigationCase(prettyContext, action))
          {
             UrlMapping mapping = config.getMappingById(action);
             if (mapping != null)
@@ -103,9 +103,8 @@ public class PrettyRedirector
       }
    }
 
-   private boolean isPrettyNavigationCase(final String action)
+   private boolean isPrettyNavigationCase(PrettyContext prettyContext, final String action)
    {
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
       PrettyConfig config = prettyContext.getConfig();
       return (action != null) && config.isMappingId(action) && action.trim().startsWith(PrettyContext.PRETTY_PREFIX);
    }
