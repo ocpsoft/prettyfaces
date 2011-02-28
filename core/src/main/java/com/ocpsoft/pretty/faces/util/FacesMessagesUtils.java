@@ -41,7 +41,6 @@ public class FacesMessagesUtils
             for (Iterator<FacesMessage> iter = facesContext.getMessages(null); iter.hasNext();)
             {
                 messages.add(new FacesMessageWrapper(iter.next()));
-                iter.remove();
             }
 
             if (messages.size() > 0)

@@ -40,9 +40,6 @@ public class FacesMessagesUtilsTest
       Map<String, Object> sessionMap = new HashMap<String, Object>();
       int saved = new FacesMessagesUtils().saveMessages(facesContext, sessionMap);
 
-      // check that messages have been removed from the context
-      assertEquals(0, facesContext.getAllMessages().size());
-      
       // messages stored in session
       assertEquals(3, saved);
       assertNotNull(sessionMap.get(FacesMessagesUtils.token));
@@ -74,9 +71,6 @@ public class FacesMessagesUtilsTest
       assertEquals(3, saved);
       assertNotNull(sessionMap.get(FacesMessagesUtils.token));
       assertEquals(3, ((Collection<?>) sessionMap.get(FacesMessagesUtils.token)).size());
-      
-      // check that messages have been removed from the context
-      assertEquals(0, facesContext.getAllMessages().size());
       
       /*
        * Step 2: Restore
