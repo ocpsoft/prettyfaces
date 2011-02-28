@@ -13,7 +13,7 @@
 
       <programlisting><![CDATA[<url-mapping id="store"> 
    <pattern value="/store/" /> 
-   <view-id>/faces/shop/store.jsf</view-id>
+   <view-id value="/faces/shop/store.jsf" />
 </url-mapping>]]></programlisting>
 	
 		With these two simple lines of configuration, the user sees: <code>pattern="/store/"</code> 

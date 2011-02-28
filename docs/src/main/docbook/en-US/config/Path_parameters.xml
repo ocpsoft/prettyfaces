@@ -33,7 +33,7 @@
 		
       <programlisting><![CDATA[<url-mapping id="viewCategory">
   <pattern value="/store/#{ cat }/" />
-  <view-id>/faces/shop/store.jsf</view-id> 
+  <view-id value="/faces/shop/store.jsf" /> 
 </url-mapping>]]></programlisting>
 	
 		Here we've used PrettyFaces path-parameter syntax to capture values stored in part of inbound URLs

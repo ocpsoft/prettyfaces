@@ -28,7 +28,7 @@
 			
       	<programlisting><![CDATA[<url-mapping id="store"> 
    <pattern value="/store/" /> 
-   <view-id>/faces/shop/store.jsf</view-id>
+   <view-id value="/faces/shop/store.jsf" />
    <query-param name="language"> #{bean.language} </query-param>
 </url-mapping>]]></programlisting>
 	
