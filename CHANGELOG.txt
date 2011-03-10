@@ -3,9 +3,9 @@
 ------------------------------------
 
 Bugfixes:
-* Fixed incorrect encoding of URLs when using the 'url' attribute for rewrite rules.
-* MultiPageMessagesSupport doesn't duplicate messages any more if using MyFaces.
-* Fixed potential NullPointerExceptions on FacesContext access.
+* Fixed incorrect encoding of URLs when using the 'url' attribute for rewrite rules (#91)
+* MultiPageMessagesSupport doesn't duplicate messages any more if using MyFaces (#89)
+* Fixed potential NullPointerExceptions on FacesContext access
 * Ignore query parameters that are not correctly encoded (#88)
 * Fixed BeanManager JNDI lookup for Weld 1.1.0 + Tomcat enviroments
 
