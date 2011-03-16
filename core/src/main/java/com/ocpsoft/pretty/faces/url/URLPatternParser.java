@@ -35,6 +35,7 @@ public class URLPatternParser
    private final String originalPattern;
    private boolean elPattern;
    private URL urlPattern = null;
+   private Pattern urlElPattern;
    private List<Segment> pathSegments = new ArrayList<Segment>();
    private List<PathParameter> pathParameters = new ArrayList<PathParameter>();
 
@@ -110,6 +111,9 @@ public class URLPatternParser
       }
 
       urlPattern = new URL(regexSegments, segmentedPattern.getMetadata().copy());
+      if (elPattern) {
+         urlElPattern = Pattern.compile(urlPattern.toURL());
+      }
       this.pathSegments = Collections.unmodifiableList(pathSegments);
    }
 
@@ -119,7 +123,7 @@ public class URLPatternParser
    public boolean matches(final URL target)
    {
       if (elPattern) {
-         return Pattern.compile(urlPattern.toURL()).matcher(target.toURL()).matches();
+         return urlElPattern.matcher(target.toURL()).matches();
       } else {
          return urlPattern.toURL().equals(target.toURL());
       }
