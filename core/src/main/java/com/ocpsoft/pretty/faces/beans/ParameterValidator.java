@@ -22,7 +22,6 @@ import javax.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
@@ -39,6 +38,7 @@ import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
+import com.ocpsoft.pretty.faces.util.NullComponent;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -234,21 +234,6 @@ public class ParameterValidator
          {
             throw new PrettyException(e1);
          }
-      }
-   }
-
-   /**
-    * This component exists only to provide Path and Query Validators with a component for which they should not throw
-    * {@link NullPointerException}s
-    * 
-    * @author lb3
-    */
-   public static class NullComponent extends UIComponentBase
-   {
-      @Override
-      public String getFamily()
-      {
-         return "com.ocpsoft.pretty.NullComponent";
       }
    }
 
