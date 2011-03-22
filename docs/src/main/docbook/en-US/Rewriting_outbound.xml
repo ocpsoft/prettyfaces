@@ -19,7 +19,7 @@
 			
 			<programlisting><![CDATA[<url-mapping id="viewCategory">
 	<pattern value="/store/#{ cat : bean.category }/" />
-	<view-id>/faces/shop/store.jsf</view-id>
+	<view-id value="/faces/shop/store.jsf" />
 </url-mapping>]]></programlisting>
 		
 			For example:
@@ -53,7 +53,7 @@ String rewrittenURL = response.encodeRedirectURL("/faces/shop/store.jsf?cat=shoe
 			
 			<programlisting><![CDATA[<url-mapping id="viewCategory">
 	<pattern value="/store/#{ cat : bean.category }/" />
-	<view-id>/faces/shop/store.jsf</view-id>
+	<view-id value="/faces/shop/store.jsf" />
 </url-mapping>]]></programlisting>
 		
 			For example:
