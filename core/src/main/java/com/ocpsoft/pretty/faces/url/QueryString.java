@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
 
@@ -38,6 +41,9 @@ import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
  */
 public class QueryString
 {
+
+   private final static Log log = LogFactory.getLog(QueryString.class);
+
    private final Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
 
    /**
@@ -243,6 +249,12 @@ public class QueryString
                      // FIXME This probably shouldn't be happening here.
                      name = URLDecoder.decode(pair.substring(0, pos), "UTF-8");
                      value = URLDecoder.decode(pair.substring(pos + 1, pair.length()), "UTF-8");
+                  }
+                  catch (IllegalArgumentException e)
+                  {
+                     // thrown by URLDecoder if character decoding fails
+                     log.warn("Ignoring invalid query parameter: "+pair);
+                     continue;
                   }
                   catch (UnsupportedEncodingException e)
                   {

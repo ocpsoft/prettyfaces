@@ -56,6 +56,11 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
    public final static String BEAN_MANAGER_JNDI = "java:comp/BeanManager";
 
    /**
+    * Special JNDI name of the BeanManager for Apache Tomcat
+    */
+   public final static String BEAN_MANAGER_JNDI_TOMCAT = "java:comp/env/BeanManager";
+
+   /**
     * FQCN of the BeanManager
     */
    public final static String BEAN_MANAGER_CLASS = "javax.enterprise.inject.spi.BeanManager";
@@ -133,12 +138,18 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       // try to find in ServletContext first
       beanManager = getBeanManagerFromServletContext(servletContext);
 
-      // try JNDI next
+      // try standard JNDI name
       if (beanManager == null)
       {
-         beanManager = getBeanManagerFromJNDI();
+         beanManager = getBeanManagerFromJNDI(BEAN_MANAGER_JNDI);
       }
 
+      // try special Tomcat JNDI name
+      if (beanManager == null)
+      {
+         beanManager = getBeanManagerFromJNDI(BEAN_MANAGER_JNDI_TOMCAT);
+      }
+      
       // No BeanManager? Abort here
       if (beanManager == null)
       {
@@ -191,20 +202,22 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
    /**
     * Tries to get the BeanManager from JNDI
     * 
+    * @param jndiName
+    *           The JNDI name used for lookup
     * @return BeanManager instance or <code>null</code>
     */
-   private Object getBeanManagerFromJNDI()
+   private Object getBeanManagerFromJNDI(String jndiName)
    {
 
       try
       {
          // perform lookup
          InitialContext initialContext = new InitialContext();
-         Object obj = initialContext.lookup(BEAN_MANAGER_JNDI);
+         Object obj = initialContext.lookup(jndiName);
 
          if (log.isTraceEnabled())
          {
-            log.trace("Found BeanManager in JNDI!");
+            log.trace("Found BeanManager in: "+jndiName);
          }
 
          return obj;
@@ -214,7 +227,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       {
          if (log.isDebugEnabled())
          {
-            log.debug("Unable to get BeanManager from JNDI: " + e.getMessage());
+            log.debug("Unable to get BeanManager from '"+jndiName+"': " + e.getMessage());
          }
       }
 
