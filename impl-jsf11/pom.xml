@@ -141,7 +141,40 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<createSourcesJar>true</createSourcesJar>
+							<artifactSet>
+								<includes>
+									<include>commons-logging:*</include>
+									<include>commons-beanutils:*</include>
+									<include>commons-digester:*</include>
+								</includes>
+							</artifactSet>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
+							<relocations>
+								<relocation>
+									<pattern>org.apache.commons</pattern>
+									<shadedPattern>com.ocpsoft.shade.org.apache.commons</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
