@@ -212,7 +212,7 @@ public class URLEncodingTest
    @Test
    public void testEncodedURLMatchesNonEncodedPattern() throws IOException
    {
-      JSFSession jsfSession = new JSFSession("/URL+ENCODED");
+      JSFSession jsfSession = new JSFSession("/URL%20ENCODED");
 
       PrettyContext prettyContext = PrettyContext.getCurrentInstance();
       assertEquals(prettyContext.getRequestURL().toURL(), "/url decoded");

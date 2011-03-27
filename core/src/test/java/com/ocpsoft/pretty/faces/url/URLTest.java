@@ -81,4 +81,36 @@ public class URLTest
       URL original = encoded.decode();
       assertEquals("/foo/bar", original.toURL());
    }
+   
+   @Test
+   public void testEncodeGermanUmlaut() throws Exception
+   {
+      String value = "/\u00e4";
+      URL url = new URL(value);
+      URL encoded = url.encode();
+      assertEquals("/%C3%A4", encoded.toURL());
+      URL original = encoded.decode();
+      assertEquals("/\u00e4", original.toURL());
+   }
+   
+   @Test
+   public void testCommaEncodingAndDecoding() throws Exception
+   {
+      // the comma is allowed and should not be encoded/decoded
+      assertEquals("/a,b", new URL("/a,b").encode().toURL());
+      assertEquals("/a,b", new URL("/a,b").decode().toURL());
+   }
+
+   @Test
+   public void testSpaceEncodingAndDecoding() throws Exception
+   {
+      // encode
+      assertEquals("/a%20b", new URL("/a b").encode().toURL());
+      assertEquals("/a%20b", new URL("/a%20b").encode().toURL());
+      
+      // decode
+      assertEquals("/a b", new URL("/a%20b").decode().toURL());
+      assertEquals("/a b", new URL("/a b").decode().toURL());
+   }
+   
 }
