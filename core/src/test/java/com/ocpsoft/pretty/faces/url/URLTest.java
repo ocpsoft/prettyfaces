@@ -106,11 +106,19 @@ public class URLTest
    {
       // encode
       assertEquals("/a%20b", new URL("/a b").encode().toURL());
-      assertEquals("/a%20b", new URL("/a%20b").encode().toURL());
       
       // decode
       assertEquals("/a b", new URL("/a%20b").decode().toURL());
-      assertEquals("/a b", new URL("/a b").decode().toURL());
+   }
+
+   @Test
+   public void testQuestionMarkEncodingAndDecoding() throws Exception
+   {
+     // encode
+     assertEquals("/a%3Fb", new URL("/a?b").encode().toURL());
+
+     // decode
+     assertEquals("/a?b", new URL("/a%3Fb").decode().toURL());
    }
    
 }

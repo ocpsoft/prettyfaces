@@ -118,9 +118,8 @@ public class URL
    {
       try
       {
-         final String prefix = "http://localhost/";
-         final URI uri = new URI( (prefix + segment).replace(" ", "%20") );
-         return uri.toASCIIString().substring(prefix.length());
+         final URI uri = new URI( "http", "localhost", "/"+segment, null );
+         return uri.toASCIIString().substring( 17 );
       }
       catch (URISyntaxException e)
       {
