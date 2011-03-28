@@ -54,7 +54,7 @@ public class URLTest
    @Test
    public void testDecode() throws Exception
    {
-      String value = "/č";
+      String value = "/\u010d";
       URL url = new URL(value);
       URL encoded = url.encode();
       assertEquals("/%C4%8D", encoded.toURL());
@@ -63,12 +63,12 @@ public class URLTest
    @Test
    public void testEncode() throws Exception
    {
-      String value = "/č";
+      String value = "/\u010d";
       URL url = new URL(value);
       URL encoded = url.encode();
       assertEquals("/%C4%8D", encoded.toURL());
       URL original = encoded.decode();
-      assertEquals("/č", original.toURL());
+      assertEquals("/\u010d", original.toURL());
    }
 
    @Test
