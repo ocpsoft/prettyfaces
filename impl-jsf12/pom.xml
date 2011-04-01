@@ -56,9 +56,9 @@
 							<createSourcesJar>true</createSourcesJar>
 							<artifactSet>
 								<includes>
-									<include>commons-logging:*</include>
-									<include>commons-beanutils:*</include>
-									<include>commons-digester:*</include>
+									<include>commons-logging:commons-logging</include>
+									<include>commons-beanutils:commons-beanutils</include>
+									<include>commons-digester:commons-digester</include>
 									<include>com.ocpsoft:prettyfaces-core</include>
 								</includes>
 							</artifactSet>
