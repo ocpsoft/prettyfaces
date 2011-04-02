@@ -195,14 +195,19 @@ public class PrettyFilter implements Filter
 
                      }
 
-                     // try to encode the redirect target
-                     String encodedRedirectURL = encodeUrlWithQueryString(redirectURL);
+                     // we have to send a redirect
+                     if(redirectURL != null) {
 
-                     // send redirect
-                     resp.setHeader("Location", encodedRedirectURL);
-                     resp.setStatus(rule.getRedirect().getStatus());
-                     resp.flushBuffer();
-                     break;
+                        // try to encode the redirect target
+                        String encodedRedirectURL = encodeUrlWithQueryString(redirectURL);
+
+                        // send redirect
+                        resp.setHeader("Location", encodedRedirectURL);
+                        resp.setStatus(rule.getRedirect().getStatus());
+                        resp.flushBuffer();
+                        break;
+
+                     }
 
                   }
                }
