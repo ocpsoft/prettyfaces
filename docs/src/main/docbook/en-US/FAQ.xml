@@ -126,5 +126,20 @@ log4j.logger.com.ocpsoft=debug</programlisting>
 				</mediaobject>
 			</example>
 		</step>
+
+    <step>
+      <title>Q. Why are non-ASCII characters distorted when using mod_jk?</title>
+      <para>
+        A. This can happen because mod_jk partially reencodes the request URL after processing them inside 
+        Apache httpd and before forwarding it to Tomcat. You should set the following option to
+        let mod_jk forward the unparsed URL.
+      </para>
+      <example>
+        <title>httpd.conf</title>
+        <programlisting>JkOptions +ForwardURICompatUnparsed</programlisting>
+      </example>
+    </step>
+
+
 	</procedure>
 </chapter>
