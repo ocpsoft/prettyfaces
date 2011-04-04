@@ -12,6 +12,7 @@ Bugfixes:
 * Fixed potential NullPointerExceptions on FacesContext access
 * Ignore query parameters that are not correctly encoded (#88)
 * Fixed BeanManager JNDI lookup for Weld 1.1.0 + Tomcat enviroments
+* Correctly handle $ characters as path parameters
 
 
 ------------------------------------

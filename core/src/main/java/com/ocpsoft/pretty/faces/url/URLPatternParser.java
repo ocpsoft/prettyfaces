@@ -258,7 +258,8 @@ public class URLPatternParser
             StringBuffer sb = new StringBuffer();
             while (parameterMatcher.find())
             {
-               parameterMatcher.appendReplacement(sb, parameters[paramIndex].toString());
+               String replacement = parameters[paramIndex].toString().replace("$", "\\$");
+               parameterMatcher.appendReplacement(sb, replacement);
                paramIndex++;
             }
             parameterMatcher.appendTail(sb);
