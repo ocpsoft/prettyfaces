@@ -33,7 +33,7 @@
 		
       <programlisting><![CDATA[<url-mapping id="viewCategory">
   <pattern value="/store/#{ cat }/" />
-  <view-id>/faces/shop/store.jsf</view-id> 
+  <view-id value="/faces/shop/store.jsf" /> 
 </url-mapping>]]></programlisting>
 	
 		Here we've used PrettyFaces path-parameter syntax to capture values stored in part of inbound URLs
@@ -161,7 +161,7 @@ public class CategoryBean {
 		
 			<programlisting><![CDATA[<url-mapping id="archives">
   <pattern value="/#{ /\\d{4}/ year }/#{ /\\d{2}/ month }/" />
-  <view-id>/faces/blog/archives.jsf</view-id> 
+  <view-id value="/faces/blog/archives.jsf" /> 
 </url-mapping>]]></programlisting>
 
 			This pattern specifies custom regular expressions for each path-parameter, the former must
@@ -176,7 +176,7 @@ public class CategoryBean {
 		
 			<programlisting><![CDATA[<url-mapping id="viewAuthorPost">
   <pattern value="/#{ /[a-z]+/ blogger }/#{ /\\d+/ postId }/" />
-  <view-id>/faces/blog/viewPost.jsf</view-id> 
+  <view-id value="/faces/blog/viewPost.jsf"/> 
 </url-mapping>]]></programlisting>
 			
 			Notice that this compiled pattern looks somewhat different from the first example URL:
@@ -209,7 +209,7 @@ public class CategoryBean {
 		
 		<programlisting><![CDATA[<url-mapping id="viewCategory" onPostback="false">
   <pattern value="/store/#{ cat }/" />
-  <view-id>/faces/shop/store.jsf</view-id> 
+  <view-id value="/faces/shop/store.jsf"/> 
 </url-mapping>]]></programlisting>
 
 		<warning>

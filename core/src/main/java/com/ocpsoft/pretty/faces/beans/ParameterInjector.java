@@ -18,6 +18,7 @@ package com.ocpsoft.pretty.faces.beans;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,7 @@ import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
 import com.ocpsoft.pretty.faces.util.FacesStateUtils;
+import com.ocpsoft.pretty.faces.util.NullComponent;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -43,7 +45,7 @@ public class ParameterInjector
    public void injectParameters(final FacesContext context)
    {
       log.trace("Injecting parameters");
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       URL url = prettyContext.getRequestURL();
       UrlMapping mapping = prettyContext.getConfig().getMappingForUrl(url);
 
@@ -69,10 +71,25 @@ public class ParameterInjector
          String el = param.getExpression().getELExpression();
          if ((el != null) && !"".equals(el.trim()))
          {
-            String value = param.getValue();
+            String valueAsString = param.getValue();
             try
             {
-               elUtils.setValue(context, el, value);
+
+               // get the type of the referenced property and try to obtain a converter for it
+               Class<?> expectedType = elUtils.getExpectedType(context, el);
+               Converter converter = context.getApplication().createConverter(expectedType);
+
+               // Use the convert to create the correct type
+               if (converter != null)
+               {
+                  Object convertedValue = converter.getAsObject(context, new NullComponent(), valueAsString);
+                  elUtils.setValue(context, el, convertedValue);
+               }
+               else
+               {
+                  elUtils.setValue(context, el, valueAsString);
+               }
+
             }
             catch (Exception e)
             {
@@ -83,7 +100,8 @@ public class ParameterInjector
       }
    }
 
-   private void injectQueryParams(final FacesContext context, final UrlMapping mapping, final PrettyContext prettyContext)
+   private void injectQueryParams(final FacesContext context, final UrlMapping mapping,
+            final PrettyContext prettyContext)
    {
       boolean isPostback = FacesStateUtils.isPostback(context);
       List<QueryParameter> params = mapping.getQueryParams();
@@ -111,8 +129,24 @@ public class ParameterInjector
                   }
                   else
                   {
-                     String value = queryString.getParameter(name);
-                     elUtils.setValue(context, el, value);
+
+                     String valueAsString = queryString.getParameter(name);
+
+                     // get the type of the referenced property and try to obtain a converter for it
+                     Class<?> expectedType = elUtils.getExpectedType(context, el);
+                     Converter converter = context.getApplication().createConverter(expectedType);
+
+                     // Use the convert to create the correct type
+                     if (converter != null)
+                     {
+                        Object convertedValue = converter.getAsObject(context, new NullComponent(), valueAsString);
+                        elUtils.setValue(context, el, convertedValue);
+                     }
+                     else
+                     {
+                        elUtils.setValue(context, el, valueAsString);
+                     }
+
                   }
                }
                catch (Exception e)

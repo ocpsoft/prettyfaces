@@ -91,7 +91,7 @@ public class LanguageBean {
   <pattern value="/store/#{ cat }/">
     <validate index="0" validatorIds="categoryValidator" onError="pretty:error" />
   </pattern>
-  <view-id>/faces/shop/store.jsf</view-id> 
+  <view-id value="/faces/shop/store.jsf" /> 
 </url-mapping>]]></programlisting>
 
   </section>

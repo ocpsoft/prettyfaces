@@ -16,6 +16,8 @@
 package com.ocpsoft.pretty;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -41,6 +43,7 @@ import com.ocpsoft.pretty.faces.servlet.PrettyFacesWrappedRequest;
 import com.ocpsoft.pretty.faces.servlet.PrettyFacesWrappedResponse;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
+import com.ocpsoft.pretty.faces.util.StringUtils;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -157,55 +160,51 @@ public class PrettyFilter implements Filter
                   newUrl = rewriteEngine.processInbound(req, resp, rule, newUrl);
                   if (!Redirect.CHAIN.equals(rule.getRedirect()))
                   {
+
                      /*
-                      * An HTTP redirect has been triggered; issue one if we have a url or if the current url has been
+                      * An HTTP redirect has been triggered; issue one if we have a URL or if the current URL has been
                       * modified.
                       */
-                     String ruleUrl = rule.getUrl();
-                     if (((ruleUrl == null) || "".equals(ruleUrl.trim())) && !originalUrl.equals(newUrl))
+
+                     String redirectURL = null;
+
+                     /*
+                      * The rewrite changed the URL and no 'url' attribute has been set for the rule.
+                      */
+                     if (StringUtils.isBlank(rule.getUrl()) && !originalUrl.equals(newUrl))
                      {
+
                         /*
-                         * The current URL has been rewritten - do redirect
+                         * Add context path and encode request using encodeRedirectURL().
                          */
-
-                        // search for the '?' character
-                        String[] parts = newUrl.split("\\?", 2);
-
-                        // build URL from everything before the '?'
-                        URL encodedPath = new URL(parts[0]).encode();
-                        encodedPath.setEncoding(url.getEncoding());
-
-                        // no query parameters, just a plain URL
-                        if ((parts.length < 2) || (parts[1] == null) || "".equals(parts[1]))
-                        {
-                           newUrl = encodedPath.toURL();
-                        }
-                        // we found query parameters, so we append them in encoded representation
-                        else
-                        {
-                           newUrl = encodedPath.toURL() + QueryString.build(parts[1]).toQueryString();
-                        }
-
-                        // send redirect
-                        String redirectURL = resp.encodeRedirectURL(req.getContextPath() + newUrl);
-                        resp.setHeader("Location", redirectURL);
-                        resp.setStatus(rule.getRedirect().getStatus());
-                        resp.flushBuffer();
-                        break;
+                        redirectURL = resp.encodeRedirectURL(req.getContextPath() + newUrl);
                      }
-                     else if ((ruleUrl != null) && !"".equals(ruleUrl.trim()))
+                     else if (StringUtils.isNotBlank(rule.getUrl()))
                      {
+
                         /*
                          * This is a custom location - don't call encodeRedirectURL() and don't add context path, just
                          * redirect to the encoded URL
                          */
-                        URL encodedNewUrl = new URL(newUrl).encode();
-                        resp.setHeader("Location", encodedNewUrl.toURL());
+                        redirectURL = newUrl.trim();
+
+                     }
+
+                     // we have to send a redirect
+                     if (redirectURL != null)
+                     {
+
+                        // try to encode the redirect target
+                        String encodedRedirectURL = encodeUrlWithQueryString(redirectURL);
+
+                        // send redirect
+                        resp.setHeader("Location", encodedRedirectURL);
                         resp.setStatus(rule.getRedirect().getStatus());
-                        resp.setCharacterEncoding(url.getEncoding());
                         resp.flushBuffer();
                         break;
+
                      }
+
                   }
                }
             }
@@ -228,6 +227,49 @@ public class PrettyFilter implements Filter
             setRewriteOccurred(req);
          }
       }
+   }
+
+   /**
+    * Helper method that encodes an URL including a query string. If encoding is not possible due to errors related to
+    * the input URL, the method will return the unencoded input URL.
+    * 
+    * @param url URL to encode (may contain a query string)
+    * @return encoded representation of the URL
+    */
+   private String encodeUrlWithQueryString(final String url)
+   {
+
+      // we must take care of URISyntax exceptions
+      try
+      {
+
+         // split the input into the base URL and the query string.
+         String[] urlParts = url.split("\\?", 2);
+
+         // use the URI class to encode the base part of the url
+         String baseUrlEncoded = new URI(urlParts[0]).toASCIIString();
+
+         // is there a query string
+         if ((urlParts.length > 1) && StringUtils.isNotBlank(urlParts[1]))
+         {
+            // return encoded base URL + the encoded query string
+            return baseUrlEncoded + QueryString.build(urlParts[1]).toQueryString();
+         }
+         else
+         {
+            // no query string -> just return the encoded URL
+            return baseUrlEncoded;
+         }
+
+      }
+      catch (URISyntaxException e)
+      {
+         // warn and return input URL
+         log.warn("Failed to encode URL '" + url + "': " + e.getMessage());
+         return url;
+
+      }
+
    }
 
    private void setRewriteOccurred(final ServletRequest req)

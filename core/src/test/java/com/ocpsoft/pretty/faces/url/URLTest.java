@@ -54,7 +54,7 @@ public class URLTest
    @Test
    public void testDecode() throws Exception
    {
-      String value = "/č";
+      String value = "/\u010d";
       URL url = new URL(value);
       URL encoded = url.encode();
       assertEquals("/%C4%8D", encoded.toURL());
@@ -63,12 +63,12 @@ public class URLTest
    @Test
    public void testEncode() throws Exception
    {
-      String value = "/č";
+      String value = "/\u010d";
       URL url = new URL(value);
       URL encoded = url.encode();
       assertEquals("/%C4%8D", encoded.toURL());
       URL original = encoded.decode();
-      assertEquals("/č", original.toURL());
+      assertEquals("/\u010d", original.toURL());
    }
 
    @Test
@@ -81,4 +81,44 @@ public class URLTest
       URL original = encoded.decode();
       assertEquals("/foo/bar", original.toURL());
    }
+   
+   @Test
+   public void testEncodeGermanUmlaut() throws Exception
+   {
+      String value = "/\u00e4";
+      URL url = new URL(value);
+      URL encoded = url.encode();
+      assertEquals("/%C3%A4", encoded.toURL());
+      URL original = encoded.decode();
+      assertEquals("/\u00e4", original.toURL());
+   }
+   
+   @Test
+   public void testCommaEncodingAndDecoding() throws Exception
+   {
+      // the comma is allowed and should not be encoded/decoded
+      assertEquals("/a,b", new URL("/a,b").encode().toURL());
+      assertEquals("/a,b", new URL("/a,b").decode().toURL());
+   }
+
+   @Test
+   public void testSpaceEncodingAndDecoding() throws Exception
+   {
+      // encode
+      assertEquals("/a%20b", new URL("/a b").encode().toURL());
+      
+      // decode
+      assertEquals("/a b", new URL("/a%20b").decode().toURL());
+   }
+
+   @Test
+   public void testQuestionMarkEncodingAndDecoding() throws Exception
+   {
+     // encode
+     assertEquals("/a%3Fb", new URL("/a?b").encode().toURL());
+
+     // decode
+     assertEquals("/a?b", new URL("/a%3Fb").decode().toURL());
+   }
+   
 }

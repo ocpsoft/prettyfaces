@@ -23,12 +23,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
@@ -38,7 +41,10 @@ import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
  */
 public class QueryString
 {
-   private final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+
+   private final static Log log = LogFactory.getLog(QueryString.class);
+
+   private final Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
 
    /**
     * Build a query string from the given map of name=value pairs. For parameters with more than one value, each value
@@ -243,6 +249,12 @@ public class QueryString
                      // FIXME This probably shouldn't be happening here.
                      name = URLDecoder.decode(pair.substring(0, pos), "UTF-8");
                      value = URLDecoder.decode(pair.substring(pos + 1, pair.length()), "UTF-8");
+                  }
+                  catch (IllegalArgumentException e)
+                  {
+                     // thrown by URLDecoder if character decoding fails
+                     log.warn("Ignoring invalid query parameter: "+pair);
+                     continue;
                   }
                   catch (UnsupportedEncodingException e)
                   {

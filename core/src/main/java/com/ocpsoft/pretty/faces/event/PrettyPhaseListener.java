@@ -58,7 +58,7 @@ public class PrettyPhaseListener implements PhaseListener
       FacesContext facesContext = event.getFacesContext();
       if (PhaseId.RESTORE_VIEW.equals(event.getPhaseId()))
       {
-         PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+         PrettyContext prettyContext = PrettyContext.getCurrentInstance(facesContext);
          if (prettyContext.shouldProcessDynaview())
          {
             // We are only using this lifecycle to access the EL-Context.
@@ -83,13 +83,12 @@ public class PrettyPhaseListener implements PhaseListener
 
    public void afterPhase(final PhaseEvent event)
    {
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
       if (PhaseId.RESTORE_VIEW.equals(event.getPhaseId()))
       {
          // TODO Test that validation occurs before injection
          /*
-          * Parameter validation and injection must occur after RESTORE_VIEW in
-          * order to participate in faces-navigation.
+          * Parameter validation and injection must occur after RESTORE_VIEW in order to participate in
+          * faces-navigation.
           */
          if (!event.getFacesContext().getResponseComplete())
          {
@@ -97,6 +96,7 @@ public class PrettyPhaseListener implements PhaseListener
             injector.injectParameters(event.getFacesContext());
          }
 
+         PrettyContext prettyContext = PrettyContext.getCurrentInstance(event.getFacesContext());
          if (prettyContext.shouldProcessDynaview())
          {
             processDynaView(prettyContext, event.getFacesContext());
@@ -121,7 +121,7 @@ public class PrettyPhaseListener implements PhaseListener
       {
          viewId = prettyContext.getCurrentViewId();
          log.trace("Invoking DynaView method: " + viewId);
-         Object result = computeDynaViewId();
+         Object result = computeDynaViewId(facesContext);
          if (result instanceof String)
          {
             viewId = (String) result;
@@ -140,27 +140,24 @@ public class PrettyPhaseListener implements PhaseListener
    }
 
    /**
-    * Calculate the Faces ViewId to which this request URI resolves. This method
-    * will recursively call any dynamic mapping viewId functions as needed until
-    * a String viewId is returned, or supplied by a static mapping.
+    * Calculate the Faces ViewId to which this request URI resolves. This method will recursively call any dynamic
+    * mapping viewId functions as needed until a String viewId is returned, or supplied by a static mapping.
     * <p>
-    * This phase does not support FacesNavigation or PrettyRedirecting. Its SOLE
-    * purpose is to resolve a viewId.
+    * This phase does not support FacesNavigation or PrettyRedirecting. Its SOLE purpose is to resolve a viewId.
     * <p>
-    * <i><b>Note:</b> Precondition - parameter injection must take place before
-    * this</i>
+    * <i><b>Note:</b> Precondition - parameter injection must take place before this</i>
     * <p>
     * <i>Postcondition - currentViewId is set to computed View Id</i>
     * 
+    * @param facesContext2
+    * 
     * @return JSF viewID to which this request resolves.
     */
-   private String computeDynaViewId()
+   private String computeDynaViewId(FacesContext facesContext)
    {
+      PrettyContext context = PrettyContext.getCurrentInstance(facesContext);
+
       String result = "";
-
-      PrettyContext context = PrettyContext.getCurrentInstance();
-      FacesContext facesContext = FacesContext.getCurrentInstance();
-
       UrlMapping urlMapping = context.getCurrentMapping();
       if (urlMapping != null)
       {
@@ -207,7 +204,7 @@ public class PrettyPhaseListener implements PhaseListener
    {
       FacesContext context = event.getFacesContext();
 
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       UrlMapping mapping = prettyContext.getCurrentMapping();
       if (mapping != null)
       {

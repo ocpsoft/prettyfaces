@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.el.ELException;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
@@ -29,6 +30,7 @@ import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.url.URLPatternParser;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
+import com.ocpsoft.pretty.faces.util.NullComponent;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -59,6 +61,7 @@ public class ExtractedValuesURLBuilder
          List<String> parameterValues = new ArrayList<String>();
          for (PathParameter injection : parameters)
          {
+            // read value of the path parameter
             expression = injection.getExpression().getELExpression();
             value = elUtils.getValue(context, expression);
             if (value == null)
@@ -66,7 +69,24 @@ public class ExtractedValuesURLBuilder
                throw new PrettyException("PrettyFaces: Exception occurred while building URL for MappingId < "
                         + mapping.getId() + " >, Required value " + " < " + expression + " > was null");
             }
-            parameterValues.add(value.toString());
+
+            // convert the value to a string using the correct converter
+            Converter converter = context.getApplication().createConverter(value.getClass());
+            if (converter != null)
+            {
+               String valueAsString = converter.getAsString(context, new NullComponent(), value);
+               if (valueAsString == null)
+               {
+                  throw new PrettyException("PrettyFaces: The converter <" + converter.getClass().getName()
+                        + "> returned null while converting the object <" + value.toString() + ">!");
+               }
+               parameterValues.add(valueAsString);
+            }
+            else
+            {
+               parameterValues.add(value.toString());
+            }
+            
          }
 
          result = parser.getMappedURL(parameterValues);

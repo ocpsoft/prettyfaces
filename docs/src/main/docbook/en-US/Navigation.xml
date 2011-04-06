@@ -29,7 +29,7 @@
 			
 			<programlisting><![CDATA[<url-mapping id="viewItem">
   <pattern value="/store/item/#{ iid : bean.itemId }/" />
-  <view-id>/faces/shop/item.jsf</view-id> 
+  <view-id value="/faces/shop/item.jsf" />
   <action>#{bean.loadItem}</action>
 </url-mapping>]]></programlisting>
 			
@@ -110,7 +110,7 @@
 			<programlisting><![CDATA[<url-mapping id="viewItem">
 	<pattern value="/store/#{ cat : bean.category }/#{ iid : bean.itemId }/" />
 	<query-param name="language"> #{ bean.language } </query-param>
-	<view-id>/faces/shop/item.jsf</view-id> 
+	<view-id value="/faces/shop/item.jsf" /> 
 	<action>#{bean.loadItem}</action>
 </url-mapping>]]></programlisting>
 			<para>

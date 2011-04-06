@@ -1,4 +1,21 @@
 ------------------------------------
+           VERSION 3.2.1
+------------------------------------
+
+Features & Enhancements:
+* Use JSF converters for path and query parameter conversion.
+* Now bundles shaded apache commons libs, and requires no dependencies.
+
+Bugfixes:
+* Fixed incorrect encoding of URLs when using the 'url' attribute for rewrite rules (#91)
+* MultiPageMessagesSupport doesn't duplicate messages any more if using MyFaces (#89)
+* Fixed potential NullPointerExceptions on FacesContext access
+* Ignore query parameters that are not correctly encoded (#88)
+* Fixed BeanManager JNDI lookup for Weld 1.1.0 + Tomcat enviroments
+* Correctly handle $ characters as path parameters
+
+
+------------------------------------
            VERSION 3.2.0
 ------------------------------------
 

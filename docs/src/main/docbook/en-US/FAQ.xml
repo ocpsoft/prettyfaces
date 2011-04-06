@@ -20,12 +20,12 @@
 				<title>Mapping a non-JSF resource</title>
 				<programlisting><![CDATA[<pretty-config>
 	<url-mapping id="login">
-		<pattern> /login </pattern>
-		<view-id> /legacy/user/login.jsp </view-id> <!-- Non JSF View Id -->
+		<pattern value="/login" />
+		<view-id value="/legacy/user/login.jsp" /> <!-- Non JSF View Id -->
 	</url-mapping>
 	<url-mapping id="register">
-		<pattern> /register </pattern>
-		<view-id>/faces/user/register.jsf</view-id> <!-- JSF View Id -->
+		<pattern value="/register" />
+		<view-id value="/faces/user/register.jsf" /> <!-- JSF View Id -->
 	</url-mapping>
 </pretty-config>]]></programlisting>
 			</example>
@@ -126,5 +126,20 @@ log4j.logger.com.ocpsoft=debug</programlisting>
 				</mediaobject>
 			</example>
 		</step>
+
+    <step>
+      <title>Q. Why are non-ASCII characters distorted when using mod_jk?</title>
+      <para>
+        A. This can happen because mod_jk partially reencodes the request URL after processing them inside 
+        Apache httpd and before forwarding it to Tomcat. You should set the following option to
+        let mod_jk forward the unparsed URL.
+      </para>
+      <example>
+        <title>httpd.conf</title>
+        <programlisting>JkOptions +ForwardURICompatUnparsed</programlisting>
+      </example>
+    </step>
+
+
 	</procedure>
 </chapter>

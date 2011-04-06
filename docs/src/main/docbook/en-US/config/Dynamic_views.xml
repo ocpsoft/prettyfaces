@@ -10,7 +10,7 @@
 		
 		<programlisting><![CDATA[<url-mapping id="home">
 	<pattern value="/home/" />
-	<view-id> #{bean.getViewPath} </view-id>
+	<view-id value="#{bean.getViewPath}" />
 </url-mapping>
 		]]></programlisting>
 		

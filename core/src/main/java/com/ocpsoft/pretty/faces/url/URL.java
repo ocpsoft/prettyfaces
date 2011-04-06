@@ -16,8 +16,8 @@
 package com.ocpsoft.pretty.faces.url;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,8 +33,6 @@ public class URL
    private String originalURL = "";
    private List<String> segments;
 
-   private final Map<String, URL> encodedURLs = new HashMap<String, URL>();
-   private final Map<String, URL> decodedURLs = new HashMap<String, URL>();
    private final Map<String, List<String>> decodedSegments = new HashMap<String, List<String>>();
 
    /**
@@ -91,42 +89,62 @@ public class URL
          List<String> result = new ArrayList<String>();
          for (String segment : segments)
          {
-            try
-            {
-               String decoded = URLDecoder.decode(segment, encoding);
-               result.add(decoded);
-            }
-            catch (UnsupportedEncodingException e)
-            {
-               throw new PrettyException("Could not decode URL with specified format: " + encoding, e);
-            }
+            result.add( decodeSegment(segment) );
          }
          decodedSegments.put(encoding, Collections.unmodifiableList(result));
       }
       return decodedSegments.get(encoding);
    }
-
+   
    /**
     * Get a list of all encoded segments (separated by '/') in this URL.
     */
    public List<String> getEncodedSegments()
    {
-      String encoding = metadata.getEncoding();
       List<String> resultSegments = new ArrayList<String>();
       for (String segment : segments)
       {
-         try
-         {
-            String encoded = URLEncoder.encode(segment, encoding);
-            resultSegments.add(encoded);
-         }
-         catch (UnsupportedEncodingException e)
-         {
-            throw new PrettyException("Could not encode URL with specified format: " + encoding, e);
-         }
+         resultSegments.add( encodeSegment(segment) );
       }
       return resultSegments;
    }
+   
+   /**
+    * Encodes a segment using the {@link URI} class. 
+    * @param segment The segment to encode
+    * @return the encoded segment
+    */
+   private static String encodeSegment(String segment)
+   {
+      try
+      {
+         final URI uri = new URI( "http", "localhost", "/"+segment, null );
+         return uri.toASCIIString().substring( 17 );
+      }
+      catch (URISyntaxException e)
+      {
+         throw new IllegalArgumentException(e);
+      }
+   }
+
+   /**
+    * Decodes a segment using the {@link URI} class.
+    * @param segment The segment to decode
+    * @return the decoded segment
+    */
+   private static String decodeSegment(String segment)
+   {
+      try
+      {
+         final URI uri = new URI( ("http://localhost/" + segment).replace(" ", "%20") );
+         return uri.getPath().substring(1);
+      }
+      catch (URISyntaxException e)
+      {
+         throw new IllegalArgumentException(e);
+      }
+   }
+   
 
    /**
     * Return a decoded form of this URL.
