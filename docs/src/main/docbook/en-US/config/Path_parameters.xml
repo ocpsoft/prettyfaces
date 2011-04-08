@@ -113,6 +113,15 @@ public class CategoryBean {
 }</programlisting>
 	
 		</para>
+
+    <para>
+      Please note that PrettyFaces will automatically use the JSF converter registered for the type of
+      the referenced bean property to convert the path parameter. This means that
+      PrettyFaces supports all JSF standard converters and converters that have been manually registered 
+      to be used for a specific type using the <code>converter-for-class</code> element in the 
+      <code>faces-config.xml</code> (or the <code>forClass</code> attribute of the 
+      <code>@FacesConverter</code> annotation). 
+    </para>
 		
 		<tip>
 			<para>
@@ -122,9 +131,6 @@ public class CategoryBean {
 		  	</para>
 		</tip>
 		
-		<para>
-			
-		</para>
 	</section>
 	
 	<section id="config.pathparams.regex">
