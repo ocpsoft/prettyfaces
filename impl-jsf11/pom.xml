@@ -21,7 +21,7 @@
 	
 	<groupId>com.ocpsoft</groupId>
 	<artifactId>prettyfaces-jsf11</artifactId>
-	<version>3.2.1</version>
+	<version>3.2.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>PrettyFaces JSF 1.1.x</name>
