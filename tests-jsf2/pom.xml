@@ -27,7 +27,8 @@
    <name>PrettyFaces JSF 2.0.x - Tests</name>
    <url>http://ocpsoft.com/prettyfaces/</url>
 
-   <properties>
+	<properties>
+	   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <version.arquillian>1.0.0.Alpha4</version.arquillian>
       <version.jetty>8.0.0.M1</version.jetty>
       <version.tomcat>6.0.29</version.tomcat>
