@@ -241,8 +241,8 @@ public class URLPatternParser
           */
          if (getParameterCount() != parameters.length)
          {
-            throw new PrettyException("Invalid number of parameters supplied for pattern: " + originalPattern
-                     + ", expected <" + getParameterCount() + ">, got <" + parameters.length + ">");
+            throw new PrettyException("Invalid number of path parameters supplied for pattern: " + originalPattern
+                     + ", expected <" + getParameterCount() + ">, but got <" + parameters.length + ">");
          }
 
          /*

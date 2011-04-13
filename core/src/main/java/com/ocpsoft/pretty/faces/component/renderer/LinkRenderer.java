@@ -66,19 +66,29 @@ public class LinkRenderer extends Renderer
                   + component.toString() + " <" + component.getClientId(context) + ">");
       }
 
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
-      PrettyConfig prettyConfig = prettyContext.getConfig();
-      UrlMapping urlMapping = prettyConfig.getMappingById(mappingId);
+      try
+      {
 
-      String href = context.getExternalContext().getRequestContextPath()
+         PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+         PrettyConfig prettyConfig = prettyContext.getConfig();
+         UrlMapping urlMapping = prettyConfig.getMappingById(mappingId);
+
+         String href = context.getExternalContext().getRequestContextPath()
                + urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
 
-      if ((link.getAnchor() != null) && link.getAnchor().length() > 0)
-      {
-         href += "#" + link.getAnchor();
-      }
+         if ((link.getAnchor() != null) && link.getAnchor().length() > 0)
+         {
+            href += "#" + link.getAnchor();
+         }
 
-      writer.writeURIAttribute("href", context.getExternalContext().encodeResourceURL(href), "href");
+         writer.writeURIAttribute("href", context.getExternalContext().encodeResourceURL(href), "href");
+
+      }
+      catch (PrettyException e)
+      {
+         throw new PrettyException("Failed to build URL for mapping '" + mappingId
+               + "' while rendering <pretty:link> component: " + link.getClientId(context), e);
+      }
 
       writeAttr(writer, "id", link.getClientId(context));
       writeAttr(writer, "accesskey", link.getAccesskey());
