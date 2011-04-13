@@ -80,12 +80,15 @@ public class PrettyURLBuilder
    public String build(final UrlMapping mapping, final boolean encodeUrl, final Map<String, String[]> parameters)
    {
       List<UIParameter> list = new ArrayList<UIParameter>();
-      for (Entry<String, String[]> e : parameters.entrySet())
+      if(parameters != null)
       {
-         UIParameter p = new UIParameter();
-         p.setName(e.getKey());
-         p.setValue(e.getValue());
-         list.add(p);
+         for (Entry<String, String[]> e : parameters.entrySet())
+         {
+            UIParameter p = new UIParameter();
+            p.setName(e.getKey());
+            p.setValue(e.getValue());
+            list.add(p);
+         }
       }
       return build(mapping, false, list);
    }
@@ -110,14 +113,17 @@ public class PrettyURLBuilder
    public String build(final UrlMapping mapping, final boolean encodeUrl, final Object... parameters)
    {
       List<UIParameter> list = new ArrayList<UIParameter>();
-      for (Object e : parameters)
+      if(parameters != null)
       {
-         UIParameter p = new UIParameter();
-         if (e != null)
+         for (Object e : parameters)
          {
-            p.setValue(e.toString());
+            UIParameter p = new UIParameter();
+            if (e != null)
+            {
+               p.setValue(e.toString());
+            }
+            list.add(p);
          }
-         list.add(p);
       }
       return build(mapping, encodeUrl, list);
    }
@@ -142,15 +148,18 @@ public class PrettyURLBuilder
    public String build(final UrlMapping mapping, final boolean encodeUrl, final RequestParameter... parameters)
    {
       List<UIParameter> list = new ArrayList<UIParameter>();
-      for (RequestParameter param : parameters)
+      if(parameters != null)
       {
-         UIParameter p = new UIParameter();
-         if (param != null)
+         for (RequestParameter param : parameters)
          {
-            p.setValue(param.getName());
-            p.setValue(param.getValue());
+            UIParameter p = new UIParameter();
+            if (param != null)
+            {
+               p.setValue(param.getName());
+               p.setValue(param.getValue());
+            }
+            list.add(p);
          }
-         list.add(p);
       }
       return build(mapping, false, list);
    }
@@ -178,70 +187,73 @@ public class PrettyURLBuilder
       {
          URLPatternParser parser = new URLPatternParser(urlMapping.getPattern());
          List<String> pathParams = new ArrayList<String>();
-
-         // TODO this logic should be in the components, not in the builder
-         if (parameters.size() == 1)
-         {
-            UIParameter firstParam = parameters.get(0);
-            if (((firstParam.getValue() != null)) && (firstParam.getName() == null))
-            {
-               if (firstParam.getValue() instanceof List<?>)
-               {
-                  URL url = parser.getMappedURL(firstParam.getValue());
-                  return url.toURL();
-               }
-               else if (firstParam.getValue().getClass().isArray())
-               {
-                  // The Object[] cast here is required, otherwise Java treats
-                  // getValue() as a single Object.
-                  List<Object> list = Arrays.asList((Object[]) firstParam.getValue());
-                  URL url = parser.getMappedURL(list);
-                  return url.toURL();
-               }
-            }
-         }
-
          List<QueryParameter> queryParams = new ArrayList<QueryParameter>();
-         for (UIParameter parameter : parameters)
+
+         if(parameters != null)
          {
-            String name = parameter.getName();
-            Object value = parameter.getValue();
-
-            if ((name == null) && (value != null))
+            // TODO this logic should be in the components, not in the builder
+            if (parameters.size() == 1)
             {
-               pathParams.add(value.toString());
-            }
-            else
-            {
-               List<?> values = null;
-               if ((value != null) && value.getClass().isArray())
+               UIParameter firstParam = parameters.get(0);
+               if (((firstParam.getValue() != null)) && (firstParam.getName() == null))
                {
-                  values = Arrays.asList((Object[]) value);
-               }
-               else if (value instanceof List<?>)
-               {
-                  values = (List<?>) value;
-               }
-               else if (value != null)
-               {
-                  values = Arrays.asList(value);
-               }
-
-               if (values != null)
-               {
-                  for (Object object : values)
+                  if (firstParam.getValue() instanceof List<?>)
                   {
-                     String tempValue = null;
-                     if (object != null)
-                     {
-                        tempValue = object.toString();
-                     }
-                     queryParams.add(new QueryParameter(name, tempValue));
+                     URL url = parser.getMappedURL(firstParam.getValue());
+                     return url.toURL();
                   }
+                  else if (firstParam.getValue().getClass().isArray())
+                  {
+                     // The Object[] cast here is required, otherwise Java treats
+                     // getValue() as a single Object.
+                     List<Object> list = Arrays.asList((Object[]) firstParam.getValue());
+                     URL url = parser.getMappedURL(list);
+                     return url.toURL();
+                  }
+               }
+            }
+   
+            for (UIParameter parameter : parameters)
+            {
+               String name = parameter.getName();
+               Object value = parameter.getValue();
+   
+               if ((name == null) && (value != null))
+               {
+                  pathParams.add(value.toString());
                }
                else
                {
-                  queryParams.add(new QueryParameter(name, null));
+                  List<?> values = null;
+                  if ((value != null) && value.getClass().isArray())
+                  {
+                     values = Arrays.asList((Object[]) value);
+                  }
+                  else if (value instanceof List<?>)
+                  {
+                     values = (List<?>) value;
+                  }
+                  else if (value != null)
+                  {
+                     values = Arrays.asList(value);
+                  }
+   
+                  if (values != null)
+                  {
+                     for (Object object : values)
+                     {
+                        String tempValue = null;
+                        if (object != null)
+                        {
+                           tempValue = object.toString();
+                        }
+                        queryParams.add(new QueryParameter(name, tempValue));
+                     }
+                  }
+                  else
+                  {
+                     queryParams.add(new QueryParameter(name, null));
+                  }
                }
             }
          }
