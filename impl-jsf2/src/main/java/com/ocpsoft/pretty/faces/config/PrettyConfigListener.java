@@ -25,16 +25,45 @@ import com.ocpsoft.pretty.faces.util.FacesFactory;
 public class PrettyConfigListener implements ServletRequestListener
 {
 
+   /**
+    * The configuration is reloaded after this amount of time
+    */
+   private final static long CONFIG_RELOAD_DELAY = 2000l;
+
+   /**
+    * Keeps track of the last time the configuration was updated
+    */
+   private long lastUpdate = 0;
+
    public void requestDestroyed(final ServletRequestEvent sre)
    {
+      // nothing
    }
 
    public void requestInitialized(final ServletRequestEvent sre)
    {
+
+      // Don't do this if the project stage is 'production'
       if (!ProjectStage.Production.equals(FacesFactory.getApplication().getProjectStage()) && !PrettyContext.isInstantiated(sre.getServletRequest()))
       {
-         PrettyConfigurator configurator = new PrettyConfigurator(sre.getServletContext());
-         configurator.configure();
+
+         // the point in time the configuration will be reloaded
+         long nextUpdate = lastUpdate + CONFIG_RELOAD_DELAY;
+
+         if (System.currentTimeMillis() > nextUpdate)
+         {
+
+            /*
+             * first update the 'lastUpdate' so that concurrent requests won't
+             * also do an update of the configuration.
+             */
+            lastUpdate = System.currentTimeMillis();
+
+            // run the configuration procedure again
+            PrettyConfigurator configurator = new PrettyConfigurator(sre.getServletContext());
+            configurator.configure();
+         }
+
       }
    }
 
