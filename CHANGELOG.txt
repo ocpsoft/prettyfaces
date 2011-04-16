@@ -1,4 +1,12 @@
 ------------------------------------
+           VERSION 3.3.0
+------------------------------------
+
+Features & Enhancements:
+* Performance improvements when running JSF 2.0 in project stage 'development'
+
+
+------------------------------------
            VERSION 3.2.1
 ------------------------------------
 
