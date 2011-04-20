@@ -77,7 +77,7 @@ public class ParameterValidator
 
             List<PathValidator> validators = mapping.getValidatorsForPathParam(param);
 
-            if (!!"".equals(validators) && (validators != null))
+            if (validators != null && validators.size() > 0)
             {
                String value = param.getValue();
                Object coerced = elUtils.coerceToType(context, param.getExpression().getELExpression(), value);
