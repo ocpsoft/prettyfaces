@@ -92,7 +92,15 @@ public class PrettyPhaseListener implements PhaseListener
           */
          if (!event.getFacesContext().getResponseComplete())
          {
+            // run parameter validation
             validator.validateParameters(event.getFacesContext());
+
+            // abort if validation failed, 404 response code has already been set
+            if(event.getFacesContext().getResponseComplete()) {
+               return;
+            }
+
+            // inject parameters
             injector.injectParameters(event.getFacesContext());
          }
 

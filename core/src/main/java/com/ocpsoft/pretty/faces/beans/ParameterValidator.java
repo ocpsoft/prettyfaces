@@ -229,6 +229,7 @@ public class ParameterValidator
          try
          {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            context.responseComplete();
          }
          catch (IOException e1)
          {
