@@ -6,7 +6,8 @@ Features & Enhancements:
 * Performance improvements when running JSF 2.0 in project stage 'development'
 
 Bugfixes:
-* Fixed bug that caused path parameter validators to be ignored
+* Fixed bug that caused path parameter validators to be ignored (#102)
+* Handle java.lang.ClassFormatError during initialization of bean name resolvers (#101)
 
 ------------------------------------
            VERSION 3.2.1

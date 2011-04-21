@@ -83,13 +83,27 @@ public class LazyBeanNameFinder
             log.trace("Initializing BeanNameResolver: " + resolver.getClass().getName());
          }
 
-         // call the resolver's init() method
-         boolean initialized = resolver.init(servletContext, classLoader);
-
-         // register resolver, if his initialization has completed
-         if (initialized)
+         try
          {
-            resolvers.add(resolver);
+
+            // call the resolver's init() method
+            boolean initialized = resolver.init(servletContext, classLoader);
+
+            // register resolver, if his initialization has completed
+            if (initialized)
+            {
+               resolvers.add(resolver);
+            }
+
+         }
+         catch (ClassFormatError e)
+         {
+            /*
+             * Seems to happen for CDI classes when using GWT
+             * In this case just ignore the resolver
+             * See: http://code.google.com/p/prettyfaces/issues/detail?id=101
+             */
+            log.warn("Failed to initialize "+resolver.getClass().getSimpleName()+": "+e.getMessage());
          }
       }
    }
