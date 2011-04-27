@@ -183,4 +183,30 @@ public class QueryStringTest
       qs = QueryString.build(queryString);
       assertEquals(queryString, qs.toQueryString());
    }
+   
+   @Test
+   public void testAddParametersOneSimpleParameter()
+   {
+      QueryString qs = new QueryString();
+      qs.addParameters("a=b");
+      assertEquals("?a=b", qs.toQueryString());
+   }
+
+   @Test
+   public void testAddParametersMultipleParametersEncoded()
+   {
+      QueryString qs = new QueryString();
+      qs.addParameters("a=b+c&d=e");
+      assertEquals("?a=b+c&d=e", qs.toQueryString());
+   }
+
+   @Test
+   public void testAddParametersEncodedAmpersand()
+   {
+      // http://code.google.com/p/prettyfaces/issues/detail?id=104
+      QueryString qs = new QueryString();
+      qs.addParameters("a=b&amp;c=d");
+      assertEquals("?a=b&c=d", qs.toQueryString());
+   }
+
 }
