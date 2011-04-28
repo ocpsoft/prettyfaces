@@ -4,6 +4,7 @@
 
 Features & Enhancements:
 * Performance improvements when running JSF 2.0 in project stage 'development'
+* Regular expression performance improvements provided by Yann Simon.
 
 Bugfixes:
 * Fixed bug that caused path parameter validators to be ignored (#102)
