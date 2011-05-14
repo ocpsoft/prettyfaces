@@ -61,6 +61,11 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
    public final static String BEAN_MANAGER_JNDI_TOMCAT = "java:comp/env/BeanManager";
 
    /**
+    * The name of the servlet context attribute the BeanManager is store in by Weld 1.1.x
+    */
+   public final static String SERVLET_CONTEXT_ATTR_WELD_1_1 = "org.jboss.weld.environment.servlet.javax.enterprise.inject.spi.BeanManager";
+
+   /**
     * FQCN of the BeanManager
     */
    public final static String BEAN_MANAGER_CLASS = "javax.enterprise.inject.spi.BeanManager";
@@ -136,7 +141,13 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       }
 
       // try to find in ServletContext first
-      beanManager = getBeanManagerFromServletContext(servletContext);
+      beanManager = getBeanManagerFromServletContext(servletContext, BEAN_MANAGER_CLASS);
+
+      // try Weld 1.1.x servlet context attribute
+      if (beanManager == null)
+      {
+        beanManager = getBeanManagerFromServletContext(servletContext, SERVLET_CONTEXT_ATTR_WELD_1_1);
+      }
 
       // try standard JNDI name
       if (beanManager == null)
@@ -174,24 +185,25 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
     * Weld and the current OpenWebBeans snapshots.
     * 
     * @param servletContext The servlet context 
+    * @param attributeName The attribute name 
     * @return The BeanManager instance or <code>null</code>
     */
-   private Object getBeanManagerFromServletContext(ServletContext servletContext)
+   private Object getBeanManagerFromServletContext(ServletContext servletContext, String attributeName)
    {
 
       // get BeanManager from servlet context
-      Object obj = servletContext.getAttribute(BEAN_MANAGER_CLASS);
+      Object obj = servletContext.getAttribute(attributeName);
 
       // debug result
       if (log.isTraceEnabled())
       {
          if (obj == null)
          {
-            log.trace("BeanManager not found in servlet context.");
+            log.trace("The BeanManager could not be found in servlet context attribute: "+attributeName);
          }
          else
          {
-            log.trace("Found BeanManager in the servlet context.");
+            log.trace("Found BeanManager in the servlet context attribute: "+attributeName);
          }
       }
 

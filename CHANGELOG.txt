@@ -8,6 +8,7 @@ Features & Enhancements:
 Bugfixes:
 * Fixed bug that caused path parameter validators to be ignored (#102)
 * Handle java.lang.ClassFormatError during initialization of bean name resolvers (#101)
+* Also check Weld 1.1.x specific servlet context attribute while search for BeanManager   
 
 ------------------------------------
            VERSION 3.2.1
