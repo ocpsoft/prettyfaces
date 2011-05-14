@@ -230,7 +230,7 @@ public class QueryString
                url = url.substring(url.indexOf('?') + 1);
             }
 
-            String pairs[] = url.split("&");
+            String pairs[] = url.split("&(amp;)?");
             for (String pair : pairs)
             {
                String name;
