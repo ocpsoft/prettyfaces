@@ -5,6 +5,8 @@
 Features & Enhancements:
 * Performance improvements when running JSF 2.0 in project stage 'development'
 * Regular expression performance improvements provided by Yann Simon.
+* Ambiguous View IDs are now resolved automatically when using pretty:mappingIds in action method navigation, <h:link> and <h:button> component outcomes
+* Ambiguous View IDs may now be resolved manually for outbound URL rewrites by adding '?com.ocpsoft.mappingId=...' to URLs before calling HttpServletResponse.encodeURL(...)
 
 Bugfixes:
 * Fixed bug that caused path parameter validators to be ignored (#102)

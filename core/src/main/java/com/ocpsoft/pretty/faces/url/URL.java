@@ -15,7 +15,6 @@
  */
 package com.ocpsoft.pretty.faces.url;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,8 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.ocpsoft.pretty.PrettyException;
 
 public class URL
 {
@@ -36,8 +33,7 @@ public class URL
    private final Map<String, List<String>> decodedSegments = new HashMap<String, List<String>>();
 
    /**
-    * Create a URL object for the given url String. The input string must not
-    * yet have been decoded.
+    * Create a URL object for the given url String. The input string must not yet have been decoded.
     * 
     * @param url The raw, un-decoded url String
     */
@@ -66,16 +62,25 @@ public class URL
       }
    }
 
+   public static URL build(final String url)
+   {
+      return new URL(url);
+   }
+
    /**
-    * Create a URL object for the given url segments (separated by '/' from the
-    * original url string), using the given metadata object to represent the
-    * encoding and leading/trailing slash information about this URL.
+    * Create a URL object for the given url segments (separated by '/' from the original url string), using the given
+    * metadata object to represent the encoding and leading/trailing slash information about this URL.
     */
    public URL(final List<String> segments, final Metadata metadata)
    {
       this.metadata = metadata;
       this.segments = segments;
       this.originalURL = metadata.buildURLFromSegments(segments);
+   }
+
+   public static URL build(final List<String> segments, final Metadata metadata)
+   {
+      return new URL(segments, metadata);
    }
 
    /**
@@ -89,13 +94,13 @@ public class URL
          List<String> result = new ArrayList<String>();
          for (String segment : segments)
          {
-            result.add( decodeSegment(segment) );
+            result.add(decodeSegment(segment));
          }
          decodedSegments.put(encoding, Collections.unmodifiableList(result));
       }
       return decodedSegments.get(encoding);
    }
-   
+
    /**
     * Get a list of all encoded segments (separated by '/') in this URL.
     */
@@ -104,22 +109,23 @@ public class URL
       List<String> resultSegments = new ArrayList<String>();
       for (String segment : segments)
       {
-         resultSegments.add( encodeSegment(segment) );
+         resultSegments.add(encodeSegment(segment));
       }
       return resultSegments;
    }
-   
+
    /**
-    * Encodes a segment using the {@link URI} class. 
+    * Encodes a segment using the {@link URI} class.
+    * 
     * @param segment The segment to encode
     * @return the encoded segment
     */
-   private static String encodeSegment(String segment)
+   private static String encodeSegment(final String segment)
    {
       try
       {
-         final URI uri = new URI( "http", "localhost", "/"+segment, null );
-         return uri.toASCIIString().substring( 17 );
+         final URI uri = new URI("http", "localhost", "/" + segment, null);
+         return uri.toASCIIString().substring(17);
       }
       catch (URISyntaxException e)
       {
@@ -129,14 +135,15 @@ public class URL
 
    /**
     * Decodes a segment using the {@link URI} class.
+    * 
     * @param segment The segment to decode
     * @return the decoded segment
     */
-   private static String decodeSegment(String segment)
+   private static String decodeSegment(final String segment)
    {
       try
       {
-         final URI uri = new URI( ("http://localhost/" + segment).replace(" ", "%20") );
+         final URI uri = new URI(("http://localhost/" + segment).replace(" ", "%20"));
          return uri.getPath().substring(1);
       }
       catch (URISyntaxException e)
@@ -144,7 +151,6 @@ public class URL
          throw new IllegalArgumentException(e);
       }
    }
-   
 
    /**
     * Return a decoded form of this URL.

@@ -43,6 +43,8 @@ import com.ocpsoft.pretty.faces.util.PrettyURLBuilder;
  */
 public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
 {
+   public static final String REWRITE_MAPPING_ID_KEY = "com.ocpsoft.mappingId";
+
    private final RewriteEngine rewriteEngine = new RewriteEngine();
 
    private final PrettyConfig prettyConfig;
@@ -116,11 +118,21 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
          String strippedUrl = stripContextPath(url);
 
          List<UrlMapping> matches = new ArrayList<UrlMapping>();
-         for (UrlMapping m : prettyConfig.getMappings())
+
+         QueryString queryString = QueryString.build(strippedUrl);
+         String mappingId = queryString.getParameter("com.ocpsoft.mappingId");
+         if (mappingId != null)
          {
-            if (!"".equals(m.getViewId()) && strippedUrl.startsWith(m.getViewId()))
+            matches.add(prettyConfig.getMappingById(mappingId));
+         }
+         else
+         {
+            for (UrlMapping m : prettyConfig.getMappings())
             {
-               matches.add(m);
+               if (!"".equals(m.getViewId()) && strippedUrl.startsWith(m.getViewId()))
+               {
+                  matches.add(m);
+               }
             }
          }
 
@@ -139,6 +151,9 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
                if (url.contains("?"))
                {
                   qs.addParameters(url);
+
+                  // remove own own metadata
+                  qs.removeParameter("com.ocpsoft.mappingId");
                }
                Map<String, String[]> queryParams = qs.getParameterMap();
 

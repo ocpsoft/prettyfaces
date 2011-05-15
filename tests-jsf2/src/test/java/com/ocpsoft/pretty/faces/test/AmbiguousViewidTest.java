@@ -17,8 +17,6 @@
 package com.ocpsoft.pretty.faces.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.faces.context.FacesContext;
@@ -26,7 +24,7 @@ import javax.faces.context.FacesContext;
 import org.jboss.arquillian.MavenArtifactResolver;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jsfunit.framework.Environment;
+import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,71 +34,53 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.ocpsoft.pretty.PrettyContext;
+import com.ocpsoft.pretty.faces.application.PrettyNavigationHandler;
+import com.ocpsoft.pretty.faces.servlet.PrettyFacesWrappedResponse;
+import com.ocpsoft.pretty.faces.test.redirect.RedirectBean;
 
 @RunWith(Arquillian.class)
-public class PrettyContextTest
+public class AmbiguousViewidTest
 {
    @Deployment
    public static Archive<?> createDeployment()
    {
       return ShrinkWrap.create(WebArchive.class, "test.war")
-               .addResource("basic/index.xhtml", "index.xhtml")
+               .addClass(RedirectBean.class)
+               .addClass(PrettyNavigationHandler.class)
+               .addClass(PrettyFacesWrappedResponse.class)
+               .addResource("basic/ambiguousViewId.xhtml", "index.xhtml")
+               .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml")
                .addWebResource("faces-config.xml")
-               .addWebResource("pretty-config.xml")
                .addLibrary(MavenArtifactResolver.resolve(
                         "com.ocpsoft:prettyfaces-jsf2:3.3.0-SNAPSHOT"))
                .setWebXML("jsf-web.xml");
    }
 
    @Test
-   public void testEnvironment() throws Exception
+   public void testSelectsCorrectViewOnNavigation() throws Exception
    {
-      assertTrue(Environment.is12Compatible());
-      assertTrue(Environment.is20Compatible());
-      assertEquals(2, Environment.getJSFMajorVersion());
-      assertEquals(0, Environment.getJSFMinorVersion());
-   }
+      String expected = "/foo";
 
-   @Test
-   public void testPrettyFacesIndexPage() throws Exception
-   {
-      JSFSession jsfSession = new JSFSession("/");
+      JSFSession jsfSession = new JSFSession(expected);
       JSFServerSession server = jsfSession.getJSFServerSession();
-      FacesContext context = server.getFacesContext();
 
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+      JSFClientSession client = jsfSession.getJSFClientSession();
 
-      assertTrue(prettyContext.isPrettyRequest());
-      assertEquals("/", prettyContext.getRequestURL().toString());
-      assertNotNull(prettyContext.getConfig());
-   }
-
-   @Test
-   public void testNonMappedRequest() throws Exception
-   {
-      JSFSession jsfSession = new JSFSession("/index.jsf");
-
-      JSFServerSession server = jsfSession.getJSFServerSession();
       FacesContext context = server.getFacesContext();
       PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
 
-      assertFalse(prettyContext.isPrettyRequest());
-      assertEquals("/index.jsf", prettyContext.getRequestURL().toString());
-      assertNotNull(prettyContext.getConfig());
-   }
+      client.click("bar");
 
-   @Test
-   public void testJSessionIdRemovedAutomatically() throws Exception
-   {
-      JSFSession jsfSession = new JSFSession("/;jsessionid=F97KJHsf9876sdf?foo=bar");
-      JSFServerSession server = jsfSession.getJSFServerSession();
-      FacesContext context = server.getFacesContext();
+      prettyContext = PrettyContext.getCurrentInstance(server.getFacesContext());
+      String actual = prettyContext.getRequestURL().toString();
+      assertEquals("/bar", actual);
+      assertTrue(prettyContext.getRequestQueryString().getParameterMap().isEmpty());
 
-      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+      client.click("foo");
 
-      assertTrue(prettyContext.isPrettyRequest());
-      assertEquals("/", prettyContext.getRequestURL().toString());
-      assertEquals("bar", prettyContext.getRequestQueryString().getParameter("foo"));
-      assertNotNull(prettyContext.getConfig());
+      prettyContext = PrettyContext.getCurrentInstance(server.getFacesContext());
+      actual = prettyContext.getRequestURL().toString();
+      assertEquals("/foo", actual);
+      assertTrue(prettyContext.getRequestQueryString().getParameterMap().isEmpty());
    }
 }

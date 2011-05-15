@@ -253,7 +253,7 @@ public class QueryString
                   catch (IllegalArgumentException e)
                   {
                      // thrown by URLDecoder if character decoding fails
-                     log.warn("Ignoring invalid query parameter: "+pair);
+                     log.warn("Ignoring invalid query parameter: " + pair);
                      continue;
                   }
                   catch (UnsupportedEncodingException e)
@@ -353,5 +353,10 @@ public class QueryString
    public String toString()
    {
       return toQueryString();
+   }
+
+   public List<String> removeParameter(final String string)
+   {
+      return parameters.remove(string);
    }
 }

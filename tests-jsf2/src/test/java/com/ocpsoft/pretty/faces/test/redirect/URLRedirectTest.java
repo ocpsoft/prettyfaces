@@ -49,7 +49,7 @@ public class URLRedirectTest
                .addWebResource("redirect/redirect-pretty-config.xml", "pretty-config.xml")
                .addWebResource("faces-config.xml")
                .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.2.1-SNAPSHOT"))
+                        "com.ocpsoft:prettyfaces-jsf2:3.3.0-SNAPSHOT"))
                .setWebXML("jsf-web.xml");
    }
 

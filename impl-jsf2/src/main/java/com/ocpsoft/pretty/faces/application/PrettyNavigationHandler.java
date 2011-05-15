@@ -27,6 +27,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
+import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
+import com.ocpsoft.pretty.faces.servlet.PrettyFacesWrappedResponse;
+import com.ocpsoft.pretty.faces.url.QueryString;
+import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesNavigationURLCanonicalizer;
 
 /**
@@ -87,9 +91,22 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
           * FIXME this will not work with dynamic view IDs... figure out another solution
           * (<rewrite-view>/faces/views/myview.xhtml</rewrite-view> ? For now. Do not support it.
           */
-         String viewId = config.getMappingById(outcome).getViewId();
-         String normalizedViewId = FacesNavigationURLCanonicalizer.normalizeRequestURI(context, viewId);
-         NavigationCase navigationCase = parent.getNavigationCase(context, fromAction, normalizedViewId);
+         UrlMapping mapping = config.getMappingById(outcome);
+         String viewId = mapping.getViewId();
+         viewId = FacesNavigationURLCanonicalizer.normalizeRequestURI(context, viewId);
+
+         URL url = new URL(viewId);
+         url.getMetadata().setLeadingSlash(true);
+         QueryString qs = QueryString.build("");
+         if (viewId.contains("?"))
+         {
+            qs.addParameters(viewId);
+         }
+         qs.addParameters("?" + PrettyFacesWrappedResponse.REWRITE_MAPPING_ID_KEY + "=" + mapping.getId());
+
+         viewId = url.toString() + qs.toQueryString();
+
+         NavigationCase navigationCase = parent.getNavigationCase(context, fromAction, viewId);
          return navigationCase;
       }
       else

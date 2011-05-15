@@ -28,7 +28,7 @@ public class InfiniteLoopTest
                .addResource("loop/loop.xhtml", "loop.xhtml")
                .addWebResource("loop/loop-pretty-config.xml", "pretty-config.xml")
                .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.2.1-SNAPSHOT"))
+                        "com.ocpsoft:prettyfaces-jsf2:3.3.0-SNAPSHOT"))
                .setWebXML("jsf-web.xml");
    }
 
