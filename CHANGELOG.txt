@@ -7,6 +7,7 @@ Features & Enhancements:
 * Regular expression performance improvements provided by Yann Simon.
 * Ambiguous View IDs are now resolved automatically when using pretty:mappingIds in action method navigation, <h:link> and <h:button> component outcomes
 * Ambiguous View IDs may now be resolved manually for outbound URL rewrites by adding '?com.ocpsoft.mappingId=...' to URLs before calling HttpServletResponse.encodeURL(...)
+* Dynaview URLs are now resolved during rendering of links and navigation cases, and are now as functional as traditional mappings.
 
 Bugfixes:
 * Fixed bug that caused path parameter validators to be ignored (#102)

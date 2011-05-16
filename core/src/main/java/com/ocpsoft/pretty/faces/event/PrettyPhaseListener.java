@@ -21,18 +21,12 @@ import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
-import com.ocpsoft.pretty.PrettyException;
-import com.ocpsoft.pretty.faces.application.PrettyRedirector;
 import com.ocpsoft.pretty.faces.beans.ActionExecutor;
-import com.ocpsoft.pretty.faces.beans.ExtractedValuesURLBuilder;
 import com.ocpsoft.pretty.faces.beans.ParameterInjector;
 import com.ocpsoft.pretty.faces.beans.ParameterValidator;
+import com.ocpsoft.pretty.faces.config.dynaview.DynaviewEngine;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
-import com.ocpsoft.pretty.faces.util.FacesElUtils;
 import com.ocpsoft.pretty.faces.util.FacesMessagesUtils;
 
 /**
@@ -41,12 +35,11 @@ import com.ocpsoft.pretty.faces.util.FacesMessagesUtils;
 public class PrettyPhaseListener implements PhaseListener
 {
    private static final long serialVersionUID = 2345410822999587673L;
-   private static final Log log = LogFactory.getLog(PrettyPhaseListener.class);
-   private static FacesElUtils elUtils = new FacesElUtils();
    private final FacesMessagesUtils messagesUtils = new FacesMessagesUtils();
    private final ActionExecutor executor = new ActionExecutor();
    private final ParameterInjector injector = new ParameterInjector();
    private final ParameterValidator validator = new ParameterValidator();
+   private final DynaviewEngine dynaview = new DynaviewEngine();
 
    public PhaseId getPhaseId()
    {
@@ -96,7 +89,8 @@ public class PrettyPhaseListener implements PhaseListener
             validator.validateParameters(event.getFacesContext());
 
             // abort if validation failed, 404 response code has already been set
-            if(event.getFacesContext().getResponseComplete()) {
+            if (event.getFacesContext().getResponseComplete())
+            {
                return;
             }
 
@@ -107,7 +101,7 @@ public class PrettyPhaseListener implements PhaseListener
          PrettyContext prettyContext = PrettyContext.getCurrentInstance(event.getFacesContext());
          if (prettyContext.shouldProcessDynaview())
          {
-            processDynaView(prettyContext, event.getFacesContext());
+            dynaview.processDynaView(prettyContext, event.getFacesContext());
          }
          else if (!event.getFacesContext().getResponseComplete())
          {
@@ -116,96 +110,6 @@ public class PrettyPhaseListener implements PhaseListener
             processEvent(event);
          }
       }
-   }
-
-   /**
-    * Handle DynaView processing. This method will end the Faces life-cycle.
-    */
-   private void processDynaView(final PrettyContext prettyContext, final FacesContext facesContext)
-   {
-      log.trace("Requesting DynaView processing for: " + prettyContext.getRequestURL());
-      String viewId = "";
-      try
-      {
-         viewId = prettyContext.getCurrentViewId();
-         log.trace("Invoking DynaView method: " + viewId);
-         Object result = computeDynaViewId(facesContext);
-         if (result instanceof String)
-         {
-            viewId = (String) result;
-            log.trace("Forwarding to DynaView: " + viewId);
-            prettyContext.setDynaviewProcessed(true);
-            facesContext.getExternalContext().dispatch(viewId);
-            facesContext.responseComplete();
-         }
-      }
-      catch (Exception e)
-      {
-         PrettyRedirector prettyRedirector = new PrettyRedirector();
-         prettyRedirector.send404(facesContext);
-         throw new PrettyException("Could not forward to view: " + viewId + "", e);
-      }
-   }
-
-   /**
-    * Calculate the Faces ViewId to which this request URI resolves. This method will recursively call any dynamic
-    * mapping viewId functions as needed until a String viewId is returned, or supplied by a static mapping.
-    * <p>
-    * This phase does not support FacesNavigation or PrettyRedirecting. Its SOLE purpose is to resolve a viewId.
-    * <p>
-    * <i><b>Note:</b> Precondition - parameter injection must take place before this</i>
-    * <p>
-    * <i>Postcondition - currentViewId is set to computed View Id</i>
-    * 
-    * @param facesContext2
-    * 
-    * @return JSF viewID to which this request resolves.
-    */
-   private String computeDynaViewId(FacesContext facesContext)
-   {
-      PrettyContext context = PrettyContext.getCurrentInstance(facesContext);
-
-      String result = "";
-      UrlMapping urlMapping = context.getCurrentMapping();
-      if (urlMapping != null)
-      {
-         String viewId = urlMapping.getViewId();
-         if (viewId == null)
-         {
-            viewId = "";
-         }
-         while (elUtils.isEl(viewId))
-         {
-            Object viewResult = elUtils.invokeMethod(facesContext, viewId);
-            if (viewResult == null)
-            {
-               viewId = "";
-               break;
-            }
-            else
-            {
-               viewId = viewResult.toString();
-            }
-
-            if (context.getConfig().isMappingId(viewId))
-            {
-               urlMapping = context.getConfig().getMappingById(viewId);
-               viewId = urlMapping.getViewId();
-               ExtractedValuesURLBuilder builder = new ExtractedValuesURLBuilder();
-               result = context.getContextPath() + builder.buildURL(urlMapping).encode()
-                        + builder.buildQueryString(urlMapping);
-            }
-            else
-            {
-               result = viewId;
-            }
-         }
-         if ("".equals(viewId))
-         {
-            log.debug("ViewId for mapping with id <" + urlMapping.getId() + "> was blank");
-         }
-      }
-      return context.stripContextPath(result);
    }
 
    private void processEvent(final PhaseEvent event)

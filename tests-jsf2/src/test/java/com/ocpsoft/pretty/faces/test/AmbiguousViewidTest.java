@@ -47,6 +47,7 @@ public class AmbiguousViewidTest
       return ShrinkWrap.create(WebArchive.class, "test.war")
                .addClass(RedirectBean.class)
                .addClass(PrettyNavigationHandler.class)
+               .addClass(AmbiguousBean.class)
                .addClass(PrettyFacesWrappedResponse.class)
                .addResource("basic/ambiguousViewId.xhtml", "index.xhtml")
                .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml")
@@ -82,5 +83,27 @@ public class AmbiguousViewidTest
       actual = prettyContext.getRequestURL().toString();
       assertEquals("/foo", actual);
       assertTrue(prettyContext.getRequestQueryString().getParameterMap().isEmpty());
+   }
+
+   @Test
+   public void testRendersCorrectURLForDynaview() throws Exception
+   {
+      String expected = "/baz";
+
+      JSFSession jsfSession = new JSFSession(expected);
+      JSFServerSession server = jsfSession.getJSFServerSession();
+
+      JSFClientSession client = jsfSession.getJSFClientSession();
+
+      FacesContext context = server.getFacesContext();
+      PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+
+      client.click("baz");
+
+      prettyContext = PrettyContext.getCurrentInstance(server.getFacesContext());
+      String actual = prettyContext.getRequestURL().toString();
+      assertEquals("/baz", actual);
+      assertTrue(prettyContext.getRequestQueryString().getParameterMap().isEmpty());
+      assertEquals(prettyContext.getContextPath() + "/baz", client.getElement("baz").getAttribute("href"));
    }
 }

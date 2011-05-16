@@ -11,4 +11,8 @@
       <pattern value="/bar" />
       <view-id>/index.jsf</view-id>
    </url-mapping>
+   <url-mapping id="baz">
+      <pattern value="/baz" />
+      <view-id value="#{ambiguousBean.getView}"/>
+   </url-mapping>
 </pretty-config>

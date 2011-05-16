@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
+import com.ocpsoft.pretty.faces.config.dynaview.DynaviewEngine;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.servlet.PrettyFacesWrappedResponse;
 import com.ocpsoft.pretty.faces.url.QueryString;
@@ -42,6 +43,7 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
 
    private final ConfigurableNavigationHandler parent;
    private final PrettyRedirector pr = PrettyRedirector.getInstance();
+   private final DynaviewEngine dynaview = new DynaviewEngine();
 
    public PrettyNavigationHandler(final ConfigurableNavigationHandler parent)
    {
@@ -93,6 +95,10 @@ public class PrettyNavigationHandler extends ConfigurableNavigationHandler
           */
          UrlMapping mapping = config.getMappingById(outcome);
          String viewId = mapping.getViewId();
+         if (mapping.isDynaView())
+         {
+            viewId = dynaview.calculateDynaviewId(context, mapping);
+         }
          viewId = FacesNavigationURLCanonicalizer.normalizeRequestURI(context, viewId);
 
          URL url = new URL(viewId);
