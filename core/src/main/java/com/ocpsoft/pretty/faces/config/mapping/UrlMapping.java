@@ -174,7 +174,7 @@ public class UrlMapping
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (viewId == null ? 0 : viewId.hashCode());
+      result = prime * result + (id == null ? 0 : id.hashCode());
       return result;
    }
 
@@ -194,14 +194,14 @@ public class UrlMapping
          return false;
       }
       UrlMapping other = (UrlMapping) obj;
-      if (viewId == null)
+      if (id == null)
       {
-         if (other.viewId != null)
+         if (other.id != null)
          {
             return false;
          }
       }
-      else if (!viewId.equals(other.viewId))
+      else if (!id.equals(other.id))
       {
          return false;
       }
