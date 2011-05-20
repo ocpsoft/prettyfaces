@@ -145,17 +145,14 @@ public class PrettyConfig
       if (viewId != null)
       {
          viewId = viewId.trim();
-         UrlMapping needle = new UrlMapping();
-         needle.setViewId(viewId);
-         if (viewId.startsWith("/"))
+         for (UrlMapping mapping : mappings)
          {
-            if (getMappings().contains(needle))
+            if (viewId.equals(mapping.getViewId())
+                  || (viewId.startsWith("/") && viewId.substring(1).equals(mapping.getViewId())))
             {
                return true;
             }
-            needle.setViewId(viewId.substring(1));
          }
-         return getMappings().contains(needle);
       }
       return false;
    }
