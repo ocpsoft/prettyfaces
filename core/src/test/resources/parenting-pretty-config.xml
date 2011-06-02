@@ -16,6 +16,11 @@
       <view-id value="/child.jsf" />
    </url-mapping>
 
+   <url-mapping id="child2" parentId="parent">
+      <pattern value="/child2/#{name}" />
+      <view-id value="/child2.jsf" />
+   </url-mapping>
+
    <url-mapping id="grandchild" parentId="child">
       <pattern value="/grandchild/#{gname}">
          <validate index="0" validatorIds="validator2" onError="#{validationBean.handle2}" validator="#{validationBean.validateMethod}" />

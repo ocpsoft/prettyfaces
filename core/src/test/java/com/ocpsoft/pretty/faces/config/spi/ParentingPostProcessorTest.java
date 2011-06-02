@@ -62,12 +62,14 @@ public class ParentingPostProcessorTest
    {
 
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new DigesterPrettyConfigParser().parse(builder, getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"));
+      new DigesterPrettyConfigParser().parse(builder,
+               getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"));
       PrettyConfig config = builder.build();
 
       assertEquals("", config.getMappingById("parent").getParentId());
       assertEquals("parent", config.getMappingById("child").getParentId());
       assertEquals("child", config.getMappingById("grandchild").getParentId());
+      assertEquals("parent", config.getMappingById("child2").getParentId());
    }
 
    @Test
@@ -81,8 +83,10 @@ public class ParentingPostProcessorTest
       EasyMock.expect(servletContext.getClassLoader()).andReturn(mockResourceLoader).anyTimes();
       EasyMock.expect(servletContext.getInitParameterNames()).andReturn(initParameterNames).anyTimes();
       EasyMock.expect(servletContext.getInitParameter(PrettyContext.CONFIG_KEY)).andReturn(null).anyTimes();
-      EasyMock.expect(servletContext.getInitParameter(ClassLoaderConfigurationProvider.CLASSPATH_CONFIG_ENABLED)).andReturn("false").anyTimes();
-      EasyMock.expect(servletContext.getResourceAsStream(DefaultXMLConfigurationProvider.DEFAULT_PRETTY_FACES_CONFIG)).andReturn(mockPrettyConfigInputStream()).anyTimes();
+      EasyMock.expect(servletContext.getInitParameter(ClassLoaderConfigurationProvider.CLASSPATH_CONFIG_ENABLED))
+               .andReturn("false").anyTimes();
+      EasyMock.expect(servletContext.getResourceAsStream(DefaultXMLConfigurationProvider.DEFAULT_PRETTY_FACES_CONFIG))
+               .andReturn(mockPrettyConfigInputStream()).anyTimes();
 
       final PrettyConfigurator configurator = new PrettyConfigurator(servletContext);
       EasyMock.replay(servletContext);
@@ -90,7 +94,7 @@ public class ParentingPostProcessorTest
 
       final PrettyConfig config = configurator.getConfig();
 
-      assertEquals(3, config.getMappings().size());
+      assertEquals(4, config.getMappings().size());
       assertEquals("/parent", config.getMappingById("parent").getPattern());
       assertEquals("/parent/child/#{name}", config.getMappingById("child").getPattern());
       assertEquals("/parent/child/#{name}/grandchild/#{gname}", config.getMappingById("grandchild").getPattern());

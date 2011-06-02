@@ -64,6 +64,12 @@ public class PrettyViewHandler extends ViewHandler
       return result;
    }
 
+   @Override
+   public String deriveLogicalViewId(final FacesContext context, final String rawViewId)
+   {
+      return parent.deriveLogicalViewId(context, rawViewId);
+   }
+
    private void setBookmarkable(final boolean value)
    {
       bookmarkable.set(value);
