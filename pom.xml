@@ -69,13 +69,18 @@
          </modules>
       </profile>
       <profile>
+         <id>test</id>
+         <modules>
+            <module>tests-jsf2</module>
+         </modules>
+	  </profile>
+      <profile>
          <id>strict</id>
          <modules>
             <module>core</module>
             <module>impl-jsf11</module>
             <module>impl-jsf12</module>
             <module>impl-jsf2</module>
-            <module>tests-jsf2</module>
          </modules>
          <build>
             <plugins>
