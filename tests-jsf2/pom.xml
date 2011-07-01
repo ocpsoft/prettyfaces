@@ -104,7 +104,7 @@
 
    <profiles>
       <profile>
-         <id>strict</id>
+         <id>arq-jetty-embedded</id>
          <activation>
             <activeByDefault>true</activeByDefault>
          </activation>
