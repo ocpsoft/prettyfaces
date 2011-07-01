@@ -76,7 +76,10 @@ public class RewriteRule
             {
                 redirect = Redirect.TEMPORARY;
             }
-            redirect = Redirect.valueOf(element.getRedirect().toUpperCase());
+            else
+            {
+                redirect = Redirect.valueOf(element.getRedirect().toUpperCase());
+            }
         }
         if (element.getToCase() != null)
         {
