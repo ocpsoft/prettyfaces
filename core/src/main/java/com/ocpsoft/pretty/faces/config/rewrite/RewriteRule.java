@@ -19,6 +19,8 @@ package com.ocpsoft.pretty.faces.config.rewrite;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ocpsoft.pretty.faces.config.types.RewriteElement;
+
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
@@ -36,6 +38,56 @@ public class RewriteRule
 
     private Pattern pattern = Pattern.compile("");
 
+    /**
+     * Creates an empty {@link RewriteRule}
+     */
+    public RewriteRule()
+    {
+        // nothing
+    }
+
+    /**
+     * Creates an rewrite rule from the supplied JAXB object
+     * 
+     * @param element
+     *            The JAXB object
+     */
+    public RewriteRule(RewriteElement element)
+    {
+        match = element.getMatch();
+        substitute = element.getSubstitute();
+        processor = element.getProcessor();
+        url = element.getUrl();
+        if (element.isInbound() != null)
+        {
+            inbound = element.isInbound();
+        }
+        if (element.isOutbound() != null)
+        {
+            outbound = element.isOutbound();
+        }
+        if (element.getRedirect() != null)
+        {
+            if ("301".equals(element.getRedirect()))
+            {
+                redirect = Redirect.PERMANENT;
+            }
+            else if ("302".equals(element.getRedirect()))
+            {
+                redirect = Redirect.TEMPORARY;
+            }
+            redirect = Redirect.valueOf(element.getRedirect().toUpperCase());
+        }
+        if (element.getToCase() != null)
+        {
+            toCase = Case.valueOf(element.getToCase().name().toUpperCase());
+        }
+        if (element.getTrailingSlash() != null)
+        {
+            trailingSlash = TrailingSlash.valueOf(element.getTrailingSlash().name().toUpperCase());
+        }
+    }
+    
     /**
      * Return true if the <b>match</b> field contains a regex that matches some
      * or all of the given URL, false if no match is found.
