@@ -2,7 +2,9 @@ package com.ocpsoft.pretty.faces.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -11,6 +13,8 @@ import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -30,11 +34,15 @@ import com.ocpsoft.pretty.faces.config.types.PrettyConfigElement;
 public class JAXBPrettyConfigParser implements PrettyConfigParser
 {
 
+   private static final String SCHEMA_LOCATION = "META-INF/ocpsoft-pretty-faces-3.2.1.xsd";
+
    private final static String JAXB_CLASS_PACKAGE = "com.ocpsoft.pretty.faces.config.types";
 
    private JAXBContext jaxbContext;
 
    private SAXParserFactory saxParserFactory;
+
+   private Schema schema;
 
    /**
     * Constructor
@@ -49,9 +57,21 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
          // create a namespace aware SAXParserFactory
          saxParserFactory = SAXParserFactory.newInstance();
          saxParserFactory.setNamespaceAware(true);
+         
+         // load schema from classpath
+         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+         URL schemaUrl = classLoader.getResource(SCHEMA_LOCATION);
+         if(schemaUrl == null) {
+            throw new IllegalStateException("Unable to load schema from: "+SCHEMA_LOCATION);
+         }
+         schema = schemaFactory.newSchema(schemaUrl);
 
       }
       catch (JAXBException e)
+      {
+      }
+      catch (SAXException e)
       {
          throw new IllegalStateException(e);
       }
@@ -77,6 +97,9 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
          xmlReader.setContentHandler(unmarshaller.getUnmarshallerHandler());
          SAXSource source = new SAXSource(namespaceFilter, new InputSource(resource));
 
+         // validate configuration
+         //unmarshaller.setSchema(schema);
+         
          // parse the document and get the PrettyConfigElement
          JAXBElement<?> e = (JAXBElement<?>) unmarshaller.unmarshal(source);
          PrettyConfigElement prettyConfigElement = (PrettyConfigElement) e.getValue();
