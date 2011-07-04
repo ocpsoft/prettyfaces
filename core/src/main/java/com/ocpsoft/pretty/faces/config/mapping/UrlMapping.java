@@ -18,6 +18,10 @@ package com.ocpsoft.pretty.faces.config.mapping;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ocpsoft.pretty.faces.config.types.ActionElement;
+import com.ocpsoft.pretty.faces.config.types.QueryParamElement;
+import com.ocpsoft.pretty.faces.config.types.UrlMappingElement;
+import com.ocpsoft.pretty.faces.config.types.ValidateElement;
 import com.ocpsoft.pretty.faces.el.Expressions;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.url.URLPatternParser;
@@ -38,6 +42,66 @@ public class UrlMapping
    private boolean onPostback = true;
    private URLPatternParser parser;
    private boolean dirty = true;
+
+   /**
+    * Creates an empty {@link UrlMapping}
+    */
+   public UrlMapping()
+   {
+      // nothing
+   }
+
+   /**
+    * Creates an URL mapping from the supplied JAXB object
+    * 
+    * @param mappingElement
+    *           The JAXB object
+    */
+   public UrlMapping(UrlMappingElement mappingElement)
+   {
+      if (mappingElement.getId() != null)
+      {
+         id = mappingElement.getId();
+      }
+      if (mappingElement.getParentId() != null)
+      {
+         parentId = mappingElement.getParentId();
+      }
+      if (mappingElement.isOutbound() != null)
+      {
+         outbound = mappingElement.isOutbound();
+      }
+      if (mappingElement.getViewId() != null)
+      {
+         viewId = mappingElement.getViewId().getValue();
+      }
+      if (mappingElement.isOnPostback() != null)
+      {
+         onPostback = mappingElement.isOnPostback();
+      }
+      if (mappingElement.getPattern() != null)
+      {
+         if (mappingElement.getPattern().getValue() != null)
+         {
+            pattern = mappingElement.getPattern().getValue();
+         }
+         if (mappingElement.getPattern().getValidate() != null)
+         {
+            for (ValidateElement validateElement : mappingElement.getPattern().getValidate())
+            {
+               pathValidators.add(new PathValidator(validateElement));
+            }
+         }
+      }
+      for (ActionElement actionElement : mappingElement.getAction())
+      {
+         actions.add(new UrlAction(actionElement));
+      }
+      for (QueryParamElement queryParamElement : mappingElement.getQueryParam())
+      {
+         queryParams.add(new QueryParameter(queryParamElement));
+      }
+   }
 
    /**
     * Return whether or not this Mapping requires DynaView capabilities

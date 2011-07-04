@@ -3,6 +3,31 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.1.1 http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.1.1.xsd">
 
+    <!-- minimal mapping -->
+    <url-mapping/>
+
+    <!-- some sample mapping -->
+    <url-mapping id="store">
+        <pattern value="/store/" />
+        <view-id value="/faces/shop/store.jsf" />
+        <query-param name="language"> #{bean.language} </query-param>
+    </url-mapping>
+
+    <!-- complete mapping -->
+    <url-mapping id="complete" onPostback="false" outbound="false"
+        parentId="parentId" inbound="false">
+        <pattern value="/#{bean.path}">
+            <validate index="0" validatorIds="validator1"
+                onError="#{bean.validatorError}" validator="#{bean.validate}" />
+        </pattern>
+        <query-param name="q" validatorIds="validatorId"
+            onError="pretty:error" validator="#{bean.validate}" onPostback="false">
+            #{bean.query}
+        </query-param>
+        <action onPostback="false" phaseId="RENDER_RESPONSE">#{bean.action}</action>
+        <view-id value="/faces/validate.jsf" />
+    </url-mapping>
+
     <!-- minimal configuration -->
     <rewrite />
 

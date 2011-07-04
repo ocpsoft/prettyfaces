@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.ocpsoft.pretty.faces.config.types.ValidateElement;
 import com.ocpsoft.pretty.faces.el.ConstantExpression;
 import com.ocpsoft.pretty.faces.el.PrettyExpression;
 
@@ -42,6 +43,29 @@ public class PathValidator
         this.onError = onError;
     }
 
+    /**
+     * Creates a path validator from the supplied JAXB object
+     * 
+     * @param validateElement
+     *            The JAXB object
+     */
+    public PathValidator(ValidateElement validateElement)
+    {
+        index = validateElement.getIndex();
+        if (validateElement.getOnError() != null)
+        {
+            onError = validateElement.getOnError();
+        }
+        if (validateElement.getValidatorIds() != null)
+        {
+            validatorIds = validateElement.getValidatorIds();
+        }
+        if (validateElement.getValidator() != null)
+        {
+            validatorExpression = new ConstantExpression(validateElement.getValidator());
+        }
+    }
+    
     public boolean hasValidators()
     {
         return validatorIds.trim().length() > 0;

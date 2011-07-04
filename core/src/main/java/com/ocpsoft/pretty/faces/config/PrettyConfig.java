@@ -28,6 +28,7 @@ import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.config.types.PrettyConfigElement;
 import com.ocpsoft.pretty.faces.config.types.RewriteElement;
+import com.ocpsoft.pretty.faces.config.types.UrlMappingElement;
 import com.ocpsoft.pretty.faces.url.URL;
 
 public class PrettyConfig
@@ -57,6 +58,10 @@ public class PrettyConfig
       for (RewriteElement rewriteElement : prettyConfigElement.getRewrite())
       {
          globalRewriteRules.add(new RewriteRule(rewriteElement));
+      }
+      for (UrlMappingElement mappingElement : prettyConfigElement.getUrlMapping())
+      {
+         mappings.add(new UrlMapping(mappingElement));
       }
    }
 
