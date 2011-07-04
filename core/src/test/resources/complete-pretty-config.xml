@@ -15,7 +15,7 @@
 
     <!-- complete mapping -->
     <url-mapping id="complete" onPostback="false" outbound="false"
-        parentId="parentId" inbound="false">
+        parentId="parentId">
         <pattern value="/#{bean.path}">
             <validate index="0" validatorIds="validator1"
                 onError="#{bean.validatorError}" validator="#{bean.validate}" />
