@@ -26,7 +26,7 @@ public class JAXBPrettyConfigParserTest
       InputStream xml = getClass().getClassLoader().getResourceAsStream("complete-pretty-config.xml");
       assertNotNull("Cannot find pretty-config.xml file for test!", xml);
       PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new JAXBPrettyConfigParser().parse(builder, xml);
+      new JAXBPrettyConfigParser().parse(builder, xml, false);
       config = builder.build();
    }
 

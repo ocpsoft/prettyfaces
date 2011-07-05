@@ -43,7 +43,7 @@ public class MappingDigesterPrettyConfigParserTest
    public void configure() throws IOException, SAXException
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new DigesterPrettyConfigParser().parse(builder, getClass().getClassLoader().getResourceAsStream(CONFIG_PATH));
+      new DigesterPrettyConfigParser().parse(builder, getClass().getClassLoader().getResourceAsStream(CONFIG_PATH), false);
       config = builder.build();
    }
 

@@ -63,7 +63,7 @@ public class ParentingPostProcessorTest
 
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
       new DigesterPrettyConfigParser().parse(builder,
-               getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"));
+               getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"), false);
       PrettyConfig config = builder.build();
 
       assertEquals("", config.getMappingById("parent").getParentId());
