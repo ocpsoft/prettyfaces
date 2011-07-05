@@ -64,7 +64,7 @@ public class ContextSpecifiedConfigurationProvider implements ConfigurationProvi
 
          try
          {
-            configParser.parse(builder, is);
+            configParser.parse(builder, is, false);
          }
          catch (Exception e)
          {

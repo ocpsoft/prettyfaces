@@ -70,6 +70,7 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
       }
       catch (JAXBException e)
       {
+         throw new IllegalStateException(e);
       }
       catch (SAXException e)
       {
@@ -82,7 +83,8 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
     * com.ocpsoft.pretty.faces.config.PrettyConfigParser#parse(com.ocpsoft.pretty
     * .faces.config.PrettyConfigBuilder, java.io.InputStream)
     */
-   public void parse(PrettyConfigBuilder builder, InputStream resource) throws IOException, SAXException
+   public void parse(PrettyConfigBuilder builder, InputStream resource, boolean validate) throws IOException,
+         SAXException
    {
 
       try
@@ -97,8 +99,11 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
          xmlReader.setContentHandler(unmarshaller.getUnmarshallerHandler());
          SAXSource source = new SAXSource(namespaceFilter, new InputSource(resource));
 
-         // validate configuration
-         //unmarshaller.setSchema(schema);
+         // optional validation
+         if (validate)
+         {
+            unmarshaller.setSchema(schema);
+         }
          
          // parse the document and get the PrettyConfigElement
          JAXBElement<?> e = (JAXBElement<?>) unmarshaller.unmarshal(source);

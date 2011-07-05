@@ -68,7 +68,7 @@ public class ClassLoaderConfigurationProvider implements ConfigurationProvider
                      is = openStream(url);
                      try
                      {
-                        configParser.parse(builder, is);
+                        configParser.parse(builder, is, false);
                      }
                      catch (SAXException e)
                      {

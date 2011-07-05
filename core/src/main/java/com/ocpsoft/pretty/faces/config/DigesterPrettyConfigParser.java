@@ -48,7 +48,8 @@ public class DigesterPrettyConfigParser implements PrettyConfigParser
    private final Converter phaseIdConverter = new PhaseIdConverter();
    private final Converter redirectConverter = new RedirectConverter();
 
-   public void parse(final PrettyConfigBuilder builder, final InputStream resource) throws IOException, SAXException
+   public void parse(final PrettyConfigBuilder builder, final InputStream resource, final boolean validate) 
+         throws IOException, SAXException
    {
       if (builder == null)
       {

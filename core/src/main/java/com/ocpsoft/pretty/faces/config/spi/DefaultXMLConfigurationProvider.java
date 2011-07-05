@@ -52,7 +52,7 @@ public class DefaultXMLConfigurationProvider implements ConfigurationProvider
 
          try
          {
-            configParser.parse(builder, is);
+            configParser.parse(builder, is, false);
          }
          catch (Exception e)
          {
