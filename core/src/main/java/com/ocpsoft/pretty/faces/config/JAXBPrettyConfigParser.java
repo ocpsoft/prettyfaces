@@ -43,7 +43,7 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
    private SAXParserFactory saxParserFactory;
 
    private Schema schema;
-
+   
    /**
     * Constructor
     */
@@ -57,22 +57,9 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
          // create a namespace aware SAXParserFactory
          saxParserFactory = SAXParserFactory.newInstance();
          saxParserFactory.setNamespaceAware(true);
-         
-         // load schema from classpath
-         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL schemaUrl = classLoader.getResource(SCHEMA_LOCATION);
-         if(schemaUrl == null) {
-            throw new IllegalStateException("Unable to load schema from: "+SCHEMA_LOCATION);
-         }
-         schema = schemaFactory.newSchema(schemaUrl);
 
       }
       catch (JAXBException e)
-      {
-         throw new IllegalStateException(e);
-      }
-      catch (SAXException e)
       {
          throw new IllegalStateException(e);
       }
@@ -102,7 +89,16 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
          // optional validation
          if (validate)
          {
-            unmarshaller.setSchema(schema);
+
+            // lazily load the schema from the classpath
+            if (schema == null)
+            {
+               schema = loadSchema();
+            }
+            
+            // enable validation
+            unmarshaller.setSchema( schema );
+            
          }
          
          // parse the document and get the PrettyConfigElement
@@ -122,6 +118,21 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
       {
          throw new IOException(e);
       }
+   }
+
+   /**
+    * Loads the PrettyFaces XML schema from the classpath.
+    */
+   private static Schema loadSchema() throws SAXException
+   {
+      // load schema from classpath
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+      URL schemaUrl = classLoader.getResource(SCHEMA_LOCATION);
+      if(schemaUrl == null) {
+         throw new IllegalStateException("Unable to load schema from: "+SCHEMA_LOCATION);
+      }
+      return schemaFactory.newSchema(schemaUrl);
    }
 
    /**
