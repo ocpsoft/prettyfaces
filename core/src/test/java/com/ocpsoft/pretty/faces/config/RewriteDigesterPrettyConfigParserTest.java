@@ -40,7 +40,7 @@ public class RewriteDigesterPrettyConfigParserTest
    public void configure() throws IOException, SAXException
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new DigesterPrettyConfigParser().parse(builder, getClass().getClassLoader().getResourceAsStream(CONFIG_PATH), false);
+      new JAXBPrettyConfigParser().parse(builder, getClass().getClassLoader().getResourceAsStream(CONFIG_PATH), false);
       config = builder.build();
    }
 
