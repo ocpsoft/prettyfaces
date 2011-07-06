@@ -22,7 +22,7 @@
    <name>PrettyFaces Parent</name>
    <groupId>com.ocpsoft</groupId>
    <artifactId>prettyfaces-parent</artifactId>
-   <version>3.3.0-SNAPSHOT</version>
+   <version>3.3.1-SNAPSHOT</version>
    <packaging>pom</packaging>
 
    <url>http://ocpsoft.com/prettyfaces/</url>
@@ -69,7 +69,19 @@
          </modules>
       </profile>
       <profile>
+         <id>test</id>
+         <modules>
+            <module>tests-jsf2</module>
+         </modules>
+	  </profile>
+      <profile>
          <id>strict</id>
+         <modules>
+            <module>core</module>
+            <module>impl-jsf11</module>
+            <module>impl-jsf12</module>
+            <module>impl-jsf2</module>
+         </modules>
          <build>
             <plugins>
                <plugin>
