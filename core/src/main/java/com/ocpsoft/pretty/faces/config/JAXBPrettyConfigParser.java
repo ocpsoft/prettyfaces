@@ -34,7 +34,7 @@ import com.ocpsoft.pretty.faces.config.types.PrettyConfigElement;
 public class JAXBPrettyConfigParser implements PrettyConfigParser
 {
 
-   private static final String SCHEMA_LOCATION = "META-INF/ocpsoft-pretty-faces-3.2.1.xsd";
+   private static final String SCHEMA_LOCATION = "META-INF/ocpsoft-pretty-faces-3.3.1.xsd";
 
    private final static String JAXB_CLASS_PACKAGE = "com.ocpsoft.pretty.faces.config.types";
 

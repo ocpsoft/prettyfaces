@@ -5,7 +5,7 @@
     <!-- create separate classes for nested elements -->
     <jxb:globalBindings localScoping="toplevel" />
 
-    <jxb:bindings schemaLocation="../resources/META-INF/ocpsoft-pretty-faces-3.2.1.xsd" node="//xsi:schema">
+    <jxb:bindings schemaLocation="../resources/META-INF/ocpsoft-pretty-faces-3.3.1.xsd" node="//xsi:schema">
         <jxb:schemaBindings>
 
             <!-- name of Java package to generate classes to -->
