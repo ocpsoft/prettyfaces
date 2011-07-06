@@ -38,31 +38,40 @@ public class JAXBPrettyConfigParser implements PrettyConfigParser
 
    private final static String JAXB_CLASS_PACKAGE = "com.ocpsoft.pretty.faces.config.types";
 
-   private JAXBContext jaxbContext;
-
-   private SAXParserFactory saxParserFactory;
+   private final static JAXBContext jaxbContext;
+   
+   private final SAXParserFactory saxParserFactory;
 
    private Schema schema;
    
    /**
-    * Constructor
+    * We do this expensive operations here. This should
+    * be OK as we do it once per ClassLoader.
     */
-   public JAXBPrettyConfigParser()
+   static
    {
       try
       {
          // build JAXBContext using the package we generate the classes to
          jaxbContext = JAXBContext.newInstance(JAXB_CLASS_PACKAGE);
 
-         // create a namespace aware SAXParserFactory
-         saxParserFactory = SAXParserFactory.newInstance();
-         saxParserFactory.setNamespaceAware(true);
-
       }
       catch (JAXBException e)
       {
          throw new IllegalStateException(e);
       }
+   }
+   
+   /**
+    * Creates a new {@link JAXBPrettyConfigParser}
+    */
+   public JAXBPrettyConfigParser()
+   {
+
+      // SAXParserFactory is NOT thread-safe
+      saxParserFactory = SAXParserFactory.newInstance();
+      saxParserFactory.setNamespaceAware(true);
+   
    }
 
    /*
