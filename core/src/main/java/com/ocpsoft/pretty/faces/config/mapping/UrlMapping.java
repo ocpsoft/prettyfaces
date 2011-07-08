@@ -61,19 +61,19 @@ public class UrlMapping
    {
       if (mappingElement.getId() != null)
       {
-         id = mappingElement.getId();
+         id = mappingElement.getId().trim();
       }
       if (mappingElement.getParentId() != null)
       {
-         parentId = mappingElement.getParentId();
+         parentId = mappingElement.getParentId().trim();
       }
       if (mappingElement.isOutbound() != null)
       {
          outbound = mappingElement.isOutbound();
       }
-      if (mappingElement.getViewId() != null)
+      if (mappingElement.getViewId() != null && mappingElement.getViewId().getValue() != null)
       {
-         viewId = mappingElement.getViewId().getValue();
+         viewId = mappingElement.getViewId().getValue().trim();
       }
       if (mappingElement.isOnPostback() != null)
       {
@@ -83,7 +83,7 @@ public class UrlMapping
       {
          if (mappingElement.getPattern().getValue() != null)
          {
-            pattern = mappingElement.getPattern().getValue();
+            pattern = mappingElement.getPattern().getValue().trim();
          }
          if (mappingElement.getPattern().getValidate() != null)
          {

@@ -54,15 +54,15 @@ public class PathValidator
         index = validateElement.getIndex();
         if (validateElement.getOnError() != null)
         {
-            onError = validateElement.getOnError();
+            onError = validateElement.getOnError().trim();
         }
         if (validateElement.getValidatorIds() != null)
         {
-            validatorIds = validateElement.getValidatorIds();
+            validatorIds = validateElement.getValidatorIds().trim();
         }
         if (validateElement.getValidator() != null)
         {
-            validatorExpression = new ConstantExpression(validateElement.getValidator());
+            validatorExpression = new ConstantExpression(validateElement.getValidator().trim());
         }
     }
     

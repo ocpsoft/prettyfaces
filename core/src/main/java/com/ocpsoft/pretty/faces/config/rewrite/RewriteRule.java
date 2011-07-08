@@ -54,10 +54,22 @@ public class RewriteRule
      */
     public RewriteRule(RewriteElement element)
     {
-        match = element.getMatch();
-        substitute = element.getSubstitute();
-        processor = element.getProcessor();
-        url = element.getUrl();
+        if (element.getMatch() != null)
+        {
+            match = element.getMatch().trim();
+        }
+        if (element.getSubstitute() != null)
+        {
+            substitute = element.getSubstitute().trim();
+        }
+        if (element.getProcessor() != null)
+        {
+            processor = element.getProcessor().trim();
+        }
+        if (element.getUrl() != null)
+        {
+            url = element.getUrl().trim();
+        }
         if (element.isInbound() != null)
         {
             inbound = element.isInbound();
@@ -68,17 +80,17 @@ public class RewriteRule
         }
         if (element.getRedirect() != null)
         {
-            if ("301".equals(element.getRedirect()))
+            if ("301".equals(element.getRedirect().trim()))
             {
                 redirect = Redirect.PERMANENT;
             }
-            else if ("302".equals(element.getRedirect()))
+            else if ("302".equals(element.getRedirect().trim()))
             {
                 redirect = Redirect.TEMPORARY;
             }
             else
             {
-                redirect = Redirect.valueOf(element.getRedirect().toUpperCase());
+                redirect = Redirect.valueOf(element.getRedirect().trim().toUpperCase());
             }
         }
         if (element.getToCase() != null)

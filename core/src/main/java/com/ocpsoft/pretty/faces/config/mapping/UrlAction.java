@@ -46,7 +46,7 @@ public class UrlAction
    {
       if (actionElement.getValue() != null)
       {
-         action = new ConstantExpression(actionElement.getValue());
+         action = new ConstantExpression(actionElement.getValue().trim());
       }
       if (actionElement.isOnPostback() != null)
       {
