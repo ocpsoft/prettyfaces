@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.servlet.ServletContext;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -34,40 +35,47 @@ import com.ocpsoft.pretty.faces.config.types.PrettyConfigElement;
 public class JAXBPrettyConfigParser implements PrettyConfigParser
 {
 
+   private static final String JAXB_CONTEXT_ATTRIBUTE = JAXBPrettyConfigParser.class.getName() + ".JAXBContext";
+   
    private static final String SCHEMA_LOCATION = "META-INF/ocpsoft-pretty-faces-3.3.1.xsd";
 
    private final static String JAXB_CLASS_PACKAGE = "com.ocpsoft.pretty.faces.config.types";
-
-   private final static JAXBContext jaxbContext;
    
    private final SAXParserFactory saxParserFactory;
+
+   private JAXBContext jaxbContext;
 
    private Schema schema;
    
    /**
-    * We do this expensive operations here. This should
-    * be OK as we do it once per ClassLoader.
-    */
-   static
-   {
-      try
-      {
-         // build JAXBContext using the package we generate the classes to
-         jaxbContext = JAXBContext.newInstance(JAXB_CLASS_PACKAGE);
-
-      }
-      catch (JAXBException e)
-      {
-         throw new IllegalStateException(e);
-      }
-   }
-   
-   /**
     * Creates a new {@link JAXBPrettyConfigParser}
     */
-   public JAXBPrettyConfigParser()
+   public JAXBPrettyConfigParser(ServletContext servletContext)
    {
 
+      // try to find the cached JAXBContext
+      jaxbContext = (JAXBContext) servletContext.getAttribute(JAXB_CONTEXT_ATTRIBUTE);
+
+      // no existing JAXBContext? We will create a new one!
+      if (jaxbContext == null)
+      {
+
+         try
+         {
+            // build JAXBContext using the package we generate the classes to
+            jaxbContext = JAXBContext.newInstance(JAXB_CLASS_PACKAGE);
+
+            // cache the JAXBContext using the ServletContext
+            servletContext.setAttribute(JAXB_CONTEXT_ATTRIBUTE, jaxbContext);
+
+         }
+         catch (JAXBException e)
+         {
+            throw new IllegalStateException(e);
+         }
+
+      }
+      
       // SAXParserFactory is NOT thread-safe
       saxParserFactory = SAXParserFactory.newInstance();
       saxParserFactory.setNamespaceAware(true);

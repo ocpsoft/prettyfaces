@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
@@ -26,7 +27,7 @@ public class JAXBPrettyConfigParserTest
       InputStream xml = getClass().getClassLoader().getResourceAsStream("complete-pretty-config.xml");
       assertNotNull("Cannot find pretty-config.xml file for test!", xml);
       PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new JAXBPrettyConfigParser().parse(builder, xml, false);
+      new JAXBPrettyConfigParser(new MockServletContext()).parse(builder, xml, false);
       config = builder.build();
    }
 

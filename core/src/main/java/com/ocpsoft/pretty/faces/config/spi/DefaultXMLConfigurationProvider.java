@@ -44,7 +44,7 @@ public class DefaultXMLConfigurationProvider implements ConfigurationProvider
    public PrettyConfig loadConfiguration(ServletContext servletContext)
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      PrettyConfigParser configParser = new JAXBPrettyConfigParser();
+      PrettyConfigParser configParser = new JAXBPrettyConfigParser(servletContext);
       final InputStream is = servletContext.getResourceAsStream(DEFAULT_PRETTY_FACES_CONFIG);
       if (is != null)
       {

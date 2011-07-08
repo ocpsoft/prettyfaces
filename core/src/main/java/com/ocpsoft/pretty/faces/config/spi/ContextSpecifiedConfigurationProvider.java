@@ -49,7 +49,7 @@ public class ContextSpecifiedConfigurationProvider implements ConfigurationProvi
    public PrettyConfig loadConfiguration(ServletContext servletContext)
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      PrettyConfigParser configParser = new JAXBPrettyConfigParser();
+      PrettyConfigParser configParser = new JAXBPrettyConfigParser(servletContext);
       final List<String> configFilesList = getConfigFilesList(servletContext);
       for (final String configFilePath : configFilesList)
       {

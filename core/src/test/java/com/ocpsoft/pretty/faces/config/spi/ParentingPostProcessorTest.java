@@ -30,6 +30,7 @@ import javax.servlet.ServletContext;
 import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.PrettyContext;
@@ -62,7 +63,7 @@ public class ParentingPostProcessorTest
    {
 
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new JAXBPrettyConfigParser().parse(builder,
+      new JAXBPrettyConfigParser(new MockServletContext()).parse(builder,
                getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"), false);
       PrettyConfig config = builder.build();
 

@@ -4,7 +4,10 @@ import static junit.framework.Assert.assertTrue;
 
 import java.io.InputStream;
 
+import javax.servlet.ServletContext;
+
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 
 public class PrettyConfigParserPerformanceTest
 {
@@ -14,14 +17,16 @@ public class PrettyConfigParserPerformanceTest
    @Test
    public void testParserPerformance() throws Exception {
 
+      ServletContext servletContext = new MockServletContext();
+      
       // don't measure initial startup costs for both parsers
       parseUsingDigester();
-      parseUsingJAXB();
+      parseUsingJAXB(servletContext);
       
       // parse using JAXB
       long jaxbStart = System.currentTimeMillis();
       for(int i=0; i<NUMBER_OF_ITERATIONS; i++) {
-         parseUsingJAXB();
+         parseUsingJAXB(servletContext);
       }
       long jaxbTime = System.currentTimeMillis() - jaxbStart;
       
@@ -41,8 +46,8 @@ public class PrettyConfigParserPerformanceTest
       
    }
    
-   private void parseUsingJAXB() throws Exception {
-      JAXBPrettyConfigParser jaxb = new JAXBPrettyConfigParser();
+   private void parseUsingJAXB(ServletContext servletContext) throws Exception {
+      JAXBPrettyConfigParser jaxb = new JAXBPrettyConfigParser(servletContext);
       jaxb.parse(new PrettyConfigBuilder(), getTestData(), false);
    }
 

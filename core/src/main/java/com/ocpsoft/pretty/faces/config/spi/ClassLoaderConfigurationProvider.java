@@ -51,7 +51,7 @@ public class ClassLoaderConfigurationProvider implements ConfigurationProvider
       }
 
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      PrettyConfigParser configParser = new JAXBPrettyConfigParser();
+      PrettyConfigParser configParser = new JAXBPrettyConfigParser(context);
       try
       {
          final Enumeration<URL> urls = getClass().getClassLoader().getResources(PRETTY_CONFIG_RESOURCE);
