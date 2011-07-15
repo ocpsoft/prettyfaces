@@ -57,6 +57,7 @@ public class RewriteRule
         if (element.getMatch() != null)
         {
             match = element.getMatch().trim();
+            pattern = Pattern.compile(match);
         }
         if (element.getSubstitute() != null)
         {
