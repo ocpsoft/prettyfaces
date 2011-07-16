@@ -7,6 +7,8 @@
    <url-mapping id="parent">
       <pattern value="/parent" />
       <view-id value="/parent.jsf" />
+      <action>#{myBean.parentAction}</action>
+      <query-param name="parent">#{myBean.parentParam}</query-param>
    </url-mapping>
 
    <url-mapping id="child" parentId="parent">
@@ -14,11 +16,15 @@
          <validate index="0" validatorIds="validator1" onError="#{validationBean.handle}" />
       </pattern>
       <view-id value="/child.jsf" />
+      <action>#{myBean.childAction}</action>
+      <query-param name="child">#{myBean.childParam}</query-param>
    </url-mapping>
 
    <url-mapping id="child2" parentId="parent">
       <pattern value="/child2/#{name}" />
       <view-id value="/child2.jsf" />
+      <action>#{myBean.child2Action}</action>
+      <query-param name="child2">#{myBean.child2Param}</query-param>
    </url-mapping>
 
    <url-mapping id="grandchild" parentId="child">
@@ -26,6 +32,8 @@
          <validate index="0" validatorIds="validator2" onError="#{validationBean.handle2}" validator="#{validationBean.validateMethod}" />
       </pattern>
       <view-id value="/grandchild.jsf" />
+      <action>#{myBean.grandchildAction}</action>
+      <query-param name="grandchild">#{myBean.grandchildParam}</query-param>
    </url-mapping>
 
 </pretty-config>
