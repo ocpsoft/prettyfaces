@@ -8,9 +8,9 @@
 	<name>prettyfaces</name>
 	
 	<ordering>
-		<before>
+		<after>
 			<others/>
-		</before>
+		</after>
 	</ordering>
 
 	<application>

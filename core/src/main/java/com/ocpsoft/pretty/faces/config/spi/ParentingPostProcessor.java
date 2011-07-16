@@ -24,6 +24,8 @@ import javax.servlet.ServletContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.mapping.PathValidator;
+import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
+import com.ocpsoft.pretty.faces.config.mapping.UrlAction;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.spi.ConfigurationPostProcessor;
 
@@ -67,8 +69,50 @@ public class ParentingPostProcessor implements ConfigurationPostProcessor
          }
          m.setPattern(parent.getPattern() + m.getPattern());
          mergeValidators(parent, m);
+         mergeActions(parent, m);
+         mergeQueryParams(parent, m);
          seen.add(m);
       }
+   }
+
+   private void mergeQueryParams(UrlMapping parent, UrlMapping child)
+   {
+      List<QueryParameter> result = new ArrayList<QueryParameter>();
+      for (QueryParameter queryParam : parent.getQueryParams())
+      {
+         if (!result.contains(queryParam))
+         {
+            result.add(copy(queryParam));
+         }
+      }
+      for (QueryParameter queryParam : child.getQueryParams())
+      {
+         if (!result.contains(queryParam))
+         {
+            result.add(copy(queryParam));
+         }
+      }
+      child.setQueryParams(result);
+   }
+
+   private void mergeActions(UrlMapping parent, UrlMapping child)
+   {
+      List<UrlAction> result = new ArrayList<UrlAction>();
+      for (UrlAction action : parent.getActions())
+      {
+         if (!result.contains(action))
+         {
+            result.add(copy(action));
+         }
+      }
+      for (UrlAction action : child.getActions())
+      {
+         if (!result.contains(action))
+         {
+            result.add(copy(action));
+         }
+      }
+      child.setActions(result);
    }
 
    private void mergeValidators(UrlMapping parent, UrlMapping child)
@@ -88,6 +132,27 @@ public class ParentingPostProcessor implements ConfigurationPostProcessor
       }
 
       child.setPathValidators(result);
+   }
+
+   private QueryParameter copy(QueryParameter queryParameter)
+   {
+      QueryParameter result = new QueryParameter();
+      result.setExpression(queryParameter.getExpression());
+      result.setName(queryParameter.getName());
+      result.setOnError(queryParameter.getOnError());
+      result.setOnPostback(queryParameter.isOnPostback());
+      result.setValidatorExpression(queryParameter.getValidatorExpression());
+      result.setValidatorIds(queryParameter.getValidatorIds());
+      return result;
+   }
+
+   private UrlAction copy(UrlAction urlAction)
+   {
+      UrlAction result = new UrlAction();
+      result.setAction(urlAction.getAction());
+      result.setOnPostback(urlAction.onPostback());
+      result.setPhaseId(result.getPhaseId());
+      return result;
    }
 
    private PathValidator copy(PathValidator pathValidator)
