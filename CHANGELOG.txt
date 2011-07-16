@@ -1,4 +1,15 @@
 ------------------------------------
+           VERSION 3.3.1
+------------------------------------
+
+Features & Enhancements:
+* Support of query parameter and action inheritance (#75)
+
+Bugfixes:
+* Implemented equals()/hashcode() for LazyExpression (#115)
+
+
+------------------------------------
            VERSION 3.3.0
 ------------------------------------
 
@@ -14,6 +25,7 @@ Bugfixes:
 * Handle java.lang.ClassFormatError during initialization of bean name resolvers (#101)
 * Also check Weld 1.1.x specific servlet context attribute while search for BeanManager
 * Mapping inheritance now working correctly for mappings using the same viewId
+
 
 ------------------------------------
            VERSION 3.2.1
