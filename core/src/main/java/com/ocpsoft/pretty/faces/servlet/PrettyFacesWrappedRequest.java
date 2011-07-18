@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 public class PrettyFacesWrappedRequest extends HttpServletRequestWrapper
 {
     private final Map<String, String[]> modifiableParameters;
-    private Map<String, String[]> allParameters = null;
 
     /**
      * Create a new request wrapper that will merge additional parameters into
@@ -61,13 +60,10 @@ public class PrettyFacesWrappedRequest extends HttpServletRequestWrapper
     @Override
     public Map<String, String[]> getParameterMap()
     {
-        if (allParameters == null)
-        {
-            allParameters = new TreeMap<String, String[]>();
-            allParameters.putAll(super.getParameterMap());
-            allParameters.putAll(modifiableParameters);
-        }
-        return Collections.unmodifiableMap(allParameters);
+       Map<String, String[]> allParameters = new TreeMap<String, String[]>();
+       allParameters.putAll(super.getParameterMap());
+       allParameters.putAll(modifiableParameters);
+       return Collections.unmodifiableMap(allParameters);
     }
 
     @Override
