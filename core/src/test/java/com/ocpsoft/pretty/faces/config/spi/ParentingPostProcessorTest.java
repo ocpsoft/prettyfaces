@@ -104,6 +104,35 @@ public class ParentingPostProcessorTest
       assertEquals("validator2", config.getMappingById("grandchild").getPathValidators().get(1).getValidatorIds());
       assertEquals(0, config.getMappingById("grandchild").getPathValidators().get(0).getIndex());
       assertEquals(1, config.getMappingById("grandchild").getPathValidators().get(1).getIndex());
+
+      // actions
+      assertEquals(3, config.getMappingById("grandchild").getActions().size());
+      assertEquals("#{myBean.parentAction}", config.getMappingById("grandchild").getActions().get(0).getAction().getELExpression());
+      assertEquals("#{myBean.childAction}", config.getMappingById("grandchild").getActions().get(1).getAction().getELExpression());
+      assertEquals("#{myBean.grandchildAction}", config.getMappingById("grandchild").getActions().get(2).getAction().getELExpression());
+      assertEquals(2, config.getMappingById("child").getActions().size());
+      assertEquals("#{myBean.parentAction}", config.getMappingById("child").getActions().get(0).getAction().getELExpression());
+      assertEquals("#{myBean.childAction}", config.getMappingById("child").getActions().get(1).getAction().getELExpression());
+      assertEquals(2, config.getMappingById("child2").getActions().size());
+      assertEquals("#{myBean.parentAction}", config.getMappingById("child2").getActions().get(0).getAction().getELExpression());
+      assertEquals("#{myBean.child2Action}", config.getMappingById("child2").getActions().get(1).getAction().getELExpression());
+      assertEquals(1, config.getMappingById("parent").getActions().size());
+      assertEquals("#{myBean.parentAction}", config.getMappingById("parent").getActions().get(0).getAction().getELExpression());
+
+      // query parameters
+      assertEquals(3, config.getMappingById("grandchild").getActions().size());
+      assertEquals("parent", config.getMappingById("grandchild").getQueryParams().get(0).getName());
+      assertEquals("child", config.getMappingById("grandchild").getQueryParams().get(1).getName());
+      assertEquals("grandchild", config.getMappingById("grandchild").getQueryParams().get(2).getName());
+      assertEquals(2, config.getMappingById("child").getActions().size());
+      assertEquals("parent", config.getMappingById("child").getQueryParams().get(0).getName());
+      assertEquals("child", config.getMappingById("child").getQueryParams().get(1).getName());
+      assertEquals(2, config.getMappingById("child2").getActions().size());
+      assertEquals("parent", config.getMappingById("child2").getQueryParams().get(0).getName());
+      assertEquals("child2", config.getMappingById("child2").getQueryParams().get(1).getName());
+      assertEquals(1, config.getMappingById("parent").getActions().size());
+      assertEquals("parent", config.getMappingById("parent").getQueryParams().get(0).getName());
+
    }
 
    private InputStream mockPrettyConfigInputStream()
