@@ -53,6 +53,7 @@ import com.ocpsoft.rewrite.servlet.http.event.HttpServletRewrite;
  */
 public class UrlMappingRuleAdaptor implements Rule
 {
+   public static final String REWRITE_MAPPING_ID_KEY = "com.ocpsoft.mappingId";
    private static Logger log = Logger.getLogger(UrlMappingRuleAdaptor.class);
    private final UrlMapping mapping;
 
@@ -83,7 +84,7 @@ public class UrlMappingRuleAdaptor implements Rule
                }
 
                QueryString queryString = QueryString.build(outboundURL);
-               String mappingId = queryString.getParameter("com.ocpsoft.mappingId");
+               String mappingId = queryString.getParameter(REWRITE_MAPPING_ID_KEY);
 
                if (((mappingId == null) && outboundURL.startsWith(mapping.getViewId()))
                         || mapping.getId().equals(mappingId))
@@ -192,18 +193,5 @@ public class UrlMappingRuleAdaptor implements Rule
          }
       }
       return result;
-   }
-
-   /**
-    * If the given URL is prefixed with this request's context-path, return the URI without the context path. Otherwise
-    * return the URI unchanged.
-    */
-   private String stripContextPath(final String contextPath, String uri)
-   {
-      if (uri.startsWith(contextPath))
-      {
-         uri = uri.substring(contextPath.length());
-      }
-      return uri;
    }
 }
