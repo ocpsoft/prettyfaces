@@ -22,6 +22,7 @@ import javax.servlet.ServletRequestListener;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.util.FacesFactory;
 
+// TODO convert this to com.ocpsoft.rewrite.servlet.spi.RequestListener
 public class PrettyConfigListener implements ServletRequestListener
 {
 
@@ -44,7 +45,8 @@ public class PrettyConfigListener implements ServletRequestListener
    {
 
       // Don't do this if the project stage is 'production'
-      if (!ProjectStage.Production.equals(FacesFactory.getApplication().getProjectStage()) && !PrettyContext.isInstantiated(sre.getServletRequest()))
+      if (!ProjectStage.Production.equals(FacesFactory.getApplication().getProjectStage())
+               && !PrettyContext.isInstantiated(sre.getServletRequest()))
       {
 
          // the point in time the configuration will be reloaded

@@ -17,18 +17,4 @@
 		<listener-class>com.ocpsoft.pretty.faces.config.PrettyConfigListener</listener-class>
 	</listener>
 
-	<filter>
-		<filter-name>Pretty Filter</filter-name>
-		<filter-class>com.ocpsoft.pretty.PrettyFilter</filter-class>
-		<async-supported>true</async-supported>
-	</filter>
-	<filter-mapping>
-		<filter-name>Pretty Filter</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>ASYNC</dispatcher>
-		<dispatcher>ERROR</dispatcher>
-	</filter-mapping>
-
 </web-fragment>

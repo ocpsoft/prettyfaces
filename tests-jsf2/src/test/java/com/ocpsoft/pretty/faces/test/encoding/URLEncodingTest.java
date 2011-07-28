@@ -22,34 +22,29 @@ import java.io.IOException;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.MavenArtifactResolver;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.ocpsoft.pretty.PrettyContext;
+import com.ocpsoft.pretty.faces.test.PrettyFacesTestBase;
 
 @RunWith(Arquillian.class)
-public class URLEncodingTest
+public class URLEncodingTest extends PrettyFacesTestBase
 {
    @Deployment
-   public static Archive<?> createDeployment()
+   public static WebArchive createDeployment()
    {
-      return ShrinkWrap.create(WebArchive.class, "test.war")
+      return PrettyFacesTestBase.createDeployment()
                .addClass(EncodingBean.class)
                .addResource("encoding/encoding.xhtml", "encoding.xhtml")
                .addWebResource("encoding/encoding-pretty-config.xml", "pretty-config.xml")
-               .addWebResource("faces-config.xml")
-               .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.3.0-SNAPSHOT"))
-               .setWebXML("jsf-web.xml");
+               .addWebResource("faces-config.xml");
    }
 
    /**
@@ -212,7 +207,7 @@ public class URLEncodingTest
    @Test
    public void testEncodedURLMatchesNonEncodedPattern() throws IOException
    {
-      JSFSession jsfSession = new JSFSession("/URL%20ENCODED");
+      new JSFSession("/URL%20ENCODED");
 
       PrettyContext prettyContext = PrettyContext.getCurrentInstance();
       assertEquals(prettyContext.getRequestURL().toURL(), "/url decoded");

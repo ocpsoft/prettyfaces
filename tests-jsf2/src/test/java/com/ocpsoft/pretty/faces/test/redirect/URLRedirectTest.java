@@ -17,40 +17,31 @@
 package com.ocpsoft.pretty.faces.test.redirect;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.net.URLEncoder;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.MavenArtifactResolver;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.ocpsoft.pretty.PrettyContext;
+import com.ocpsoft.pretty.faces.test.PrettyFacesTestBase;
 
 @RunWith(Arquillian.class)
-public class URLRedirectTest
+public class URLRedirectTest extends PrettyFacesTestBase
 {
    @Deployment
-   public static Archive<?> createDeployment()
+   public static WebArchive createDeployment()
    {
-      return ShrinkWrap.create(WebArchive.class, "test.war")
+      return PrettyFacesTestBase.createDeployment()
                .addClass(RedirectBean.class)
                .addResource("redirect/redirect.xhtml", "redirect.xhtml")
-               .addWebResource("redirect/redirect-pretty-config.xml", "pretty-config.xml")
-               .addWebResource("faces-config.xml")
-               .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.3.0-SNAPSHOT"))
-               .setWebXML("jsf-web.xml");
+               .addWebResource("redirect/redirect-pretty-config.xml", "pretty-config.xml");
    }
 
    @Test
@@ -87,10 +78,9 @@ public class URLRedirectTest
 
       client.click("redirect");
 
-
       // doesn't seem to work. But I think our code is correct. Perhaps a HTTPUnit problem?
-      //String browserURL = client.getContentPage().getUrl().toString();
-      //assertTrue(browserURL.contains(requestURL));
+      // String browserURL = client.getContentPage().getUrl().toString();
+      // assertTrue(browserURL.contains(requestURL));
 
       String expected = "/foo/" + RedirectBean.PATH_VALUE;
       String actual = prettyContext.getRequestURL().toString();

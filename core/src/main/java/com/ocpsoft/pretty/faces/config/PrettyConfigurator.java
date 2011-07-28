@@ -73,7 +73,8 @@ public class PrettyConfigurator
 
          config = parenting.processConfiguration(servletContext, config);
 
-         ServiceLoader<ConfigurationPostProcessor> postProcessors = ServiceLoader.load(ConfigurationPostProcessor.class);
+         ServiceLoader<ConfigurationPostProcessor> postProcessors = ServiceLoader
+                  .load(ConfigurationPostProcessor.class);
          for (ConfigurationPostProcessor p : postProcessors)
          {
             config = p.processConfiguration(servletContext, config);
@@ -107,6 +108,16 @@ public class PrettyConfigurator
    public PrettyConfig getConfig()
    {
       return config;
+   }
+
+   public static PrettyConfig getConfig(final ServletContext context)
+   {
+      return (PrettyConfig) context.getAttribute(PrettyContext.CONFIG_KEY);
+   }
+
+   public static void setConfig(final ServletContext context, final PrettyConfig config)
+   {
+      context.setAttribute(PrettyContext.CONFIG_KEY, config);
    }
 
 }
