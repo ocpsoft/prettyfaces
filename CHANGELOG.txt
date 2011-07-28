@@ -7,6 +7,7 @@ Features & Enhancements:
 
 Bugfixes:
 * Implemented equals()/hashcode() for LazyExpression (#115)
+* Performance: URLPatternParser got created on every call to UrlMapping.getPatternParser()
 
 
 ------------------------------------
