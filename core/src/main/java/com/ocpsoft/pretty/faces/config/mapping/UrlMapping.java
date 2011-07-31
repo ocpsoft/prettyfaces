@@ -40,8 +40,7 @@ public class UrlMapping
    private List<QueryParameter> queryParams = new ArrayList<QueryParameter>();
    private List<PathValidator> pathValidators = new ArrayList<PathValidator>();
    private boolean onPostback = true;
-   private URLPatternParser parser;
-   private boolean dirty = true;
+   private URLPatternParser parser = null;
 
    /**
     * Creates an empty {@link UrlMapping}
@@ -118,7 +117,7 @@ public class UrlMapping
     */
    public URLPatternParser getPatternParser()
    {
-      if (((parser == null) || dirty) && (pattern != null))
+      if ((parser == null) && (pattern != null))
       {
          this.parser = new URLPatternParser(pattern);
       }
@@ -215,7 +214,8 @@ public class UrlMapping
    public void setPattern(final String pattern)
    {
       this.pattern = pattern;
-      this.dirty = true;
+      // reset the parser so it gets recreated
+      this.parser = null;
    }
 
    public boolean addQueryParam(final QueryParameter param)
