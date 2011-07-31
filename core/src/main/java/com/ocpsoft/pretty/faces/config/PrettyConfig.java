@@ -25,6 +25,9 @@ import java.util.Map;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
+import com.ocpsoft.pretty.faces.config.types.PrettyConfigElement;
+import com.ocpsoft.pretty.faces.config.types.RewriteElement;
+import com.ocpsoft.pretty.faces.config.types.UrlMappingElement;
 import com.ocpsoft.pretty.faces.url.URL;
 
 public class PrettyConfig
@@ -34,6 +37,32 @@ public class PrettyConfig
    private List<RewriteRule> globalRewriteRules = new ArrayList<RewriteRule>();
    private String dynaviewId = "";
    private final Map<String, UrlMapping> cachedMappings = new HashMap<String, UrlMapping>();
+
+   /**
+    * Creates an empty {@link PrettyConfig} object
+    */
+   public PrettyConfig()
+   {
+      // nothing
+   }
+
+   /**
+    * Initializes the instance using the supplied JAXB object
+    * 
+    * @param prettyConfigElement
+    *           The JAXB object
+    */
+   public PrettyConfig(PrettyConfigElement prettyConfigElement)
+   {
+      for (RewriteElement rewriteElement : prettyConfigElement.getRewrite())
+      {
+         globalRewriteRules.add(new RewriteRule(rewriteElement));
+      }
+      for (UrlMappingElement mappingElement : prettyConfigElement.getUrlMapping())
+      {
+         mappings.add(new UrlMapping(mappingElement));
+      }
+   }
 
    /**
     * Set the current DynaView ID. This is used when calculating dynamic viewIds specified in pretty-config.xml (Do not

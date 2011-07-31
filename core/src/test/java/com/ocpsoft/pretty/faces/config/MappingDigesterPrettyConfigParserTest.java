@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
@@ -43,7 +44,7 @@ public class MappingDigesterPrettyConfigParserTest
    public void configure() throws IOException, SAXException
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new DigesterPrettyConfigParser().parse(builder, getClass().getClassLoader().getResourceAsStream(CONFIG_PATH));
+      new JAXBPrettyConfigParser(new MockServletContext()).parse(builder, getClass().getClassLoader().getResourceAsStream(CONFIG_PATH), false);
       config = builder.build();
    }
 

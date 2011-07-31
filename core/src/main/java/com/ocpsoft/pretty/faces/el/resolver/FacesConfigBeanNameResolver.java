@@ -32,13 +32,11 @@ import java.util.Set;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
-import com.ocpsoft.pretty.faces.util.EmptyEntityResolver;
+import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
 
 /**
  * 
@@ -246,43 +244,23 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
          log.trace("Loading bean names from: " + url.toString());
       }
 
-      // setup digester
-      Digester digester = new Digester();
+      FacesConfigParser parser = new FacesConfigParser();
       
-      /*
-       * We use the context class loader to resolve classes.
-       * This fixes ClassNotFoundExceptions on Geronimo.
-       */
-      digester.setUseContextClassLoader(true);      
-
-      // prevent downloading of DTDs
-      digester.setEntityResolver(new EmptyEntityResolver());
-
-      digester.setValidating(false);
-      digester.push(facesConfigEntries);
-      digester.addObjectCreate("faces-config/managed-bean", FacesConfigEntry.class);
-      digester.addCallMethod("faces-config/managed-bean/managed-bean-name", "setName", 0);
-      digester.addCallMethod("faces-config/managed-bean/managed-bean-class", "setBeanClass", 0);
-      digester.addSetNext("faces-config/managed-bean", "add");
-
-      // stream used to read faces-config.xml file
       InputStream stream = null;
 
       try
       {
          // open the file and let digester pares it
          stream = url.openStream();
-         digester.parse(stream);
+         parser.parse(stream);
+         
+         // add new faces config entries
+         facesConfigEntries.addAll( parser.getEntries() );
 
       }
       catch (IOException e)
       {
          // may be thrown when reading the file
-         log.error("Failed to parse: " + url.toString(), e);
-      }
-      catch (SAXException e)
-      {
-         // parsing errors
          log.error("Failed to parse: " + url.toString(), e);
       }
       finally
@@ -347,6 +325,62 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
       public void setBeanClass(String beanClass)
       {
          this.beanClass = beanClass;
+      }
+
+   }
+   
+   /**
+    * Very simple parser to read the managed bean entries for a faces-config.xml
+    */
+   private static class FacesConfigParser extends SimpleXMLParserBase
+   {
+
+      private final List<FacesConfigEntry> entries = new ArrayList<FacesConfigEntry>();
+
+      private FacesConfigEntry currentEntry = null;
+
+      @Override
+      public void processStartElement(String name)
+      {
+         // <managed-bean>
+         if (elements("faces-config", "managed-bean"))
+         {
+            currentEntry = new FacesConfigEntry();
+         }
+      }
+
+      @Override
+      public void processEndElement(String name)
+      {
+         // </managed-bean>
+         if (elements("faces-config", "managed-bean"))
+         {
+            entries.add(currentEntry);
+            currentEntry = null;
+         }
+      }
+
+      @Override
+      public void processCharacters(String text)
+      {
+
+         // <managed-bean-name>
+         if (elements("faces-config", "managed-bean", "managed-bean-name"))
+         {
+            currentEntry.setName(text.trim());
+         }
+
+         // <managed-bean-class>
+         if (elements("faces-config", "managed-bean", "managed-bean-class"))
+         {
+            currentEntry.setBeanClass(text.trim());
+         }
+
+      }
+
+      public List<FacesConfigEntry> getEntries()
+      {
+         return entries;
       }
 
    }

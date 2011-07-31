@@ -30,10 +30,11 @@ import javax.servlet.ServletContext;
 import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.PrettyContext;
-import com.ocpsoft.pretty.faces.config.DigesterPrettyConfigParser;
+import com.ocpsoft.pretty.faces.config.JAXBPrettyConfigParser;
 import com.ocpsoft.pretty.faces.config.MockClassLoader;
 import com.ocpsoft.pretty.faces.config.MockFacesServletRegistration;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
@@ -62,8 +63,8 @@ public class ParentingPostProcessorTest
    {
 
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      new DigesterPrettyConfigParser().parse(builder,
-               getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"));
+      new JAXBPrettyConfigParser(new MockServletContext()).parse(builder,
+               getClass().getClassLoader().getResourceAsStream("parenting-pretty-config.xml"), false);
       PrettyConfig config = builder.build();
 
       assertEquals("", config.getMappingById("parent").getParentId());

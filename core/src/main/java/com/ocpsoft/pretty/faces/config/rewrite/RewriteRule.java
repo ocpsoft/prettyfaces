@@ -19,6 +19,8 @@ package com.ocpsoft.pretty.faces.config.rewrite;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ocpsoft.pretty.faces.config.types.RewriteElement;
+
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
@@ -36,6 +38,72 @@ public class RewriteRule
 
     private Pattern pattern = Pattern.compile("");
 
+    /**
+     * Creates an empty {@link RewriteRule}
+     */
+    public RewriteRule()
+    {
+        // nothing
+    }
+
+    /**
+     * Creates an rewrite rule from the supplied JAXB object
+     * 
+     * @param element
+     *            The JAXB object
+     */
+    public RewriteRule(RewriteElement element)
+    {
+        if (element.getMatch() != null)
+        {
+            match = element.getMatch().trim();
+            pattern = Pattern.compile(match);
+        }
+        if (element.getSubstitute() != null)
+        {
+            substitute = element.getSubstitute().trim();
+        }
+        if (element.getProcessor() != null)
+        {
+            processor = element.getProcessor().trim();
+        }
+        if (element.getUrl() != null)
+        {
+            url = element.getUrl().trim();
+        }
+        if (element.isInbound() != null)
+        {
+            inbound = element.isInbound();
+        }
+        if (element.isOutbound() != null)
+        {
+            outbound = element.isOutbound();
+        }
+        if (element.getRedirect() != null)
+        {
+            if ("301".equals(element.getRedirect().trim()))
+            {
+                redirect = Redirect.PERMANENT;
+            }
+            else if ("302".equals(element.getRedirect().trim()))
+            {
+                redirect = Redirect.TEMPORARY;
+            }
+            else
+            {
+                redirect = Redirect.valueOf(element.getRedirect().trim().toUpperCase());
+            }
+        }
+        if (element.getToCase() != null)
+        {
+            toCase = Case.valueOf(element.getToCase().name().toUpperCase());
+        }
+        if (element.getTrailingSlash() != null)
+        {
+            trailingSlash = TrailingSlash.valueOf(element.getTrailingSlash().name().toUpperCase());
+        }
+    }
+    
     /**
      * Return true if the <b>match</b> field contains a regex that matches some
      * or all of the given URL, false if no match is found.

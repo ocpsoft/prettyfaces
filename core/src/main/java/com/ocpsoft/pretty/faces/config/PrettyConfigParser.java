@@ -36,10 +36,13 @@ public interface PrettyConfigParser
      *            target builder, must not be <code>null</code>.
      * @param resource
      *            input stream to be parsed, must not be <code>null</code>
+     * @param resource
+     *            if the parser should perform validation of the xml file
      * @throws IOException
      *             If input stream could not be read.
      * @throws SAXException
      *             If configuration could not be parsed.
      */
-    public void parse(PrettyConfigBuilder builder, InputStream resource) throws IOException, SAXException;
+    public void parse(PrettyConfigBuilder builder, InputStream resource, boolean validate) 
+          throws IOException, SAXException;
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.ocpsoft.pretty.faces.config.types.QueryParamElement;
 import com.ocpsoft.pretty.faces.el.ConstantExpression;
 import com.ocpsoft.pretty.faces.el.PrettyExpression;
 
@@ -37,6 +38,40 @@ public class QueryParameter extends RequestParameter
         super();
     }
 
+    /**
+     * Creates an URL action from the supplied JAXB object
+     * 
+     * @param actionElement
+     *            The JAXB object
+     */
+    public QueryParameter(QueryParamElement queryParamElement)
+    {
+        if (queryParamElement.getValidatorIds() != null)
+        {
+            validatorIds = queryParamElement.getValidatorIds().trim();
+        }
+        if (queryParamElement.getValidator() != null)
+        {
+            validatorExpression = new ConstantExpression(queryParamElement.getValidator().trim());
+        }
+        if (queryParamElement.getOnError() != null)
+        {
+            onError = queryParamElement.getOnError().trim();
+        }
+        if (queryParamElement.isOnPostback() != null)
+        {
+            onPostback = queryParamElement.isOnPostback();
+        }
+        if (queryParamElement.getName() != null)
+        {
+            setName(queryParamElement.getName().trim());
+        }
+        if (queryParamElement.getValue() != null)
+        {
+            setExpression(new ConstantExpression(queryParamElement.getValue().trim()));
+        }
+    }
+    
     public QueryParameter(final String name, final String value)
     {
         super(name, value);
