@@ -23,6 +23,7 @@ package com.ocpsoft.rewrite.prettyfaces;
 
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.RewriteEngine;
+import com.ocpsoft.rewrite.EvaluationContext;
 import com.ocpsoft.rewrite.config.Condition;
 import com.ocpsoft.rewrite.config.Operation;
 import com.ocpsoft.rewrite.config.Rule;
@@ -49,7 +50,7 @@ public class OutboundRewriteRuleAdaptor implements Rule
       return new HttpCondition() {
 
          @Override
-         public boolean evaluateHttp(final HttpServletRewrite event)
+         public boolean evaluateHttp(final HttpServletRewrite event, final EvaluationContext context)
          {
             if ((event instanceof HttpOutboundServletRewrite)
                      && rule.isOutbound()
@@ -67,7 +68,7 @@ public class OutboundRewriteRuleAdaptor implements Rule
       return new HttpOperation() {
 
          @Override
-         public void performHttp(final HttpServletRewrite event)
+         public void performHttp(final HttpServletRewrite event, final EvaluationContext context)
          {
             RewriteEngine engine = new RewriteEngine();
             HttpOutboundServletRewrite outbound = (HttpOutboundServletRewrite) event;

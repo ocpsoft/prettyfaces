@@ -40,12 +40,16 @@ public class AmbiguousViewidTest extends PrettyFacesTestBase
    @Deployment
    public static WebArchive createDeployment()
    {
-      return PrettyFacesTestBase.createDeployment()
+      WebArchive deployment = PrettyFacesTestBase.createDeployment()
                .addClass(RedirectBean.class)
                .addClass(PrettyNavigationHandler.class)
                .addClass(AmbiguousBean.class)
                .addResource("basic/ambiguousViewId.xhtml", "index.xhtml")
                .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml");
+
+      System.out.println(deployment.toString(true));
+
+      return deployment;
    }
 
    @Test

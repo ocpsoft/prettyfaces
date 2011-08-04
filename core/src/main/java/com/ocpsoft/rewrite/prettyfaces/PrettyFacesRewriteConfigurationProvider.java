@@ -56,15 +56,15 @@ public class PrettyFacesRewriteConfigurationProvider extends HttpConfigurationPr
          List<UrlMapping> mappings = config.getMappings();
 
          for (RewriteRule rule : rules) {
-            builder.addRule(new InboundRewriteRuleAdaptor(rule));
+            builder.add(new InboundRewriteRuleAdaptor(rule));
          }
 
          for (UrlMapping mapping : mappings) {
-            builder.addRule(new UrlMappingRuleAdaptor(mapping));
+            builder.add(new UrlMappingRuleAdaptor(mapping));
          }
 
          for (RewriteRule rule : rules) {
-            builder.addRule(new OutboundRewriteRuleAdaptor(rule));
+            builder.add(new OutboundRewriteRuleAdaptor(rule));
          }
       }
       return builder;

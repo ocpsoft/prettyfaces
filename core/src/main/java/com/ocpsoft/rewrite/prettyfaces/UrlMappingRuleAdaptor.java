@@ -37,6 +37,7 @@ import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.PrettyURLBuilder;
+import com.ocpsoft.rewrite.EvaluationContext;
 import com.ocpsoft.rewrite.config.Condition;
 import com.ocpsoft.rewrite.config.Operation;
 import com.ocpsoft.rewrite.config.Rule;
@@ -68,7 +69,7 @@ public class UrlMappingRuleAdaptor implements Rule
       return new HttpCondition() {
 
          @Override
-         public boolean evaluateHttp(final HttpServletRewrite event)
+         public boolean evaluateHttp(final HttpServletRewrite event, final EvaluationContext context)
          {
             if ((event instanceof InboundRewrite)
                      && mapping.matches(PrettyContext.getRequestURL(event.getRequest())))
@@ -102,7 +103,7 @@ public class UrlMappingRuleAdaptor implements Rule
    {
       return new HttpOperation() {
          @Override
-         public void performHttp(final HttpServletRewrite event)
+         public void performHttp(final HttpServletRewrite event, final EvaluationContext evalContext)
          {
             PrettyContext context = PrettyContext.getCurrentInstance(event.getRequest());
 
