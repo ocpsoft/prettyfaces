@@ -27,7 +27,7 @@ import javax.servlet.ServletContext;
 import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.PrettyException;
-import com.ocpsoft.pretty.faces.config.DigesterPrettyConfigParser;
+import com.ocpsoft.pretty.faces.config.JAXBPrettyConfigParser;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
@@ -51,7 +51,7 @@ public class ClassLoaderConfigurationProvider implements ConfigurationProvider
       }
 
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      PrettyConfigParser configParser = new DigesterPrettyConfigParser();
+      PrettyConfigParser configParser = new JAXBPrettyConfigParser(context);
       try
       {
          final Enumeration<URL> urls = getClass().getClassLoader().getResources(PRETTY_CONFIG_RESOURCE);
@@ -68,7 +68,7 @@ public class ClassLoaderConfigurationProvider implements ConfigurationProvider
                      is = openStream(url);
                      try
                      {
-                        configParser.parse(builder, is);
+                        configParser.parse(builder, is, false);
                      }
                      catch (SAXException e)
                      {

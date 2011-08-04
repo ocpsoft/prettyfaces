@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ocpsoft.pretty.PrettyException;
-import com.ocpsoft.pretty.faces.config.DigesterPrettyConfigParser;
+import com.ocpsoft.pretty.faces.config.JAXBPrettyConfigParser;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
@@ -44,7 +44,7 @@ public class DefaultXMLConfigurationProvider implements ConfigurationProvider
    public PrettyConfig loadConfiguration(ServletContext servletContext)
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
-      PrettyConfigParser configParser = new DigesterPrettyConfigParser();
+      PrettyConfigParser configParser = new JAXBPrettyConfigParser(servletContext);
       final InputStream is = servletContext.getResourceAsStream(DEFAULT_PRETTY_FACES_CONFIG);
       if (is != null)
       {
@@ -52,7 +52,7 @@ public class DefaultXMLConfigurationProvider implements ConfigurationProvider
 
          try
          {
-            configParser.parse(builder, is);
+            configParser.parse(builder, is, false);
          }
          catch (Exception e)
          {

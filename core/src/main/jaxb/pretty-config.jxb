@@ -1,0 +1,24 @@
+<jxb:bindings version="2.0" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+
+    <!-- create separate classes for nested elements -->
+    <jxb:globalBindings localScoping="toplevel" />
+
+    <jxb:bindings schemaLocation="../resources/META-INF/ocpsoft-pretty-faces-3.3.1.xsd" node="//xsi:schema">
+        <jxb:schemaBindings>
+
+            <!-- name of Java package to generate classes to -->
+            <jxb:package name="com.ocpsoft.pretty.faces.config.types" />
+
+            <!-- append 'Element' to all generated classes -->
+            <jxb:nameXmlTransform>
+                <jxb:elementName suffix="Element" />
+                <jxb:typeName suffix="Element" />
+                <jxb:anonymousTypeName suffix="Element" />
+            </jxb:nameXmlTransform>
+
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+</jxb:bindings> 

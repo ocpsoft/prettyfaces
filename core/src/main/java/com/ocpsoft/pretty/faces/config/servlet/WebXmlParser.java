@@ -25,13 +25,12 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
-import com.ocpsoft.pretty.faces.util.EmptyEntityResolver;
+import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
 
 /**
  * Digester-based implementation of {@link PrettyConfigParser}.
@@ -81,13 +80,11 @@ public class WebXmlParser
             log.warn("No " + WEB_XML_PATH + " found - cannot configure PrettyFaces DynaView");
          }
 
-         WebXml webXml = new WebXml();
          if (in != null)
          {
-            Digester digester = getConfiguredDigester();
-            digester.push(webXml);
-            digester.parse(in);
-            processConfig(webXml);
+            WebXmlSaxParser parser = new WebXmlSaxParser();
+            parser.parse(in);
+            processConfig(parser.getWebXml());
          }
       }
 
@@ -120,32 +117,6 @@ public class WebXmlParser
       }
    }
 
-   private Digester getConfiguredDigester()
-   {
-      final Digester digester = new Digester();
-
-      /*
-       * We use the context class loader to resolve classes. This fixes
-       * ClassNotFoundExceptions on Geronimo.
-       */
-      digester.setUseContextClassLoader(true);
-
-      // prevent downloading of DTDs
-      digester.setEntityResolver(new EmptyEntityResolver());
-
-      digester.addObjectCreate("web-app/servlet", ServletDefinition.class);
-      digester.addCallMethod("web-app/servlet/servlet-name", "setServletName", 0);
-      digester.addCallMethod("web-app/servlet/servlet-class", "setServletClass", 0);
-      digester.addSetNext("web-app/servlet", "addServlet");
-
-      digester.addObjectCreate("web-app/servlet-mapping", ServletMapping.class);
-      digester.addCallMethod("web-app/servlet-mapping/servlet-name", "setServletName", 0);
-      digester.addCallMethod("web-app/servlet-mapping/url-pattern", "setUrlPattern", 0);
-      digester.addSetNext("web-app/servlet-mapping", "addServletMapping");
-
-      return digester;
-   }
-
    public boolean isFacesPresent()
    {
       return facesMapping != null;
@@ -158,5 +129,88 @@ public class WebXmlParser
          return facesMapping;
       }
       return "";
+   }
+   
+   /**
+    * Implementation of {@link SimpleXMLParserBase} that reads all
+    * servlet-mapping declarations of a web.xml
+    */
+   private static class WebXmlSaxParser extends SimpleXMLParserBase
+   {
+
+      private final WebXml webXml = new WebXml();
+
+      private ServletDefinition currentServletDefinition;
+
+      private ServletMapping currentServletMapping;
+
+      @Override
+      public void processStartElement(String name)
+      {
+
+         // <servlet>
+         if (elements("web-app", "servlet"))
+         {
+            currentServletDefinition = new ServletDefinition();
+         }
+
+         // <servlet-mapping>
+         if (elements("web-app", "servlet-mapping"))
+         {
+            currentServletMapping = new ServletMapping();
+         }
+
+      }
+
+      @Override
+      public void processEndElement(String name)
+      {
+
+         // </servlet>
+         if (elements("web-app", "servlet"))
+         {
+            webXml.addServlet(currentServletDefinition);
+            currentServletDefinition = null;
+         }
+
+         // </servlet-mapping>
+         if (elements("web-app", "servlet-mapping"))
+         {
+            webXml.addServletMapping(currentServletMapping);
+            currentServletMapping = null;
+         }
+
+      }
+
+      @Override
+      public void processCharacters(String text)
+      {
+         if (elements("web-app", "servlet", "servlet-name"))
+         {
+            currentServletDefinition.setServletName(text.trim());
+         }
+
+         if (elements("web-app", "servlet", "servlet-class"))
+         {
+            currentServletDefinition.setServletClass(text.trim());
+         }
+
+         if (elements("web-app", "servlet-mapping", "servlet-name"))
+         {
+            currentServletMapping.setServletName(text.trim());
+         }
+
+         if (elements("web-app", "servlet-mapping", "url-pattern"))
+         {
+            currentServletMapping.setUrlPattern(text.trim());
+         }
+
+      }
+
+      public WebXml getWebXml()
+      {
+         return webXml;
+      }
+
    }
 }

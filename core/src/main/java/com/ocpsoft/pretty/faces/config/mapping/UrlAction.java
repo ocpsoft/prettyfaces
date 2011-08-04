@@ -16,6 +16,7 @@
 package com.ocpsoft.pretty.faces.config.mapping;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
+import com.ocpsoft.pretty.faces.config.types.ActionElement;
 import com.ocpsoft.pretty.faces.el.ConstantExpression;
 import com.ocpsoft.pretty.faces.el.PrettyExpression;
 
@@ -33,6 +34,28 @@ public class UrlAction
     */
    public UrlAction()
    {
+   }
+   
+   /**
+    * Creates an URL action from the supplied JAXB object
+    * 
+    * @param actionElement
+    *           The JAXB object
+    */
+   public UrlAction(ActionElement actionElement)
+   {
+      if (actionElement.getValue() != null)
+      {
+         action = new ConstantExpression(actionElement.getValue().trim());
+      }
+      if (actionElement.isOnPostback() != null)
+      {
+         onPostback = actionElement.isOnPostback();
+      }
+      if (actionElement.getPhaseId() != null)
+      {
+         phaseId = PhaseId.valueOf(actionElement.getPhaseId().trim().toUpperCase());
+      }
    }
 
    /**
