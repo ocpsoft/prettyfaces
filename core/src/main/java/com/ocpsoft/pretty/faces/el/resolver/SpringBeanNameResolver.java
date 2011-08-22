@@ -17,7 +17,6 @@ package com.ocpsoft.pretty.faces.el.resolver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
@@ -61,7 +60,7 @@ public class SpringBeanNameResolver implements ELBeanNameResolver
    private final static String SCOPED_PROXY_UTILS_CLASS = "org.springframework.aop.scope.ScopedProxyUtils";
 
    /**
-    * Name of the static getTargetBeanName() method
+    * Name of the static ScopedProxyUtils.getTargetBeanName() method
     */
    private final static String GET_TARGET_BEAN_NAME_METHOD = "getTargetBeanName";
 
@@ -71,7 +70,7 @@ public class SpringBeanNameResolver implements ELBeanNameResolver
    private Method getBeanNamesMethod;
 
    /**
-    * The static getTargetBeanName() method
+    * The static ScopedProxyUtils.getTargetBeanName() method
     */
    private Method getTargetBeanNameMethod;
 
@@ -111,7 +110,11 @@ public class SpringBeanNameResolver implements ELBeanNameResolver
          {
             log.debug("Spring detected. Enabling Spring bean name resolving.");
          }
+         
+         // this is optional as the method is part of the Spring AOP module
          getTargetBeanNameMethod = getProxyTargetBeanNameMethod(classLoader);
+         
+         // success
          return true;
 
       }
@@ -202,13 +205,23 @@ public class SpringBeanNameResolver implements ELBeanNameResolver
       return null;
    }
 
+   /**
+    * Removes Spring internal bean names from the supplied list of names.
+    * 
+    * @param names
+    *           The original list of names
+    * @return the filtered list of names
+    */
    private String[] filterProxyNames(String[] names)
    {
+
+      // Spring AOP hasn't been found!
       if (getTargetBeanNameMethod == null)
       {
          return names;
       }
-      ArrayList<String> result = new ArrayList<String>(names.length);
+
+      ArrayList<String> result = new ArrayList<String>();
       for (int i = names.length - 1; i >= 0; i--)
       {
          String name = names[i];
@@ -216,49 +229,91 @@ public class SpringBeanNameResolver implements ELBeanNameResolver
          {
             continue;
          }
-         boolean isProxy = false;
-         for (int j = 0; !isProxy && j < names.length; j++)
+         boolean isTargetBeanName = false;
+         for (int j = 0; !isTargetBeanName && j < names.length; j++)
          {
+            
+            // don't compare with itself
             if (j == i)
             {
                continue;
             }
+            
+            // we will catch all reflection exceptions
             try
             {
-               isProxy = name.equals(getTargetBeanNameMethod.invoke(null, names[j]));
+               
+               // get the name Spring would use for the proxied bean
+               String targetBeanName = (String) getTargetBeanNameMethod.invoke(null, names[j]);
+
+               // the name is a Spring internal name for the proxied bean
+               isTargetBeanName = name.equals(targetBeanName);
+
             }
-            catch (Exception e)
+            catch (IllegalArgumentException e)
             {
-               if (log.isDebugEnabled())
-               {
-                  log.debug(String.format("Error invoking %s(%s)", getTargetBeanNameMethod, name));
-               }
+               log.warn(String.format("Internal error invoking %s", getTargetBeanNameMethod.getName()), e);
+            }
+            catch (IllegalAccessException e)
+            {
+               log.warn(String.format("Error invoking %s due to security restrictions",
+                     getTargetBeanNameMethod.getName()));
+            }
+            catch (InvocationTargetException e)
+            {
+               log.warn(String.format("Method %s has thrown an exception:", getTargetBeanNameMethod.getName()),
+                     e.getTargetException());
             }
          }
-         if (!isProxy)
+         
+         // no internal name -> add to result
+         if (!isTargetBeanName)
          {
             result.add(name);
          }
+         
       }
-      
+
       return result.toArray(new String[result.size()]);
    }
 
+   /**
+    * Tries to obtain the method ScopedProxyUtils.getTargetBeanName(). This may
+    * fail because the class is part of Spring's AOP module.
+    * 
+    * @param classLoader
+    *           The classloader to use for lookups
+    * @return the target method or <code>null</code> if Spring AOP could not be
+    *         found
+    */
    private static Method getProxyTargetBeanNameMethod(ClassLoader classLoader)
    {
-      try {
+      try
+      {
          Class<?> scopedProxyUtilsClass = Class.forName(SCOPED_PROXY_UTILS_CLASS, true, classLoader);
          return scopedProxyUtilsClass.getMethod(GET_TARGET_BEAN_NAME_METHOD, String.class);
       }
-      catch (Exception e)
+      catch (ClassNotFoundException e)
       {
-         // will happen when Spring AOP is not on the classpath, or similar
+         // will happen when Spring AOP is not on the classpath
          if (log.isDebugEnabled())
          {
             log.debug(String.format("Could not find %s#%s method; filtering of proxy bean names has been disabled.",
                   SCOPED_PROXY_UTILS_CLASS, GET_TARGET_BEAN_NAME_METHOD));
          }
-         return null;
       }
+      catch (SecurityException e)
+      {
+         // security issue
+         log.warn(String.format("Unable to find method %s on class %s due to security restrictions.",
+               GET_TARGET_BEAN_NAME_METHOD, SCOPED_PROXY_UTILS_CLASS));
+      }
+      catch (NoSuchMethodException e)
+      {
+         // Spring is expected to offer this method
+         log.warn(String.format("Cannot find method %s on class %s.", GET_TARGET_BEAN_NAME_METHOD,
+               SCOPED_PROXY_UTILS_CLASS));
+      }
+      return null;
    }
 }

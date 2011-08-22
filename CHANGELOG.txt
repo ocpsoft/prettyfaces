@@ -8,7 +8,7 @@ Features & Enhancements:
 Bugfixes:
 * Implemented equals()/hashcode() for LazyExpression (#115)
 * Performance: URLPatternParser got created on every call to UrlMapping.getPatternParser()
-
+* Fixed incorrect handling of Spring AOP proxies during bean name lookup - thanks to mbenson for the patch #(119)
 
 ------------------------------------
            VERSION 3.3.0
