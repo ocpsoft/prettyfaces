@@ -51,7 +51,6 @@
             </property>
          </activation>
          <modules>
-            <module>impl-jsf11</module>
             <module>impl-jsf12</module>
             <module>impl-jsf2</module>
          </modules>
@@ -67,6 +66,14 @@
             <module>docs</module>
          </modules>
       </profile>
+      <profile>
+         <id>core</id>
+         <modules>
+            <module>core</module>
+            <module>impl-jsf12</module>
+            <module>impl-jsf2</module>
+         </modules>
+	  </profile>
       <profile>
          <id>test</id>
          <modules>
