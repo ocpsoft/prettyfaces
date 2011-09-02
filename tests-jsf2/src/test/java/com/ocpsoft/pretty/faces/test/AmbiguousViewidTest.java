@@ -21,40 +21,29 @@ import static org.junit.Assert.assertTrue;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.MavenArtifactResolver;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.ocpsoft.pretty.PrettyContext;
-import com.ocpsoft.pretty.faces.application.PrettyNavigationHandler;
-import com.ocpsoft.pretty.faces.servlet.PrettyFacesWrappedResponse;
 import com.ocpsoft.pretty.faces.test.redirect.RedirectBean;
 
 @RunWith(Arquillian.class)
-public class AmbiguousViewidTest
+public class AmbiguousViewidTest extends PrettyFacesTestBase
 {
    @Deployment
-   public static Archive<?> createDeployment()
+   public static WebArchive createDeployment()
    {
-      return ShrinkWrap.create(WebArchive.class, "test.war")
+      return PrettyFacesTestBase.createDeployment()
                .addClass(RedirectBean.class)
-               .addClass(PrettyNavigationHandler.class)
                .addClass(AmbiguousBean.class)
-               .addClass(PrettyFacesWrappedResponse.class)
                .addResource("basic/ambiguousViewId.xhtml", "index.xhtml")
-               .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml")
-               .addWebResource("faces-config.xml")
-               .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.3.1-SNAPSHOT"))
-               .setWebXML("jsf-web.xml");
+               .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml");
    }
 
    @Test
