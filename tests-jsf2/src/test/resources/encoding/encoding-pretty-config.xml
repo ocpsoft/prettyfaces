@@ -7,25 +7,25 @@
 
    <url-mapping id="form">
       <pattern value="/custom/form"></pattern>
-      <view-id>/encoding.jsf</view-id>
+      <view-id value="/encoding.jsf" />
    </url-mapping>
    <url-mapping id="encoding">
       <pattern value="/encoding/#{encodingBean.pathText}" />
       <query-param name="dis">#{encodingBean.queryText}</query-param>
-      <view-id> /encoding.jsf </view-id>
+      <view-id value="/encoding.jsf " />
    </url-mapping>
    <url-mapping id="urldecoded">
       <pattern value="/url decoded" />
-      <view-id> /encoding.jsf </view-id>
+      <view-id value="/encoding.jsf " />
    </url-mapping>
    <url-mapping id="hardencoding">
       <pattern value="/hard encoding/Vračar" />
-      <view-id> /encoding.jsf </view-id>
+      <view-id value="/encoding.jsf " />
    </url-mapping>
    
    <url-mapping id="formencoding">
       <pattern value="/#{/.*/ encodingBean.pathText}/" />
-      <view-id> /encoding.jsf </view-id>
+      <view-id value="/encoding.jsf " />
    </url-mapping>
    
    <!-- Rewrite using substitute -->
@@ -40,7 +40,7 @@
 
    <url-mapping id="virtual">
       <pattern value="/virtuální"></pattern>
-      <view-id>/encoding.jsf</view-id>
+      <view-id value="/encoding.jsf" />
    </url-mapping>
    
 </pretty-config>

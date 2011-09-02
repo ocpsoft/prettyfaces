@@ -5,7 +5,7 @@
 
 	<url-mapping id="loop">
 		<pattern value="/loop.jsf" />
-		<view-id>/loop.jsf</view-id>
+		<view-id value="/loop.jsf" />
 	</url-mapping>
 
 </pretty-config>

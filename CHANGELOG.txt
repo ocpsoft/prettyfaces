@@ -1,4 +1,14 @@
 ------------------------------------
+           VERSION 4.0.0
+------------------------------------
+Regression Impact:
+* ViewID must now be strictly defined using the "value" attribute. E.g.: <view-id value="/view.id" />
+ -- This can be done using the following regular expression replacement:
+ Search: <view-id>\s*([^<]+?)\s*</view-id>
+ Replace: <view-id value="$1" />
+ 
+
+------------------------------------
            VERSION 3.3.1
 ------------------------------------
 
@@ -8,7 +18,7 @@ Features & Enhancements:
 Bugfixes:
 * Implemented equals()/hashcode() for LazyExpression (#115)
 * Performance: URLPatternParser got created on every call to UrlMapping.getPatternParser()
-
+* Fixed incorrect handling of Spring AOP proxies during bean name lookup - thanks to mbenson for the patch #(119)
 
 ------------------------------------
            VERSION 3.3.0

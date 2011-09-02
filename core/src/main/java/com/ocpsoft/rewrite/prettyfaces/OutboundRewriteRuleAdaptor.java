@@ -23,12 +23,8 @@ package com.ocpsoft.rewrite.prettyfaces;
 
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.RewriteEngine;
-import com.ocpsoft.rewrite.EvaluationContext;
-import com.ocpsoft.rewrite.config.Condition;
-import com.ocpsoft.rewrite.config.Operation;
 import com.ocpsoft.rewrite.config.Rule;
-import com.ocpsoft.rewrite.servlet.config.HttpCondition;
-import com.ocpsoft.rewrite.servlet.config.HttpOperation;
+import com.ocpsoft.rewrite.event.Rewrite;
 import com.ocpsoft.rewrite.servlet.http.event.HttpOutboundServletRewrite;
 import com.ocpsoft.rewrite.servlet.http.event.HttpServletRewrite;
 
@@ -45,49 +41,6 @@ public class OutboundRewriteRuleAdaptor implements Rule
       this.rule = rule;
    }
 
-   public Condition getCondition()
-   {
-      return new HttpCondition() {
-
-         @Override
-         public boolean evaluateHttp(final HttpServletRewrite event, final EvaluationContext context)
-         {
-            if ((event instanceof HttpOutboundServletRewrite)
-                     && rule.isOutbound()
-                     && rule.matches(((HttpOutboundServletRewrite) event).getOutboundURL()))
-            {
-               return true;
-            }
-            return false;
-         }
-      };
-   }
-
-   public Operation getOperation()
-   {
-      return new HttpOperation() {
-
-         @Override
-         public void performHttp(final HttpServletRewrite event, final EvaluationContext context)
-         {
-            RewriteEngine engine = new RewriteEngine();
-            HttpOutboundServletRewrite outbound = (HttpOutboundServletRewrite) event;
-            String url = outbound.getOutboundURL();
-            String strippedUrl = stripContextPath(outbound.getContextPath(), url);
-
-            String result = "";
-            if (!strippedUrl.equals(url))
-            {
-               result = outbound.getContextPath();
-            }
-            strippedUrl = engine.processOutbound(event.getRequest(), event.getResponse(), rule, strippedUrl);
-            result += strippedUrl;
-
-            outbound.setOutboundURL(result);
-         }
-      };
-   }
-
    /**
     * If the given URL is prefixed with this request's context-path, return the URI without the context path. Otherwise
     * return the URI unchanged.
@@ -99,6 +52,44 @@ public class OutboundRewriteRuleAdaptor implements Rule
          uri = uri.substring(contextPath.length());
       }
       return uri;
+   }
+
+   @Override
+   public String getId()
+   {
+      return toString();
+   }
+
+   @Override
+   public boolean evaluate(final Rewrite event, final com.ocpsoft.rewrite.context.EvaluationContext context)
+   {
+      if ((event instanceof HttpOutboundServletRewrite)
+               && rule.isOutbound()
+               && rule.matches(((HttpOutboundServletRewrite) event).getOutboundURL()))
+      {
+         return true;
+      }
+      return false;
+   }
+
+   @Override
+   public void perform(final Rewrite event, final com.ocpsoft.rewrite.context.EvaluationContext context)
+   {
+      RewriteEngine engine = new RewriteEngine();
+      HttpOutboundServletRewrite outbound = (HttpOutboundServletRewrite) event;
+      String url = outbound.getOutboundURL();
+      String strippedUrl = stripContextPath(outbound.getContextPath(), url);
+
+      String result = "";
+      if (!strippedUrl.equals(url))
+      {
+         result = outbound.getContextPath();
+      }
+      strippedUrl = engine.processOutbound(((HttpServletRewrite) event).getRequest(),
+               ((HttpServletRewrite) event).getResponse(), rule, strippedUrl);
+      result += strippedUrl;
+
+      outbound.setOutboundURL(result);
    }
 
 }

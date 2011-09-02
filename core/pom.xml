@@ -51,6 +51,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <generateDirectory>src/main/generated-sources</generateDirectory>
                     <strict>true</strict>
                     <verbose>false</verbose>
                     <bindingDirectory>src/main/jaxb</bindingDirectory>

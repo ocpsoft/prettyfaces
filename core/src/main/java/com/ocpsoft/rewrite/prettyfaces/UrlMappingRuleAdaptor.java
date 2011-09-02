@@ -28,8 +28,6 @@ import java.util.Map.Entry;
 
 import javax.faces.component.UIParameter;
 
-import org.jboss.logging.Logger;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
@@ -37,13 +35,11 @@ import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.PrettyURLBuilder;
-import com.ocpsoft.rewrite.EvaluationContext;
-import com.ocpsoft.rewrite.config.Condition;
-import com.ocpsoft.rewrite.config.Operation;
 import com.ocpsoft.rewrite.config.Rule;
+import com.ocpsoft.rewrite.context.EvaluationContext;
 import com.ocpsoft.rewrite.event.InboundRewrite;
-import com.ocpsoft.rewrite.servlet.config.HttpCondition;
-import com.ocpsoft.rewrite.servlet.config.HttpOperation;
+import com.ocpsoft.rewrite.event.Rewrite;
+import com.ocpsoft.rewrite.logging.Logger;
 import com.ocpsoft.rewrite.servlet.http.event.HttpInboundServletRewrite;
 import com.ocpsoft.rewrite.servlet.http.event.HttpOutboundServletRewrite;
 import com.ocpsoft.rewrite.servlet.http.event.HttpServletRewrite;
@@ -61,84 +57,6 @@ public class UrlMappingRuleAdaptor implements Rule
    public UrlMappingRuleAdaptor(final UrlMapping mapping)
    {
       this.mapping = mapping;
-   }
-
-   @Override
-   public Condition getCondition()
-   {
-      return new HttpCondition() {
-
-         @Override
-         public boolean evaluateHttp(final HttpServletRewrite event, final EvaluationContext context)
-         {
-            if ((event instanceof InboundRewrite)
-                     && mapping.matches(PrettyContext.getRequestURL(event.getRequest())))
-            {
-               return true;
-            }
-            else if ((event instanceof HttpOutboundServletRewrite)
-                     && mapping.isOutbound()) {
-               String outboundURL = ((HttpOutboundServletRewrite) event).getOutboundURL();
-               if (outboundURL.startsWith(event.getContextPath()))
-               {
-                  outboundURL = outboundURL.substring(event.getContextPath().length());
-               }
-
-               QueryString queryString = QueryString.build(outboundURL);
-               String mappingId = queryString.getParameter(REWRITE_MAPPING_ID_KEY);
-
-               if (((mappingId == null) && outboundURL.startsWith(mapping.getViewId()))
-                        || mapping.getId().equals(mappingId))
-               {
-                  return true;
-               }
-            }
-            return false;
-         }
-      };
-   }
-
-   @Override
-   public Operation getOperation()
-   {
-      return new HttpOperation() {
-         @Override
-         public void performHttp(final HttpServletRewrite event, final EvaluationContext evalContext)
-         {
-            PrettyContext context = PrettyContext.getCurrentInstance(event.getRequest());
-
-            if (event instanceof HttpInboundServletRewrite)
-            {
-               String viewId = context.getCurrentViewId();
-               URL url = context.getRequestURL();
-               if (context.shouldProcessDynaview())
-               {
-                  log.trace("Forwarding mapped request [" + url.toURL() + "] to dynaviewId [" + viewId + "]");
-                  ((HttpInboundServletRewrite) event).forward(context.getDynaViewId());
-               }
-               else
-               {
-                  log.trace("Forwarding mapped request [" + url.toURL() + "] to resource [" + viewId + "]");
-                  if (url.decode().toURL().matches(viewId))
-                  {
-                     event.proceed();
-                  }
-                  else
-                  {
-                     ((HttpInboundServletRewrite) event).forward(viewId);
-                  }
-               }
-            }
-            else if ((event instanceof HttpOutboundServletRewrite)
-                     && mapping.isOutbound())
-            {
-               HttpOutboundServletRewrite outboundRewrite = (HttpOutboundServletRewrite) event;
-               String newUrl = rewritePrettyMappings(context.getConfig(), event.getContextPath(),
-                        outboundRewrite.getOutboundURL());
-               outboundRewrite.setOutboundURL(newUrl);
-            }
-         }
-      };
    }
 
    private String rewritePrettyMappings(final PrettyConfig config, final String contextPath, final String url)
@@ -194,5 +112,77 @@ public class UrlMappingRuleAdaptor implements Rule
          }
       }
       return result;
+   }
+
+   @Override
+   public String getId()
+   {
+      return toString();
+   }
+
+   @Override
+   public boolean evaluate(final Rewrite event, final EvaluationContext context)
+   {
+      if ((event instanceof InboundRewrite)
+               && mapping.matches(PrettyContext.getRequestURL(((HttpServletRewrite) event).getRequest())))
+      {
+         return true;
+      }
+      else if ((event instanceof HttpOutboundServletRewrite)
+               && mapping.isOutbound()) {
+         String outboundURL = ((HttpOutboundServletRewrite) event).getOutboundURL();
+         if (outboundURL.startsWith(((HttpServletRewrite) event).getContextPath()))
+         {
+            outboundURL = outboundURL.substring(((HttpServletRewrite) event).getContextPath().length());
+         }
+
+         QueryString queryString = QueryString.build(outboundURL);
+         String mappingId = queryString.getParameter(REWRITE_MAPPING_ID_KEY);
+
+         if (((mappingId == null) && outboundURL.startsWith(mapping.getViewId()))
+                  || mapping.getId().equals(mappingId))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public void perform(final Rewrite event, final EvaluationContext ec)
+   {
+      PrettyContext context = PrettyContext.getCurrentInstance(((HttpServletRewrite) event).getRequest());
+
+      if (event instanceof HttpInboundServletRewrite)
+      {
+         String viewId = context.getCurrentViewId();
+         URL url = context.getRequestURL();
+         if (context.shouldProcessDynaview())
+         {
+            log.trace("Forwarding mapped request [" + url.toURL() + "] to dynaviewId [" + viewId + "]");
+            ((HttpInboundServletRewrite) event).forward(context.getDynaViewId());
+         }
+         else
+         {
+            log.trace("Forwarding mapped request [" + url.toURL() + "] to resource [" + viewId + "]");
+            if (url.decode().toURL().matches(viewId))
+            {
+               ((HttpServletRewrite) event).proceed();
+            }
+            else
+            {
+               ((HttpInboundServletRewrite) event).forward(viewId);
+            }
+         }
+      }
+      else if ((event instanceof HttpOutboundServletRewrite)
+               && mapping.isOutbound())
+      {
+         HttpOutboundServletRewrite outboundRewrite = (HttpOutboundServletRewrite) event;
+         String newUrl = rewritePrettyMappings(context.getConfig(), ((HttpServletRewrite) event).getContextPath(),
+                  outboundRewrite.getOutboundURL());
+         outboundRewrite.setOutboundURL(newUrl);
+      }
+
    }
 }

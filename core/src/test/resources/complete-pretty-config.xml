@@ -3,14 +3,25 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.1.1 http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.1.1.xsd">
 
+    <!-- minimal configuration -->
+    <rewrite />
+
+    <!-- complete rule specifying all possible attributes -->
+    <rewrite inbound="false" match="/something" outbound="false"
+        processor="com.ocpsoft.MyProcessor" redirect="302" substitute="/new"
+        toCase="uppercase" trailingSlash="remove" url="http://www.ocpsoft.com/" />
+        
     <!-- minimal mapping -->
-    <url-mapping/>
+    <url-mapping>
+      <pattern value=""></pattern>
+      <view-id/>
+    </url-mapping>
 
     <!-- some sample mapping -->
     <url-mapping id="store">
         <pattern value="/store/" />
-        <view-id value="/faces/shop/store.jsf" />
         <query-param name="language"> #{bean.language} </query-param>
+        <view-id value="/faces/shop/store.jsf" />
     </url-mapping>
 
     <!-- complete mapping -->
@@ -24,16 +35,8 @@
             onError="pretty:error" validator="#{bean.validate}" onPostback="false">
             #{bean.query}
         </query-param>
-        <action onPostback="false" phaseId="RENDER_RESPONSE">#{bean.action}</action>
         <view-id value="/faces/validate.jsf" />
+        <action onPostback="false" phaseId="RENDER_RESPONSE">#{bean.action}</action>
     </url-mapping>
-
-    <!-- minimal configuration -->
-    <rewrite />
-
-    <!-- complete rule specifying all possible attributes -->
-    <rewrite inbound="false" match="/something" outbound="false"
-        processor="com.ocpsoft.MyProcessor" redirect="302" substitute="/new"
-        toCase="uppercase" trailingSlash="remove" url="http://www.ocpsoft.com/" />
 
 </pretty-config>

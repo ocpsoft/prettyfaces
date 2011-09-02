@@ -5,37 +5,37 @@
 
    <url-mapping id="index">
       <pattern value="/"></pattern>
-      <view-id>/index.jsf</view-id>
+      <view-id value="/index.jsf" />
    </url-mapping>
 
    <url-mapping id="form">
       <pattern value="/custom/form"></pattern>
-      <view-id>/form.jsf</view-id>
+      <view-id value="/form.jsf" />
    </url-mapping>
 
    <url-mapping id="index">
       <pattern value="/default/#{digits}"></pattern>
-      <view-id>/index.jsf</view-id>
+      <view-id value="/index.jsf" />
    </url-mapping>
 
    <url-mapping id="index">
       <pattern value="/digits/#{/\\d+/ digits}"></pattern>
-      <view-id>/index.jsf</view-id>
+      <view-id value="/index.jsf" />
    </url-mapping>
    
    <!-- Begin Encoding Mappings -->
    <url-mapping id="encoding">
       <pattern value="/encoding/#{encodingBean.pathText}" />
       <query-param name="dis">#{encodingBean.queryText}</query-param>
-      <view-id> /faces/encoding/test.jsf </view-id>
+      <view-id value="/faces/encoding/test.jsf" />
    </url-mapping>
    <url-mapping id="urldecoded">
       <pattern value="/url decoded" />
-      <view-id> /faces/encoding/test.jsf </view-id>
+      <view-id value="/faces/encoding/test.jsf" />
    </url-mapping>
    <url-mapping id="hardencoding">
       <pattern value="/hard encoding/Vračar" />
-      <view-id> /faces/encoding/test.jsf </view-id>
+      <view-id value="/faces/encoding/test.jsf" />
    </url-mapping>
 
 

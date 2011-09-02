@@ -47,8 +47,6 @@ public class AmbiguousViewidTest extends PrettyFacesTestBase
                .addResource("basic/ambiguousViewId.xhtml", "index.xhtml")
                .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml");
 
-      System.out.println(deployment.toString(true));
-
       return deployment;
    }
 
