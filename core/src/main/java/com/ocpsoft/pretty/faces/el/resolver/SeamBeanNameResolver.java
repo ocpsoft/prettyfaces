@@ -20,10 +20,8 @@ import java.lang.reflect.Method;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>
@@ -43,7 +41,7 @@ import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
  */
 public class SeamBeanNameResolver implements ELBeanNameResolver
 {
-   private final static Log log = LogFactory.getLog(SeamBeanNameResolver.class);
+   private final static Logger log = Logger.getLogger(SeamBeanNameResolver.class);
 
    /**
     * FQCN of the Seam class
@@ -63,7 +61,7 @@ public class SeamBeanNameResolver implements ELBeanNameResolver
    /*
     * Interface implementation
     */
-   public boolean init(ServletContext servletContext, ClassLoader classLoader)
+   public boolean init(final ServletContext servletContext, final ClassLoader classLoader)
    {
 
       try
@@ -108,7 +106,7 @@ public class SeamBeanNameResolver implements ELBeanNameResolver
    /*
     * Interface implementation
     */
-   public String getBeanName(Class<?> clazz)
+   public String getBeanName(final Class<?> clazz)
    {
 
       // catch reflection exceptions
@@ -119,7 +117,7 @@ public class SeamBeanNameResolver implements ELBeanNameResolver
          String result = (String) getComponentNameMethod.invoke(null, clazz);
 
          // log name if call was successful
-         if (log.isTraceEnabled() && result != null)
+         if (log.isTraceEnabled() && (result != null))
          {
             log.trace("Seam returned name '" + result + "' for class: " + clazz.getName());
          }

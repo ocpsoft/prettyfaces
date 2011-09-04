@@ -20,9 +20,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
@@ -33,13 +30,14 @@ import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
 import com.ocpsoft.pretty.faces.util.FacesStateUtils;
 import com.ocpsoft.pretty.faces.util.NullComponent;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
 public class ParameterInjector
 {
-   private static final Log log = LogFactory.getLog(ParameterInjector.class);
+   private static final Logger log = Logger.getLogger(ParameterInjector.class);
    private static final FacesElUtils elUtils = new FacesElUtils();
 
    public void injectParameters(final FacesContext context)

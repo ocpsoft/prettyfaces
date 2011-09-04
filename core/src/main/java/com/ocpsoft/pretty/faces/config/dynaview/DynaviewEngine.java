@@ -23,21 +23,19 @@ import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.application.PrettyRedirector;
 import com.ocpsoft.pretty.faces.beans.ExtractedValuesURLBuilder;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
+import com.ocpsoft.rewrite.logging.Logger;
 
 public class DynaviewEngine
 {
    public static final String DYNAVIEW = "com.ocpsoft.dynaView";
 
-   private static final Log log = LogFactory.getLog(DynaviewEngine.class);
+   private static final Logger log = Logger.getLogger(DynaviewEngine.class);
    private static FacesElUtils elUtils = new FacesElUtils();
 
    /**
@@ -163,7 +161,7 @@ public class DynaviewEngine
                viewId = urlMapping.getViewId();
                ExtractedValuesURLBuilder builder = new ExtractedValuesURLBuilder();
                result = context.getContextPath() + builder.buildURL(urlMapping).encode()
-                         + builder.buildQueryString(urlMapping);
+                        + builder.buildQueryString(urlMapping);
             }
             else
             {

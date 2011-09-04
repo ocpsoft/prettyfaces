@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLActions;
@@ -42,6 +39,7 @@ import com.ocpsoft.pretty.faces.el.ConstantExpression;
 import com.ocpsoft.pretty.faces.el.LazyBeanNameFinder;
 import com.ocpsoft.pretty.faces.el.LazyExpression;
 import com.ocpsoft.pretty.faces.el.PrettyExpression;
+import com.ocpsoft.rewrite.logging.Logger;
 
 @SuppressWarnings("unchecked")
 public class PrettyAnnotationHandler
@@ -50,7 +48,7 @@ public class PrettyAnnotationHandler
    /**
     * The logger
     */
-   private static final Log log = LogFactory.getLog(PrettyAnnotationHandler.class);
+   private static final Logger log = Logger.getLogger(PrettyAnnotationHandler.class);
 
    /**
     * A map assigning mapping IDs to {@link UrlMapping} instances
@@ -80,19 +78,18 @@ public class PrettyAnnotationHandler
    /**
     * Constructor
     */
-   public PrettyAnnotationHandler(LazyBeanNameFinder beanNameFinder)
+   public PrettyAnnotationHandler(final LazyBeanNameFinder beanNameFinder)
    {
       this.beanNameFinder = beanNameFinder;
    }
 
    /**
-    * This method scans the supplied class for PrettyFaces annotations. The
-    * method must be called for every class that should be scanner before
-    * finally calling {@link #build(PrettyConfigBuilder)}.
+    * This method scans the supplied class for PrettyFaces annotations. The method must be called for every class that
+    * should be scanner before finally calling {@link #build(PrettyConfigBuilder)}.
     * 
     * @param clazz The class to scan
     */
-   public void processClass(Class clazz)
+   public void processClass(final Class clazz)
    {
 
       // log class name on trace level
@@ -135,11 +132,10 @@ public class PrettyAnnotationHandler
    /**
     * Checks for PrettyFaces mapping annotations on a single class
     * 
-    * @param clazz
-    *           Class to scan
+    * @param clazz Class to scan
     * @return The IDs of the mappings found on the class
     */
-   public String[] processClassMappingAnnotations(Class clazz)
+   public String[] processClassMappingAnnotations(final Class clazz)
    {
 
       // list of all mapping IDs found on the class
@@ -174,7 +170,7 @@ public class PrettyAnnotationHandler
       return classMappingIds.toArray(new String[classMappingIds.size()]);
 
    }
-   
+
    /**
     * Process a single {@link URLMapping} annotation.
     * 
@@ -182,7 +178,7 @@ public class PrettyAnnotationHandler
     * @param mappingAnnotation The annotation to process
     * @return The mapping ID of the mapping found
     */
-   private String processPrettyMappingAnnotation(Class clazz, URLMapping mappingAnnotation)
+   private String processPrettyMappingAnnotation(final Class clazz, final URLMapping mappingAnnotation)
    {
 
       // log class name
@@ -223,7 +219,8 @@ public class PrettyAnnotationHandler
          if (validationAnnotation.index() < 0)
          {
             throw new IllegalArgumentException(
-                  "Please set the index of the path parameter you want to validate with the @URLValidator specified on mapping: " + mapping.getId());
+                     "Please set the index of the path parameter you want to validate with the @URLValidator specified on mapping: "
+                              + mapping.getId());
          }
 
          // prepare PathValidator
@@ -253,7 +250,7 @@ public class PrettyAnnotationHandler
     * 
     * @param clazz Class to scan
     */
-   private void processPrettyBeanAnnotation(Class clazz)
+   private void processPrettyBeanAnnotation(final Class clazz)
    {
 
       // get reference to @URLMapping annotation
@@ -277,13 +274,12 @@ public class PrettyAnnotationHandler
    }
 
    /**
-    * Searches for {@link URLAction} or {@link URLActions} annotations on a
-    * method.
+    * Searches for {@link URLAction} or {@link URLActions} annotations on a method.
     * 
     * @param method Method to scan
     * @param classMappingIds The mapping IDs of the class this method belongs to
     */
-   private void processMethodAnnotations(Method method, String[] classMappingIds)
+   private void processMethodAnnotations(final Method method, final String[] classMappingIds)
    {
 
       // is there a @URLAction annotation on the class?
@@ -311,7 +307,7 @@ public class PrettyAnnotationHandler
     * @param field Field to scan
     * @param classMappingIds The mapping IDs of the class this method belongs to
     */
-   private void processFieldAnnotations(Field field, String[] classMappingIds)
+   private void processFieldAnnotations(final Field field, final String[] classMappingIds)
    {
       // Is there a @URLQueryParameter annotation?
       URLQueryParameter queryParamAnnotation = field.getAnnotation(URLQueryParameter.class);
@@ -332,7 +328,7 @@ public class PrettyAnnotationHandler
             // action belongs to the mapping mentioned with mappingId attribute
             queryParam.setMappingIds(new String[] { queryParamAnnotation.mappingId().trim() });
          }
-         else if (classMappingIds != null && classMappingIds.length > 0)
+         else if ((classMappingIds != null) && (classMappingIds.length > 0))
          {
             // use the mappings found on the class
             queryParam.setMappingIds(classMappingIds);
@@ -340,9 +336,9 @@ public class PrettyAnnotationHandler
          else
          {
             throw new IllegalArgumentException("Unable to find a suitable mapping "
-                  + "for the query-parameter definied on field '" + field.getName() + "' in class '"
-                  + field.getDeclaringClass().getName() + "'. Either place a @URLMapping annotation on the "
-                  + "class or reference a foreign mapping using the 'mappingId' attribute.");
+                     + "for the query-parameter definied on field '" + field.getName() + "' in class '"
+                     + field.getDeclaringClass().getName() + "'. Either place a @URLMapping annotation on the "
+                     + "class or reference a foreign mapping using the 'mappingId' attribute.");
          }
 
          // check if there is also a validation annotation placed on the field
@@ -367,14 +363,14 @@ public class PrettyAnnotationHandler
    }
 
    /**
-    * Creates a {@link UrlAction} object from the supplied {@link URLAction}
-    * annotation
+    * Creates a {@link UrlAction} object from the supplied {@link URLAction} annotation
     * 
     * @param actionAnnotation The annotation
     * @param method The method that was annotated
     * @param classMappingIds the mapping IDs of the current class
     */
-   private void processPrettyActionAnnotation(URLAction actionAnnotation, Method method, String[] classMappingIds)
+   private void processPrettyActionAnnotation(final URLAction actionAnnotation, final Method method,
+            final String[] classMappingIds)
    {
 
       // Create ActionSpec
@@ -389,18 +385,18 @@ public class PrettyAnnotationHandler
          // action belongs to the mapping mentioned with mappingId attribute
          actionSpec.setMappingIds(new String[] { actionAnnotation.mappingId().trim() });
       }
-      else if ( classMappingIds != null && classMappingIds.length > 0 )
+      else if ((classMappingIds != null) && (classMappingIds.length > 0))
       {
          // use the mapping found on the class
-         actionSpec.setMappingIds( classMappingIds );
+         actionSpec.setMappingIds(classMappingIds);
       }
       else
       {
          // No mapping found... throw an exception..
          throw new IllegalArgumentException("Unable to find a suitable mapping "
-               + "for the action definied on method '" + method.getName() + "' in class '"
-               + method.getDeclaringClass().getName() + "'. Either place a @URLMapping annotation on the "
-               + "class or reference a foreign mapping using the 'mappingId' attribute.");
+                  + "for the action definied on method '" + method.getName() + "' in class '"
+                  + method.getDeclaringClass().getName() + "'. Either place a @URLMapping annotation on the "
+                  + "class or reference a foreign mapping using the 'mappingId' attribute.");
       }
 
       // add action to list of actions
@@ -412,22 +408,20 @@ public class PrettyAnnotationHandler
     * Returns <code>true</code> for "blank" strings.
     * 
     * @param str Input string
-    * @return <code>true</code> if string is <code>null</code> or trimmed value
-    *         is empty
+    * @return <code>true</code> if string is <code>null</code> or trimmed value is empty
     */
-   private static boolean isBlank(String str)
+   private static boolean isBlank(final String str)
    {
       return (str == null) || (str.trim().length() == 0);
    }
 
    /**
-    * This methods adds all mappings found to the supplied
-    * {@link PrettyConfigBuilder}. It should be called after all classes has
-    * been scanned via {@link #processClass(Class)}.
+    * This methods adds all mappings found to the supplied {@link PrettyConfigBuilder}. It should be called after all
+    * classes has been scanned via {@link #processClass(Class)}.
     * 
     * @param builder The builder to add the mappings to
     */
-   public void build(PrettyConfigBuilder builder)
+   public void build(final PrettyConfigBuilder builder)
    {
 
       // process all actions found
@@ -450,8 +444,8 @@ public class PrettyAnnotationHandler
             if (mapping == null)
             {
                throw new IllegalArgumentException("Unable to find the mapping '" + mappingId
-                     + "' referenced at method '" + actionSpec.getMethod().getName() + "' in class '"
-                     + actionSpec.getMethod().getDeclaringClass().getName() + "'.");
+                        + "' referenced at method '" + actionSpec.getMethod().getName() + "' in class '"
+                        + actionSpec.getMethod().getDeclaringClass().getName() + "'.");
             }
 
             // build UrlMapping
@@ -492,8 +486,8 @@ public class PrettyAnnotationHandler
             if (mapping == null)
             {
                throw new IllegalArgumentException("Unable to find the mapping '" + mappingId
-                     + "' referenced at field '" + queryParamSpec.getFieldName() + "' in class '"
-                     + queryParamSpec.getOwnerClass().getName() + "'.");
+                        + "' referenced at field '" + queryParamSpec.getFieldName() + "' in class '"
+                        + queryParamSpec.getOwnerClass().getName() + "'.");
             }
 
             // build UrlMapping
@@ -520,7 +514,7 @@ public class PrettyAnnotationHandler
             if (log.isTraceEnabled())
             {
                log.trace("Registered query-param '" + queryParam.getName() + "' to '" + expression + "' in mapping: "
-                     + mapping.getId());
+                        + mapping.getId());
             }
 
             // register this action
@@ -538,14 +532,14 @@ public class PrettyAnnotationHandler
    }
 
    /**
-    * Creates a {@link PrettyExpression} for a class and component. This method
-    * may return a {@link ConstantExpression} or a {@link LazyExpression}.
+    * Creates a {@link PrettyExpression} for a class and component. This method may return a {@link ConstantExpression}
+    * or a {@link LazyExpression}.
     * 
     * @param clazz The class of the bean
     * @param component the component (property or method name)
     * @return The expression
     */
-   private PrettyExpression buildPrettyExpression(Class<?> clazz, String component)
+   private PrettyExpression buildPrettyExpression(final Class<?> clazz, final String component)
    {
 
       if (log.isTraceEnabled())
@@ -590,7 +584,7 @@ public class PrettyAnnotationHandler
     * @param separator the separator to use
     * @return joined list of values
     */
-   private static String join(String[] values, String separator)
+   private static String join(final String[] values, final String separator)
    {
       StringBuilder result = new StringBuilder();
       if (values != null)
@@ -625,7 +619,7 @@ public class PrettyAnnotationHandler
          return onPostback;
       }
 
-      public void setOnPostback(boolean onPostback)
+      public void setOnPostback(final boolean onPostback)
       {
          this.onPostback = onPostback;
       }
@@ -635,7 +629,7 @@ public class PrettyAnnotationHandler
          return phaseId;
       }
 
-      public void setPhaseId(PhaseId phaseId)
+      public void setPhaseId(final PhaseId phaseId)
       {
          this.phaseId = phaseId;
       }
@@ -645,7 +639,7 @@ public class PrettyAnnotationHandler
          return method;
       }
 
-      public void setMethod(Method method)
+      public void setMethod(final Method method)
       {
          this.method = method;
       }
@@ -655,7 +649,7 @@ public class PrettyAnnotationHandler
          return mappingIds;
       }
 
-      public void setMappingIds(String[] mappingIds)
+      public void setMappingIds(final String[] mappingIds)
       {
          this.mappingIds = mappingIds;
       }
@@ -683,7 +677,7 @@ public class PrettyAnnotationHandler
          return validator;
       }
 
-      public void setValidator(String validator)
+      public void setValidator(final String validator)
       {
          this.validator = validator;
       }
@@ -693,7 +687,7 @@ public class PrettyAnnotationHandler
          return name;
       }
 
-      public void setName(String name)
+      public void setName(final String name)
       {
          this.name = name;
       }
@@ -703,7 +697,7 @@ public class PrettyAnnotationHandler
          return fieldName;
       }
 
-      public void setFieldName(String fieldName)
+      public void setFieldName(final String fieldName)
       {
          this.fieldName = fieldName;
       }
@@ -713,7 +707,7 @@ public class PrettyAnnotationHandler
          return ownerClass;
       }
 
-      public void setOwnerClass(Class<?> ownerClass)
+      public void setOwnerClass(final Class<?> ownerClass)
       {
          this.ownerClass = ownerClass;
       }
@@ -723,7 +717,7 @@ public class PrettyAnnotationHandler
          return onError;
       }
 
-      public void setOnError(String onError)
+      public void setOnError(final String onError)
       {
          this.onError = onError;
       }
@@ -733,7 +727,7 @@ public class PrettyAnnotationHandler
          return validatorIds;
       }
 
-      public void setValidatorIds(String[] validatorIds)
+      public void setValidatorIds(final String[] validatorIds)
       {
          this.validatorIds = validatorIds;
       }
@@ -743,7 +737,7 @@ public class PrettyAnnotationHandler
          return onPostback;
       }
 
-      public void setOnPostback(boolean onPostback)
+      public void setOnPostback(final boolean onPostback)
       {
          this.onPostback = onPostback;
       }
@@ -753,7 +747,7 @@ public class PrettyAnnotationHandler
          return mappingIds;
       }
 
-      public void setMappingIds(String[] mappingIds)
+      public void setMappingIds(final String[] mappingIds)
       {
          this.mappingIds = mappingIds;
       }

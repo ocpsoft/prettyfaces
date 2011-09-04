@@ -21,9 +21,6 @@ import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.UrlAction;
@@ -32,13 +29,14 @@ import com.ocpsoft.pretty.faces.util.FacesElUtils;
 import com.ocpsoft.pretty.faces.util.FacesMessagesUtils;
 import com.ocpsoft.pretty.faces.util.FacesStateUtils;
 import com.ocpsoft.pretty.faces.util.PhaseIdComparator;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
 public class ActionExecutor
 {
-   private static final Log log = LogFactory.getLog(ActionExecutor.class);
+   private static final Logger log = Logger.getLogger(ActionExecutor.class);
    private static final FacesElUtils elUtils = new FacesElUtils();
    private final FacesMessagesUtils mu = new FacesMessagesUtils();
 

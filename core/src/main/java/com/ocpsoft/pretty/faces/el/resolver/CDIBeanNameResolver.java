@@ -26,10 +26,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>
@@ -37,9 +35,8 @@ import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
  * </p>
  * 
  * <p>
- * This resolver will try to get the BeanManager from the {@link ServletContext}
- * or directly from JNDI. If the BeanManager can be found, it will resolve names
- * by calling BeanManager.getBeans().
+ * This resolver will try to get the BeanManager from the {@link ServletContext} or directly from JNDI. If the
+ * BeanManager can be found, it will resolve names by calling BeanManager.getBeans().
  * </p>
  * 
  * @author Christian Kaltepoth
@@ -48,7 +45,7 @@ import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
 public class CDIBeanNameResolver implements ELBeanNameResolver
 {
 
-   private final static Log log = LogFactory.getLog(CDIBeanNameResolver.class);
+   private final static Logger log = Logger.getLogger(CDIBeanNameResolver.class);
 
    /**
     * Default JNDI name of the BeanManager
@@ -103,7 +100,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
    /*
     * Implementation of method defined in the interface
     */
-   public boolean init(ServletContext servletContext, ClassLoader classLoader)
+   public boolean init(final ServletContext servletContext, final ClassLoader classLoader)
    {
 
       // catch reflection exceptions
@@ -146,7 +143,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       // try Weld 1.1.x servlet context attribute
       if (beanManager == null)
       {
-        beanManager = getBeanManagerFromServletContext(servletContext, SERVLET_CONTEXT_ATTR_WELD_1_1);
+         beanManager = getBeanManagerFromServletContext(servletContext, SERVLET_CONTEXT_ATTR_WELD_1_1);
       }
 
       // try standard JNDI name
@@ -160,7 +157,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       {
          beanManager = getBeanManagerFromJNDI(BEAN_MANAGER_JNDI_TOMCAT);
       }
-      
+
       // No BeanManager? Abort here
       if (beanManager == null)
       {
@@ -181,14 +178,13 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
 
    /**
     * Tries to get the BeanManager from the servlet context attribute
-    * <code>javax.enterprise.inject.spi.BeanManager</code>. This works with
-    * Weld and the current OpenWebBeans snapshots.
+    * <code>javax.enterprise.inject.spi.BeanManager</code>. This works with Weld and the current OpenWebBeans snapshots.
     * 
-    * @param servletContext The servlet context 
-    * @param attributeName The attribute name 
+    * @param servletContext The servlet context
+    * @param attributeName The attribute name
     * @return The BeanManager instance or <code>null</code>
     */
-   private Object getBeanManagerFromServletContext(ServletContext servletContext, String attributeName)
+   private Object getBeanManagerFromServletContext(final ServletContext servletContext, final String attributeName)
    {
 
       // get BeanManager from servlet context
@@ -199,11 +195,11 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       {
          if (obj == null)
          {
-            log.trace("The BeanManager could not be found in servlet context attribute: "+attributeName);
+            log.trace("The BeanManager could not be found in servlet context attribute: " + attributeName);
          }
          else
          {
-            log.trace("Found BeanManager in the servlet context attribute: "+attributeName);
+            log.trace("Found BeanManager in the servlet context attribute: " + attributeName);
          }
       }
 
@@ -214,11 +210,10 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
    /**
     * Tries to get the BeanManager from JNDI
     * 
-    * @param jndiName
-    *           The JNDI name used for lookup
+    * @param jndiName The JNDI name used for lookup
     * @return BeanManager instance or <code>null</code>
     */
-   private Object getBeanManagerFromJNDI(String jndiName)
+   private Object getBeanManagerFromJNDI(final String jndiName)
    {
 
       try
@@ -229,7 +224,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
 
          if (log.isTraceEnabled())
          {
-            log.trace("Found BeanManager in: "+jndiName);
+            log.trace("Found BeanManager in: " + jndiName);
          }
 
          return obj;
@@ -239,7 +234,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
       {
          if (log.isDebugEnabled())
          {
-            log.debug("Unable to get BeanManager from '"+jndiName+"': " + e.getMessage());
+            log.debug("Unable to get BeanManager from '" + jndiName + "': " + e.getMessage());
          }
       }
 
@@ -249,7 +244,7 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
    /*
     * Implementation of interface
     */
-   public String getBeanName(Class<?> clazz)
+   public String getBeanName(final Class<?> clazz)
    {
       // catch reflection exceptions
       try
@@ -257,10 +252,10 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
 
          // call BeanManager.getBeans(clazz) without suppling qualifiers
          Set<?> beansSet = (Set<?>) getBeansMethod.invoke(
-               beanManager, clazz, Array.newInstance(Annotation.class, 0));
+                  beanManager, clazz, Array.newInstance(Annotation.class, 0));
 
          // BeanManager returns no results
-         if (beansSet == null || beansSet.size() == 0)
+         if ((beansSet == null) || (beansSet.size() == 0))
          {
 
             if (log.isTraceEnabled())
@@ -274,8 +269,8 @@ public class CDIBeanNameResolver implements ELBeanNameResolver
          // more than one name? Warn the user..
          if (beansSet.size() > 1)
          {
-            log.warn("The BeanManager returns more than one name for " + clazz.getName() + 
-            ". You should place a @URLBeanName annotation on the class.");
+            log.warn("The BeanManager returns more than one name for " + clazz.getName() +
+                     ". You should place a @URLBeanName annotation on the class.");
             return null;
          }
 

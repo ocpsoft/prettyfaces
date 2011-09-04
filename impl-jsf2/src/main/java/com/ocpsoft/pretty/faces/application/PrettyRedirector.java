@@ -22,9 +22,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.beans.ExtractedValuesURLBuilder;
@@ -32,13 +29,14 @@ import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
 public class PrettyRedirector
 {
-   private static final Log log = LogFactory.getLog(PrettyRedirector.class);
+   private static final Logger log = Logger.getLogger(PrettyRedirector.class);
    private final ExtractedValuesURLBuilder builder = new ExtractedValuesURLBuilder();
 
    public static PrettyRedirector getInstance()
@@ -104,7 +102,7 @@ public class PrettyRedirector
       }
    }
 
-   private boolean isPrettyNavigationCase(PrettyContext prettyContext, final String action)
+   private boolean isPrettyNavigationCase(final PrettyContext prettyContext, final String action)
    {
       PrettyConfig config = prettyContext.getConfig();
       return (action != null) && config.isMappingId(action) && action.trim().startsWith(PrettyContext.PRETTY_PREFIX);

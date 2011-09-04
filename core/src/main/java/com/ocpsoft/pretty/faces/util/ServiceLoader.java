@@ -30,19 +30,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
- * This class handles looking up service providers on the class path. It
- * implements the <a href="http://java.sun.com/javase/6/docs/technotes/guides/jar/jar.html#Service%20Provider"
- * >Service Provider section of the JAR File Specification</a>.
+ * This class handles looking up service providers on the class path. It implements the <a
+ * href="http://java.sun.com/javase/6/docs/technotes/guides/jar/jar.html#Service%20Provider" >Service Provider section
+ * of the JAR File Specification</a>.
  * 
- * The Service Provider programmatic lookup was not specified prior to Java 6 so
- * this interface allows use of the specification prior to Java 6.
+ * The Service Provider programmatic lookup was not specified prior to Java 6 so this interface allows use of the
+ * specification prior to Java 6.
  * 
- * The API is copied from <a
- * href="http://java.sun.com/javase/6/docs/api/java/util/ServiceLoader.html"
+ * The API is copied from <a href="http://java.sun.com/javase/6/docs/api/java/util/ServiceLoader.html"
  * >java.util.ServiceLoader</a>
  * 
  * @author Pete Muir
@@ -53,11 +51,10 @@ public class ServiceLoader<S> implements Iterable<S>
 {
    private static final String SERVICES = "META-INF/services";
 
-   private static final Log log = LogFactory.getLog(ServiceLoader.class);
+   private static final Logger log = Logger.getLogger(ServiceLoader.class);
 
    /**
-    * Creates a new service loader for the given service type, using the current
-    * thread's context class loader.
+    * Creates a new service loader for the given service type, using the current thread's context class loader.
     * 
     * An invocation of this convenience method of the form
     * 
@@ -71,7 +68,7 @@ public class ServiceLoader<S> implements Iterable<S>
     * @param service The interface or abstract class representing the service
     * @return A new service loader
     */
-   public static <S> ServiceLoader<S> load(Class<S> service)
+   public static <S> ServiceLoader<S> load(final Class<S> service)
    {
       return load(service, Thread.currentThread().getContextClassLoader());
    }
@@ -80,12 +77,11 @@ public class ServiceLoader<S> implements Iterable<S>
     * Creates a new service loader for the given service type and class loader.
     * 
     * @param service The interface or abstract class representing the service
-    * @param loader The class loader to be used to load provider-configuration
-    *           files and provider classes, or null if the system class loader
-    *           (or, failing that, the bootstrap class loader) is to be used
+    * @param loader The class loader to be used to load provider-configuration files and provider classes, or null if
+    *           the system class loader (or, failing that, the bootstrap class loader) is to be used
     * @return A new service loader
     */
-   public static <S> ServiceLoader<S> load(Class<S> service, ClassLoader loader)
+   public static <S> ServiceLoader<S> load(final Class<S> service, ClassLoader loader)
    {
       if (loader == null)
       {
@@ -95,38 +91,34 @@ public class ServiceLoader<S> implements Iterable<S>
    }
 
    /**
-    * Creates a new service loader for the given service type, using the
-    * extension class loader.
+    * Creates a new service loader for the given service type, using the extension class loader.
     * 
-    * This convenience method simply locates the extension class loader, call it
-    * extClassLoader, and then returns
+    * This convenience method simply locates the extension class loader, call it extClassLoader, and then returns
     * 
     * <code>ServiceLoader.load(service, extClassLoader)</code>
     * 
-    * If the extension class loader cannot be found then the system class loader
-    * is used; if there is no system class loader then the bootstrap class
-    * loader is used.
+    * If the extension class loader cannot be found then the system class loader is used; if there is no system class
+    * loader then the bootstrap class loader is used.
     * 
-    * This method is intended for use when only installed providers are desired.
-    * The resulting service will only find and load providers that have been
-    * installed into the current Java virtual machine; providers on the
-    * application's class path will be ignored.
+    * This method is intended for use when only installed providers are desired. The resulting service will only find
+    * and load providers that have been installed into the current Java virtual machine; providers on the application's
+    * class path will be ignored.
     * 
     * @param service The interface or abstract class representing the service
     * @return A new service loader
     */
-   public static <S> ServiceLoader<S> loadInstalled(Class<S> service)
+   public static <S> ServiceLoader<S> loadInstalled(final Class<S> service)
    {
       throw new UnsupportedOperationException("Not implemented");
    }
 
    private final String serviceFile;
-   private Class<S> expectedType;
+   private final Class<S> expectedType;
    private final ClassLoader loader;
 
    private Set<S> providers;
 
-   private ServiceLoader(Class<S> service, ClassLoader loader)
+   private ServiceLoader(final Class<S> service, final ClassLoader loader)
    {
       this.loader = loader;
       this.serviceFile = SERVICES + "/" + service.getName();
@@ -136,12 +128,11 @@ public class ServiceLoader<S> implements Iterable<S>
    /**
     * Clear this loader's provider cache so that all providers will be reloaded.
     * 
-    * After invoking this method, subsequent invocations of the iterator method
-    * will lazily look up and instantiate providers from scratch, just as is
-    * done by a newly-created loader.
+    * After invoking this method, subsequent invocations of the iterator method will lazily look up and instantiate
+    * providers from scratch, just as is done by a newly-created loader.
     * 
-    * This method is intended for use in situations in which new providers can
-    * be installed into a running Java virtual machine.
+    * This method is intended for use in situations in which new providers can be installed into a running Java virtual
+    * machine.
     */
    public void reload()
    {
@@ -171,7 +162,7 @@ public class ServiceLoader<S> implements Iterable<S>
       return serviceFiles;
    }
 
-   private void loadServiceFile(URL serviceFile)
+   private void loadServiceFile(final URL serviceFile)
    {
       InputStream is = null;
       try
@@ -221,7 +212,7 @@ public class ServiceLoader<S> implements Iterable<S>
       return line.trim();
    }
 
-   private void loadService(String serviceClassName)
+   private void loadService(final String serviceClassName)
    {
       Class<? extends S> serviceClass = loadClass(serviceClassName);
       if (serviceClass == null)
@@ -236,7 +227,7 @@ public class ServiceLoader<S> implements Iterable<S>
       providers.add(serviceInstance);
    }
 
-   private Class<? extends S> loadClass(String serviceClassName)
+   private Class<? extends S> loadClass(final String serviceClassName)
    {
       Class<?> clazz = null;
       Class<? extends S> serviceClass = null;
@@ -256,7 +247,7 @@ public class ServiceLoader<S> implements Iterable<S>
       return serviceClass;
    }
 
-   private S prepareInstance(Class<? extends S> serviceClass)
+   private S prepareInstance(final Class<? extends S> serviceClass)
    {
       try
       {
@@ -265,7 +256,7 @@ public class ServiceLoader<S> implements Iterable<S>
          constructor.setAccessible(true);
          return constructor.newInstance();
       }
-      catch (NoClassDefFoundError e) 
+      catch (NoClassDefFoundError e)
       {
          log.warn("Could not instantiate service class " + serviceClass.getName(), e);
          return null;
@@ -299,36 +290,27 @@ public class ServiceLoader<S> implements Iterable<S>
    /**
     * Lazily loads the available providers of this loader's service.
     * 
-    * The iterator returned by this method first yields all of the elements of
-    * the provider cache, in instantiation order. It then lazily loads and
-    * instantiates any remaining providers, adding each one to the cache in
-    * turn.
+    * The iterator returned by this method first yields all of the elements of the provider cache, in instantiation
+    * order. It then lazily loads and instantiates any remaining providers, adding each one to the cache in turn.
     * 
-    * To achieve laziness the actual work of parsing the available
-    * provider-configuration files and instantiating providers must be done by
-    * the iterator itself. Its hasNext and next methods can therefore throw a
-    * ServiceConfigurationError if a provider-configuration file violates the
-    * specified format, or if it names a provider class that cannot be found and
-    * instantiated, or if the result of instantiating the class is not
-    * assignable to the service type, or if any other kind of exception or error
-    * is thrown as the next provider is located and instantiated. To write
-    * robust code it is only necessary to catch ServiceConfigurationError when
-    * using a service iterator.
+    * To achieve laziness the actual work of parsing the available provider-configuration files and instantiating
+    * providers must be done by the iterator itself. Its hasNext and next methods can therefore throw a
+    * ServiceConfigurationError if a provider-configuration file violates the specified format, or if it names a
+    * provider class that cannot be found and instantiated, or if the result of instantiating the class is not
+    * assignable to the service type, or if any other kind of exception or error is thrown as the next provider is
+    * located and instantiated. To write robust code it is only necessary to catch ServiceConfigurationError when using
+    * a service iterator.
     * 
-    * If such an error is thrown then subsequent invocations of the iterator
-    * will make a best effort to locate and instantiate the next available
-    * provider, but in general such recovery cannot be guaranteed.
+    * If such an error is thrown then subsequent invocations of the iterator will make a best effort to locate and
+    * instantiate the next available provider, but in general such recovery cannot be guaranteed.
     * 
-    * Design Note Throwing an error in these cases may seem extreme. The
-    * rationale for this behavior is that a malformed provider-configuration
-    * file, like a malformed class file, indicates a serious problem with the
-    * way the Java virtual machine is configured or is being used. As such it is
-    * preferable to throw an error rather than try to recover or, even worse,
-    * fail silently.
+    * Design Note Throwing an error in these cases may seem extreme. The rationale for this behavior is that a malformed
+    * provider-configuration file, like a malformed class file, indicates a serious problem with the way the Java
+    * virtual machine is configured or is being used. As such it is preferable to throw an error rather than try to
+    * recover or, even worse, fail silently.
     * 
-    * The iterator returned by this method does not support removal. Invoking
-    * its remove method will cause an UnsupportedOperationException to be
-    * thrown.
+    * The iterator returned by this method does not support removal. Invoking its remove method will cause an
+    * UnsupportedOperationException to be thrown.
     * 
     * @return An iterator that lazily loads providers for this loader's service
     */

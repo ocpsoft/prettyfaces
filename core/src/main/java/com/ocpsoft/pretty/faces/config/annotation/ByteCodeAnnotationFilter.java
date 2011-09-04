@@ -19,22 +19,18 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>
- * This class reads Java class files and checks whether they contain references
- * to PrettyFaces annotations. This allows to check classes for the presence
- * of annotations before instantiating them.
+ * This class reads Java class files and checks whether they contain references to PrettyFaces annotations. This allows
+ * to check classes for the presence of annotations before instantiating them.
  * </p>
  * 
  * <p>
- * The filter is inspired by the <code>ClassByteCodeAnnotationFilter</code>
- * of Apache MyFaces 2.0. Many thanks go out to Leonardo Uribe for
- * his great work on this class.
+ * The filter is inspired by the <code>ClassByteCodeAnnotationFilter</code> of Apache MyFaces 2.0. Many thanks go out to
+ * Leonardo Uribe for his great work on this class.
  * </p>
  * 
  * @see http://java.sun.com/docs/books/jvms/second_edition/html/ClassFile.doc.html
@@ -48,14 +44,14 @@ public class ByteCodeAnnotationFilter
    /**
     * Logger
     */
-   private final static Log log = LogFactory.getLog(ByteCodeAnnotationFilter.class);
+   private final static Logger log = Logger.getLogger(ByteCodeAnnotationFilter.class);
 
    /**
     * The string to search for in the constant pool.
     */
-   private final static String SEARCH_STRING = 
-      "L"+URLMapping.class.getPackage().getName().replace('.', '/');
-   
+   private final static String SEARCH_STRING =
+            "L" + URLMapping.class.getPackage().getName().replace('.', '/');
+
    /**
     * The magic to identify class files.
     */
@@ -79,23 +75,19 @@ public class ByteCodeAnnotationFilter
 
    /**
     * <p>
-    * Checks whether that supplied {@link InputStream} contains a Java class
-    * file that might contain PrettyFaces annotations.
+    * Checks whether that supplied {@link InputStream} contains a Java class file that might contain PrettyFaces
+    * annotations.
     * </p>
     * <p>
-    * The caller of this method is responsible to close the supplied
-    * {@link InputStream}. This method won't do it!
+    * The caller of this method is responsible to close the supplied {@link InputStream}. This method won't do it!
     * </p>
     * 
-    * @param classFileStream
-    *           The stream to read the class file from.
-    * @return <code>true</code> for files that should be further checked for
-    *         annotations
-    * @throws IOException
-    *            for any kind of IO problem
+    * @param classFileStream The stream to read the class file from.
+    * @return <code>true</code> for files that should be further checked for annotations
+    * @throws IOException for any kind of IO problem
     */
    @SuppressWarnings("unused")
-   public boolean accept(InputStream classFileStream) throws IOException
+   public boolean accept(final InputStream classFileStream) throws IOException
    {
 
       // open a DataInputStream
@@ -195,13 +187,13 @@ public class ByteCodeAnnotationFilter
              * }
              */
             in.readLong();
-            
+
             /*
              * We must increase the constant pool index because this tag
              * type takes two entries
              */
             i++;
-            
+
             break;
 
          case CONSTANT_NameAndType:

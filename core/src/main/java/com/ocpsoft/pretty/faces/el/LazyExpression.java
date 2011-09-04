@@ -15,21 +15,18 @@
  */
 package com.ocpsoft.pretty.faces.el;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
- * An implementation of {@link PrettyExpression} used when the name of the bean
- * should be resolved lazily. This class is used by the annotation configuration
- * mechanism.
+ * An implementation of {@link PrettyExpression} used when the name of the bean should be resolved lazily. This class is
+ * used by the annotation configuration mechanism.
  * 
  * @author Christian Kaltepoth
  */
 public class LazyExpression implements PrettyExpression
 {
 
-   private final static Log log = LogFactory.getLog(LazyExpression.class);
+   private final static Logger log = Logger.getLogger(LazyExpression.class);
 
    /**
     * LazyBeanNameFinder used to resolve the bean names
@@ -42,8 +39,7 @@ public class LazyExpression implements PrettyExpression
    private final Class<?> beanClass;
 
    /**
-    * The component of the bean the expression refers to. Can be a single
-    * property name, a property path or method name.
+    * The component of the bean the expression refers to. Can be a single property name, a property path or method name.
     */
    private final String component;
 
@@ -55,15 +51,12 @@ public class LazyExpression implements PrettyExpression
    /**
     * Creates a new {@link LazyExpression}
     * 
-    * @param finder
-    *            The bean name finder to user for lazy resolving
-    * @param beanClass
-    *            the class of the bean
-    * @param component
-    *            the component of the bean referenced by the expression. Can be
-    *            a single property name, a property path or a method name
+    * @param finder The bean name finder to user for lazy resolving
+    * @param beanClass the class of the bean
+    * @param component the component of the bean referenced by the expression. Can be a single property name, a property
+    *           path or a method name
     */
-   public LazyExpression(LazyBeanNameFinder finder, Class<?> beanClass, String component)
+   public LazyExpression(final LazyBeanNameFinder finder, final Class<?> beanClass, final String component)
    {
       this.finder = finder;
       this.beanClass = beanClass;
@@ -115,8 +108,8 @@ public class LazyExpression implements PrettyExpression
    /**
     * The component of the bean the expression refers to.
     * 
-    * @return the component of the bean referenced by the expression. Can be a
-    *         single property name, a property path or a method name
+    * @return the component of the bean referenced by the expression. Can be a single property name, a property path or
+    *         a method name
     */
    public String getComponent()
    {
@@ -131,8 +124,8 @@ public class LazyExpression implements PrettyExpression
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((beanClass == null) ? 0 : beanClass.hashCode());
-      result = prime * result + ((expression == null) ? 0 : expression.hashCode());
+      result = (prime * result) + ((beanClass == null) ? 0 : beanClass.hashCode());
+      result = (prime * result) + ((expression == null) ? 0 : expression.hashCode());
       return result;
    }
 
@@ -140,7 +133,7 @@ public class LazyExpression implements PrettyExpression
     * @see java.lang.Object#equals(java.lang.Object)
     */
    @Override
-   public boolean equals(Object obj)
+   public boolean equals(final Object obj)
    {
       if (this == obj)
       {
@@ -179,5 +172,5 @@ public class LazyExpression implements PrettyExpression
       }
       return true;
    }
-   
+
 }

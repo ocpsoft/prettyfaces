@@ -25,12 +25,11 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
 import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * Digester-based implementation of {@link PrettyConfigParser}.
@@ -39,7 +38,7 @@ import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
  */
 public class WebXmlParser
 {
-   private static final Log log = LogFactory.getLog(WebXmlParser.class);
+   private static final Logger log = Logger.getLogger(WebXmlParser.class);
 
    private static final String FACES_SERVLET = "javax.faces.webapp.FacesServlet";
    private static final String WEB_XML_PATH = "/WEB-INF/web.xml";
@@ -130,10 +129,9 @@ public class WebXmlParser
       }
       return "";
    }
-   
+
    /**
-    * Implementation of {@link SimpleXMLParserBase} that reads all
-    * servlet-mapping declarations of a web.xml
+    * Implementation of {@link SimpleXMLParserBase} that reads all servlet-mapping declarations of a web.xml
     */
    private static class WebXmlSaxParser extends SimpleXMLParserBase
    {
@@ -145,7 +143,7 @@ public class WebXmlParser
       private ServletMapping currentServletMapping;
 
       @Override
-      public void processStartElement(String name)
+      public void processStartElement(final String name)
       {
 
          // <servlet>
@@ -163,7 +161,7 @@ public class WebXmlParser
       }
 
       @Override
-      public void processEndElement(String name)
+      public void processEndElement(final String name)
       {
 
          // </servlet>
@@ -183,7 +181,7 @@ public class WebXmlParser
       }
 
       @Override
-      public void processCharacters(String text)
+      public void processCharacters(final String text)
       {
          if (elements("web-app", "servlet", "servlet-name"))
          {

@@ -24,9 +24,6 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.JAXBPrettyConfigParser;
@@ -34,19 +31,19 @@ import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
 import com.ocpsoft.pretty.faces.spi.ConfigurationProvider;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
- * Loads configuration files specified in web.xml init parameter
- * {@link PrettyContext#CONFIG_KEY}
+ * Loads configuration files specified in web.xml init parameter {@link PrettyContext#CONFIG_KEY}
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public class ContextSpecifiedConfigurationProvider implements ConfigurationProvider
 {
-   private static final Log log = LogFactory.getLog(ContextSpecifiedConfigurationProvider.class);
+   private static final Logger log = Logger.getLogger(ContextSpecifiedConfigurationProvider.class);
 
-   public PrettyConfig loadConfiguration(ServletContext servletContext)
+   public PrettyConfig loadConfiguration(final ServletContext servletContext)
    {
       final PrettyConfigBuilder builder = new PrettyConfigBuilder();
       PrettyConfigParser configParser = new JAXBPrettyConfigParser(servletContext);
@@ -86,7 +83,7 @@ public class ContextSpecifiedConfigurationProvider implements ConfigurationProvi
       return builder.build();
    }
 
-   private List<String> getConfigFilesList(ServletContext context)
+   private List<String> getConfigFilesList(final ServletContext context)
    {
       final String configFiles = context.getInitParameter(PrettyContext.CONFIG_KEY);
       final List<String> configFilesList = new ArrayList<String>();
@@ -99,9 +96,10 @@ public class ContextSpecifiedConfigurationProvider implements ConfigurationProvi
 
             if (DefaultXMLConfigurationProvider.DEFAULT_PRETTY_FACES_CONFIG.equals(systemId))
             {
-               log.warn("The file [" + DefaultXMLConfigurationProvider.DEFAULT_PRETTY_FACES_CONFIG + "] has been specified in the ["
-                     + PrettyContext.CONFIG_KEY + "] context parameter of "
-                     + "the deployment descriptor; this is unecessary and will be ignored.");
+               log.warn("The file [" + DefaultXMLConfigurationProvider.DEFAULT_PRETTY_FACES_CONFIG
+                        + "] has been specified in the ["
+                        + PrettyContext.CONFIG_KEY + "] context parameter of "
+                        + "the deployment descriptor; this is unecessary and will be ignored.");
             }
             else
             {

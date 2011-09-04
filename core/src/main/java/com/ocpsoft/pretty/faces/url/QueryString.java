@@ -30,11 +30,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -42,7 +40,7 @@ import com.ocpsoft.pretty.faces.config.mapping.RequestParameter;
 public class QueryString
 {
 
-   private final static Log log = LogFactory.getLog(QueryString.class);
+   private final static Logger log = Logger.getLogger(QueryString.class);
 
    private final Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
 
@@ -326,7 +324,7 @@ public class QueryString
                            result.append("=");
                         }
 
-                        if (i < values.size() - 1)
+                        if (i < (values.size() - 1))
                         {
                            result.append("&" + key);
                         }

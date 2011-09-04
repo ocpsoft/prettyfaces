@@ -21,8 +21,7 @@ import java.net.URL;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * Base class for implementations of the {@link ClassFinder} interface.
@@ -36,7 +35,7 @@ public abstract class AbstractClassFinder implements ClassFinder
    /**
     * Common logger for all implementations
     */
-   protected final Log log = LogFactory.getLog(this.getClass());
+   protected final Logger log = Logger.getLogger(this.getClass());
 
    /**
     * The {@link ServletContext}
@@ -52,7 +51,7 @@ public abstract class AbstractClassFinder implements ClassFinder
     * The filter for checking which classes to process
     */
    protected final PackageFilter packageFilter;
-   
+
    /**
     * The filter to check bytecode for interesting annotations
     */
@@ -61,15 +60,12 @@ public abstract class AbstractClassFinder implements ClassFinder
    /**
     * Initialization procedure
     * 
-    * @param servletContext
-    *           The {@link ServletContext} of the web application.
-    * @param classLoader
-    *           The {@link ClassLoader} to use for loading classes
-    * @param packageFilter
-    *           The {@link PackageFilter} used to check if a package has to be
-    *           scanned.
+    * @param servletContext The {@link ServletContext} of the web application.
+    * @param classLoader The {@link ClassLoader} to use for loading classes
+    * @param packageFilter The {@link PackageFilter} used to check if a package has to be scanned.
     */
-   public AbstractClassFinder(ServletContext servletContext, ClassLoader classLoader, PackageFilter packageFilter)
+   public AbstractClassFinder(final ServletContext servletContext, final ClassLoader classLoader,
+            final PackageFilter packageFilter)
    {
       this.servletContext = servletContext;
       this.classLoader = classLoader;
@@ -80,14 +76,11 @@ public abstract class AbstractClassFinder implements ClassFinder
    /**
     * Strip everything up to and including a given prefix from a string.
     * 
-    * @param str
-    *           The string to process
-    * @param prefix
-    *           The prefix
-    * @return the stripped string or <code>null</code> if the prefix has not
-    *         been found
+    * @param str The string to process
+    * @param prefix The prefix
+    * @return the stripped string or <code>null</code> if the prefix has not been found
     */
-   protected String stripKnownPrefix(String str, String prefix)
+   protected String stripKnownPrefix(final String str, final String prefix)
    {
 
       int startIndex = str.lastIndexOf(prefix);
@@ -98,18 +91,16 @@ public abstract class AbstractClassFinder implements ClassFinder
 
       return null;
    }
-   
+
    /**
     * <p>
-    * Creates a FQCN from an {@link URL} representing a <code>.class</code>
-    * file.
+    * Creates a FQCN from an {@link URL} representing a <code>.class</code> file.
     * </p>
-    *
-    * @param url
-    *           The path of the class file
+    * 
+    * @param url The path of the class file
     * @return the FQCN of the class
     */
-   protected static String getClassName(String filename)
+   protected static String getClassName(final String filename)
    {
 
       // end index is just before ".class"
@@ -123,15 +114,12 @@ public abstract class AbstractClassFinder implements ClassFinder
    }
 
    /**
-    * Checks if a supplied class has to be processed by checking the package
-    * name against the {@link PackageFilter}.
+    * Checks if a supplied class has to be processed by checking the package name against the {@link PackageFilter}.
     * 
-    * @param className
-    *           FQCN of the class
-    * @return <code>true</code> for classes to process, <code>false</code> for
-    *         classes to ignore
+    * @param className FQCN of the class
+    * @return <code>true</code> for classes to process, <code>false</code> for classes to ignore
     */
-   protected boolean mustProcessClass(String className)
+   protected boolean mustProcessClass(final String className)
    {
 
       // the default package
@@ -151,36 +139,31 @@ public abstract class AbstractClassFinder implements ClassFinder
 
    /**
     * <p>
-    * Handle a single class to process. This method should only be called if the
-    * class name is accepted by the {@link PackageFilter}.
+    * Handle a single class to process. This method should only be called if the class name is accepted by the
+    * {@link PackageFilter}.
     * </p>
     * <p>
-    * If <code>classFileStream</code> is not <code>null</code> the method will first
-    * try to check whether the class files may contain annotations by scanning
-    * it with the {@link ByteCodeAnnotationFilter}. If no {@link InputStream} is
-    * supplied, this check will be skipped. After that the method will create an
-    * instance of the class and then call
+    * If <code>classFileStream</code> is not <code>null</code> the method will first try to check whether the class
+    * files may contain annotations by scanning it with the {@link ByteCodeAnnotationFilter}. If no {@link InputStream}
+    * is supplied, this check will be skipped. After that the method will create an instance of the class and then call
     * {@link PrettyAnnotationHandler#processClass(Class)}.
     * </p>
     * <p>
-    * Please not the the called of this method is responsible to close the
-    * supplied {@link InputStream}!
+    * Please not the the called of this method is responsible to close the supplied {@link InputStream}!
     * </p>
     * 
-    * @param className
-    *           The FQCN of the class
-    * @param classFileStream
-    *           The Java class file of the class (may be <code>null</code>)
-    * @param handler
-    *           the handler to notify
+    * @param className The FQCN of the class
+    * @param classFileStream The Java class file of the class (may be <code>null</code>)
+    * @param handler the handler to notify
     */
-   protected void processClass(String className, InputStream classFileStream, PrettyAnnotationHandler handler)
+   protected void processClass(final String className, final InputStream classFileStream,
+            final PrettyAnnotationHandler handler)
    {
 
-      // bytecode check is only performed if the InputStream is available 
+      // bytecode check is only performed if the InputStream is available
       if (classFileStream != null)
       {
-         
+
          // we must take care of IOExceptions thrown by ByteCodeAnnotationFilter
          try
          {
@@ -199,7 +182,7 @@ public abstract class AbstractClassFinder implements ClassFinder
             {
                log.debug("Bytecode filter recommends to scan class: " + className);
             }
-            
+
          }
          catch (IOException e)
          {
@@ -209,7 +192,7 @@ public abstract class AbstractClassFinder implements ClassFinder
             }
          }
       }
-      
+
       try
       {
          // request this class from the ClassLoader

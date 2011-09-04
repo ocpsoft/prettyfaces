@@ -23,26 +23,24 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigurator;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.Assert;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
 public class PrettyContext implements Serializable
 {
+   private static final Logger log = Logger.getLogger(PrettyContext.class);
 
    private static final String DEFAULT_ENCODING = "UTF-8";
    public static final String CONFIG_KEY = "com.ocpsoft.pretty.CONFIG_FILES";
 
-   private static final Log log = LogFactory.getLog(PrettyContext.class);
    private static final long serialVersionUID = -4593906924975844541L;
 
    public static final String PRETTY_PREFIX = "pretty:";

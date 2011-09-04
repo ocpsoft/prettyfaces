@@ -32,24 +32,20 @@ import java.util.Set;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
 import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * 
  * <p>
- * Implementation of {@link ELBeanNameResolver} handling beans configured via the
- * standard XML configuration mechanism.
+ * Implementation of {@link ELBeanNameResolver} handling beans configured via the standard XML configuration mechanism.
  * </p>
  * 
  * <p>
- * This resolver handles beans specified in faces-config.xml files. The resolver
- * will pick up the default configuration file <code>/WEB-INF/faces-config.xml</code>, 
- * all <code>/META-INF/faces-config.xml</code> found by the supplied {@link ClassLoader} 
- * and all files specified via the <code>javax.faces.CONFIG_FILES</code> init parameter.
+ * This resolver handles beans specified in faces-config.xml files. The resolver will pick up the default configuration
+ * file <code>/WEB-INF/faces-config.xml</code>, all <code>/META-INF/faces-config.xml</code> found by the supplied
+ * {@link ClassLoader} and all files specified via the <code>javax.faces.CONFIG_FILES</code> init parameter.
  * </p>
  * 
  * @author Christian Kaltepoth
@@ -58,30 +54,27 @@ import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
 public class FacesConfigBeanNameResolver implements ELBeanNameResolver
 {
 
-   private final static Log log = LogFactory.getLog(FacesConfigBeanNameResolver.class);
+   private final static Logger log = Logger.getLogger(FacesConfigBeanNameResolver.class);
 
    /**
-    * Name of default <code>faces-config.xml</code> loaded via
-    * {@link ServletContext#getResource(String)}
+    * Name of default <code>faces-config.xml</code> loaded via {@link ServletContext#getResource(String)}
     */
    private final static String WEB_INF_FACES_CONFIG_XML = "/WEB-INF/faces-config.xml";
 
    /**
-    * Name of <code>faces-config.xml</code> loaded via
-    * {@link ClassLoader#getResource(String)}
+    * Name of <code>faces-config.xml</code> loaded via {@link ClassLoader#getResource(String)}
     */
    private final static String META_INF_FACES_CONFIG_XML = "META-INF/faces-config.xml";
 
    /**
     * Lookup map: FQCN -> bean name
     */
-   private Map<String, String> beanNameMap = new HashMap<String, String>();
+   private final Map<String, String> beanNameMap = new HashMap<String, String>();
 
    /**
-    * Initialization procedure. Reads all faces-config.xml files and registers
-    * the beans found.
+    * Initialization procedure. Reads all faces-config.xml files and registers the beans found.
     */
-   public boolean init(ServletContext servletContext, ClassLoader classLoader)
+   public boolean init(final ServletContext servletContext, final ClassLoader classLoader)
    {
 
       // list of beans found
@@ -113,18 +106,14 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
    }
 
    /**
-    * Returns a set of faces-config.xml files. This set includes the default
-    * configuration file, all additional files mentioned via the
-    * <code>javax.faces.CONFIG_FILES</code> init parameter and all files found
-    * in META-INF folders.
+    * Returns a set of faces-config.xml files. This set includes the default configuration file, all additional files
+    * mentioned via the <code>javax.faces.CONFIG_FILES</code> init parameter and all files found in META-INF folders.
     * 
-    * @param servletContext
-    *           The ServletContext
-    * @param classLoader
-    *           The classloader used to find files in META-INF directories
+    * @param servletContext The ServletContext
+    * @param classLoader The classloader used to find files in META-INF directories
     * @return A set of URLs
     */
-   private Set<URL> getFacesConfigFiles(ServletContext servletContext, ClassLoader classLoader)
+   private Set<URL> getFacesConfigFiles(final ServletContext servletContext, final ClassLoader classLoader)
    {
 
       // set of URLs to process
@@ -168,21 +157,20 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
    }
 
    /**
-    * Returns a collection of faces configuration files mentioned via the
-    * default <code>javax.faces.CONFIG_FILES</code> init parameter
+    * Returns a collection of faces configuration files mentioned via the default <code>javax.faces.CONFIG_FILES</code>
+    * init parameter
     * 
-    * @param servletContext
-    *           The ServletContext
+    * @param servletContext The ServletContext
     * @return A collection of URLs (never null)
     */
-   private Collection<URL> getConfigFilesFromInitParameter(ServletContext servletContext)
+   private Collection<URL> getConfigFilesFromInitParameter(final ServletContext servletContext)
    {
 
       // read init parameter
       String initParam = servletContext.getInitParameter(FacesServlet.CONFIG_FILES_ATTR);
 
       // empty? return empty set
-      if (initParam == null || initParam.trim().length() == 0)
+      if ((initParam == null) || (initParam.trim().length() == 0))
       {
          return Collections.emptySet();
       }
@@ -227,15 +215,13 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
    }
 
    /**
-    * Process a single <code>faces-config.xml</code> file and add all beans
-    * found to the supplied list of {@link FacesConfigEntry} objects.
+    * Process a single <code>faces-config.xml</code> file and add all beans found to the supplied list of
+    * {@link FacesConfigEntry} objects.
     * 
-    * @param url
-    *           The faces-config.xml file
-    * @param facesConfigEntries
-    *           list of entries to add the beans to
+    * @param url The faces-config.xml file
+    * @param facesConfigEntries list of entries to add the beans to
     */
-   private void processFacesConfig(URL url, List<FacesConfigEntry> facesConfigEntries)
+   private void processFacesConfig(final URL url, final List<FacesConfigEntry> facesConfigEntries)
    {
 
       // log name of current file
@@ -245,7 +231,7 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
       }
 
       FacesConfigParser parser = new FacesConfigParser();
-      
+
       InputStream stream = null;
 
       try
@@ -253,9 +239,9 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
          // open the file and let digester pares it
          stream = url.openStream();
          parser.parse(stream);
-         
+
          // add new faces config entries
-         facesConfigEntries.addAll( parser.getEntries() );
+         facesConfigEntries.addAll(parser.getEntries());
 
       }
       catch (IOException e)
@@ -285,7 +271,7 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
    /*
     * Implementation if interface method
     */
-   public String getBeanName(Class<?> clazz)
+   public String getBeanName(final Class<?> clazz)
    {
       // first check bean name map containing faces-config.xml entries
       String name = beanNameMap.get(clazz.getName());
@@ -312,7 +298,7 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
          return name;
       }
 
-      public void setName(String name)
+      public void setName(final String name)
       {
          this.name = name;
       }
@@ -322,13 +308,13 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
          return beanClass;
       }
 
-      public void setBeanClass(String beanClass)
+      public void setBeanClass(final String beanClass)
       {
          this.beanClass = beanClass;
       }
 
    }
-   
+
    /**
     * Very simple parser to read the managed bean entries for a faces-config.xml
     */
@@ -340,7 +326,7 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
       private FacesConfigEntry currentEntry = null;
 
       @Override
-      public void processStartElement(String name)
+      public void processStartElement(final String name)
       {
          // <managed-bean>
          if (elements("faces-config", "managed-bean"))
@@ -350,7 +336,7 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
       }
 
       @Override
-      public void processEndElement(String name)
+      public void processEndElement(final String name)
       {
          // </managed-bean>
          if (elements("faces-config", "managed-bean"))
@@ -361,7 +347,7 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
       }
 
       @Override
-      public void processCharacters(String text)
+      public void processCharacters(final String text)
       {
 
          // <managed-bean-name>

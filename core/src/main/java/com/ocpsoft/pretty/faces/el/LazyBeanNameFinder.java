@@ -21,21 +21,17 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
 import com.ocpsoft.pretty.faces.util.ServiceLoader;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>
  * Class implementing lazy resolving of bean names.
  * </p>
  * <p>
- * This class is typically created once and is than supplied to
- * {@link LazyExpression} instances in the
- * {@link LazyExpression#LazyExpression(LazyBeanNameFinder, Class, String)}
- * constructor.
+ * This class is typically created once and is than supplied to {@link LazyExpression} instances in the
+ * {@link LazyExpression#LazyExpression(LazyBeanNameFinder, Class, String)} constructor.
  * </p>
  * 
  * @author Christian Kaltepoth
@@ -43,7 +39,7 @@ import com.ocpsoft.pretty.faces.util.ServiceLoader;
 public class LazyBeanNameFinder
 {
 
-   private final static Log log = LogFactory.getLog(LazyBeanNameFinder.class);
+   private final static Logger log = Logger.getLogger(LazyBeanNameFinder.class);
 
    /**
     * List of all resolvers. Initialized once on object creation
@@ -51,13 +47,12 @@ public class LazyBeanNameFinder
    private final List<ELBeanNameResolver> resolvers = new ArrayList<ELBeanNameResolver>();
 
    /**
-    * Creates a new {@link LazyBeanNameFinder}. The constructor will find all
-    * implementations of {@link ELBeanNameResolver} by using the
-    * {@link ServiceLoader} mechanism.
+    * Creates a new {@link LazyBeanNameFinder}. The constructor will find all implementations of
+    * {@link ELBeanNameResolver} by using the {@link ServiceLoader} mechanism.
     * 
     * @param servletContext The servlet context
     */
-   public LazyBeanNameFinder(ServletContext servletContext)
+   public LazyBeanNameFinder(final ServletContext servletContext)
    {
 
       // we use the context classloader
@@ -103,23 +98,21 @@ public class LazyBeanNameFinder
              * In this case just ignore the resolver
              * See: http://code.google.com/p/prettyfaces/issues/detail?id=101
              */
-            log.warn("Failed to initialize "+resolver.getClass().getSimpleName()+": "+e.getMessage());
+            log.warn("Failed to initialize " + resolver.getClass().getSimpleName() + ": " + e.getMessage());
          }
       }
    }
 
    /**
-    * Find the bean name of the supplied class. This method will try to resolve
-    * the bean name by calling all registered implementations of
-    * {@link ELBeanNameResolver}. This method will either return the resolved name
-    * or throw an {@link IllegalStateException}, if no resolver knows the name
-    * of the bean.
+    * Find the bean name of the supplied class. This method will try to resolve the bean name by calling all registered
+    * implementations of {@link ELBeanNameResolver}. This method will either return the resolved name or throw an
+    * {@link IllegalStateException}, if no resolver knows the name of the bean.
     * 
     * @param clazz The class of the bean
     * @return The resolved bean name
     * @throws IllegalStateException If the name of the bean cannot be resolved
     */
-   public String findBeanName(Class<?> clazz) throws IllegalStateException
+   public String findBeanName(final Class<?> clazz) throws IllegalStateException
    {
 
       // process all resolvers
@@ -139,7 +132,7 @@ public class LazyBeanNameFinder
 
       // No resolver knows the name of the bean
       throw new IllegalStateException("Cannot find name of bean '" + clazz.getName()
-            + "'! You should place a @URLBeanName annotation on this class to let PrettyFaces know its name.");
+               + "'! You should place a @URLBeanName annotation on this class to let PrettyFaces know its name.");
 
    }
 

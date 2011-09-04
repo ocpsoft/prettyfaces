@@ -18,13 +18,12 @@ package com.ocpsoft.pretty.faces.config.annotation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>
- * This class represents a package filter specified by the
- * <code>com.ocpsoft.pretty.SCAN_PACKAGES</code> initialization parameter.
+ * This class represents a package filter specified by the <code>com.ocpsoft.pretty.SCAN_PACKAGES</code> initialization
+ * parameter.
  * </p>
  * 
  * @author Christian Kaltepoth
@@ -32,20 +31,19 @@ import org.apache.commons.logging.LogFactory;
 public class PackageFilter
 {
 
-   private final static Log log = LogFactory.getLog(PackageFilter.class);
+   private final static Logger log = Logger.getLogger(PackageFilter.class);
 
    private final Set<String> packageSet = new HashSet<String>();
 
    /**
     * Creates a new {@link PackageFilter}
     * 
-    * @param config
-    *           Comma-separated list of packages (null safe)
+    * @param config Comma-separated list of packages (null safe)
     */
-   public PackageFilter(String config)
+   public PackageFilter(final String config)
    {
       // keep empty package set for empty config value
-      if (config == null || config.trim().length() == 0)
+      if ((config == null) || (config.trim().length() == 0))
       {
          if (log.isDebugEnabled())
          {
@@ -76,21 +74,17 @@ public class PackageFilter
     * Checks whether the supplied packages matches the filter.
     * </p>
     * <p>
-    * The method returns <code>true</code> if one of the following checks
-    * succeed:
+    * The method returns <code>true</code> if one of the following checks succeed:
     * </p>
     * <ul>
-    * <li>The supplied package is one of the packages specified in the filter
-    * condition.</li>
-    * <li>The supplied package is a sub-package of one of the packages specified
-    * in the filter condition.</li>
+    * <li>The supplied package is one of the packages specified in the filter condition.</li>
+    * <li>The supplied package is a sub-package of one of the packages specified in the filter condition.</li>
     * </ul>
     * 
-    * @param packageName
-    *           A package name
+    * @param packageName A package name
     * @return <code>true</code> if the filter matches
     */
-   public boolean isAllowedPackage(String packageName)
+   public boolean isAllowedPackage(final String packageName)
    {
 
       // No packages in set? Accept all packages.

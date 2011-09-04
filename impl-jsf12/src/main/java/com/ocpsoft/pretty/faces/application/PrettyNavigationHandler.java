@@ -18,14 +18,12 @@ package com.ocpsoft.pretty.faces.application;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
+import com.ocpsoft.rewrite.logging.Logger;
 
 public class PrettyNavigationHandler extends NavigationHandler
 {
-   private static final Log log = LogFactory.getLog(PrettyNavigationHandler.class);
+   private static final Logger log = Logger.getLogger(PrettyNavigationHandler.class);
 
    private final NavigationHandler parent;
    private final PrettyRedirector pr = PrettyRedirector.getInstance();

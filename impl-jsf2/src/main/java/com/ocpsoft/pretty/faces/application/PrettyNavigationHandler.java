@@ -22,9 +22,6 @@ import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.NavigationCase;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.dynaview.DynaviewEngine;
@@ -32,6 +29,7 @@ import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesNavigationURLCanonicalizer;
+import com.ocpsoft.rewrite.logging.Logger;
 import com.ocpsoft.rewrite.prettyfaces.UrlMappingRuleAdaptor;
 
 /**
@@ -39,7 +37,7 @@ import com.ocpsoft.rewrite.prettyfaces.UrlMappingRuleAdaptor;
  */
 public class PrettyNavigationHandler extends ConfigurableNavigationHandler
 {
-   private static final Log log = LogFactory.getLog(PrettyNavigationHandler.class);
+   private static final Logger log = Logger.getLogger(PrettyNavigationHandler.class);
 
    private final ConfigurableNavigationHandler parent;
    private final PrettyRedirector pr = PrettyRedirector.getInstance();
