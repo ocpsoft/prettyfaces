@@ -60,7 +60,11 @@
          <artifactId>prettyfaces-jsf2</artifactId>
          <version>${project.version}</version>
       </dependency>
-
+      <dependency>
+         <groupId>org.jboss.logging</groupId>
+         <artifactId>jboss-logging</artifactId>
+         <version>3.0.0.GA</version>
+      </dependency>
       <dependency>
          <groupId>javax.el</groupId>
          <artifactId>el-api</artifactId>
