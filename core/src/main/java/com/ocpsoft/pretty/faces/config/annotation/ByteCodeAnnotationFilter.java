@@ -19,8 +19,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>

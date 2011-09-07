@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>

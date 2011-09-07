@@ -22,6 +22,7 @@ import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.NavigationCase;
 import javax.faces.context.FacesContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.dynaview.DynaviewEngine;
@@ -29,7 +30,6 @@ import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesNavigationURLCanonicalizer;
-import com.ocpsoft.rewrite.logging.Logger;
 import com.ocpsoft.rewrite.prettyfaces.UrlMappingRuleAdaptor;
 
 /**

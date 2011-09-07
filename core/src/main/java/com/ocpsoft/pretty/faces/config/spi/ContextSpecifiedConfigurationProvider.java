@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.JAXBPrettyConfigParser;
@@ -31,7 +32,6 @@ import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
 import com.ocpsoft.pretty.faces.spi.ConfigurationProvider;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * Loads configuration files specified in web.xml init parameter {@link PrettyContext#CONFIG_KEY}

@@ -23,13 +23,13 @@ import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.application.PrettyRedirector;
 import com.ocpsoft.pretty.faces.beans.ExtractedValuesURLBuilder;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
-import com.ocpsoft.rewrite.logging.Logger;
 
 public class DynaviewEngine
 {

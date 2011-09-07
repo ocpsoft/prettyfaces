@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
 import com.ocpsoft.pretty.faces.config.annotation.ClassFinder;
@@ -30,7 +31,6 @@ import com.ocpsoft.pretty.faces.config.annotation.WebClassesFinder;
 import com.ocpsoft.pretty.faces.config.annotation.WebLibFinder;
 import com.ocpsoft.pretty.faces.el.LazyBeanNameFinder;
 import com.ocpsoft.pretty.faces.spi.ConfigurationProvider;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

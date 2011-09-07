@@ -27,9 +27,9 @@ import javax.servlet.ServletRegistration;
 
 import org.xml.sax.SAXException;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
 import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * Digester-based implementation of {@link PrettyConfigParser}.

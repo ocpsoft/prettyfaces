@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLActions;
@@ -39,7 +40,6 @@ import com.ocpsoft.pretty.faces.el.ConstantExpression;
 import com.ocpsoft.pretty.faces.el.LazyBeanNameFinder;
 import com.ocpsoft.pretty.faces.el.LazyExpression;
 import com.ocpsoft.pretty.faces.el.PrettyExpression;
-import com.ocpsoft.rewrite.logging.Logger;
 
 @SuppressWarnings("unchecked")
 public class PrettyAnnotationHandler

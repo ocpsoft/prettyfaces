@@ -32,9 +32,9 @@ import java.util.Set;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
 import com.ocpsoft.pretty.faces.util.SimpleXMLParserBase;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * 

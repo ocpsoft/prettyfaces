@@ -17,6 +17,8 @@ package com.ocpsoft.pretty.faces.config;
 
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.common.services.ServiceLoader;
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.dynaview.DynaviewEngine;
@@ -25,8 +27,6 @@ import com.ocpsoft.pretty.faces.config.spi.ParentingPostProcessor;
 import com.ocpsoft.pretty.faces.config.spi.ValidatingPostProcessor;
 import com.ocpsoft.pretty.faces.spi.ConfigurationPostProcessor;
 import com.ocpsoft.pretty.faces.spi.ConfigurationProvider;
-import com.ocpsoft.pretty.faces.util.ServiceLoader;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com>Lincoln Baxter, III</a>

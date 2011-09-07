@@ -21,7 +21,7 @@ import java.net.URL;
 
 import javax.servlet.ServletContext;
 
-import com.ocpsoft.rewrite.logging.Logger;
+import com.ocpsoft.logging.Logger;
 
 /**
  * Base class for implementations of the {@link ClassFinder} interface.

@@ -15,7 +15,7 @@
  */
 package com.ocpsoft.pretty.faces.el;
 
-import com.ocpsoft.rewrite.logging.Logger;
+import com.ocpsoft.logging.Logger;
 
 /**
  * An implementation of {@link PrettyExpression} used when the name of the bean should be resolved lazily. This class is

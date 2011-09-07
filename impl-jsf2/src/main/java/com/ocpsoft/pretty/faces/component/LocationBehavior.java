@@ -18,11 +18,11 @@ package com.ocpsoft.pretty.faces.component;
 import javax.faces.component.behavior.ClientBehaviorBase;
 import javax.faces.component.behavior.ClientBehaviorContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.beans.ExtractedValuesURLBuilder;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * Simple JSF2 client behavior that changes the current URL by setting <code>window.location.href</code>.

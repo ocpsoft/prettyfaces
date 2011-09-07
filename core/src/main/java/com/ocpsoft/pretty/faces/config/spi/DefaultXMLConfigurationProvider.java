@@ -21,13 +21,13 @@ import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyException;
 import com.ocpsoft.pretty.faces.config.JAXBPrettyConfigParser;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigBuilder;
 import com.ocpsoft.pretty.faces.config.PrettyConfigParser;
 import com.ocpsoft.pretty.faces.spi.ConfigurationProvider;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

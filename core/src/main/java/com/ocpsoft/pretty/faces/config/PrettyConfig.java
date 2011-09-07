@@ -29,6 +29,7 @@ import com.ocpsoft.pretty.faces.config.types.PrettyConfigElement;
 import com.ocpsoft.pretty.faces.config.types.RewriteElement;
 import com.ocpsoft.pretty.faces.config.types.UrlMappingElement;
 import com.ocpsoft.pretty.faces.url.URL;
+import com.ocpsoft.rewrite.servlet.RewriteFilter;
 
 public class PrettyConfig
 {

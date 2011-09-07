@@ -18,7 +18,7 @@ package com.ocpsoft.pretty.faces.config.annotation;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.ocpsoft.rewrite.logging.Logger;
+import com.ocpsoft.logging.Logger;
 
 /**
  * <p>

@@ -26,8 +26,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.faces.spi.ELBeanNameResolver;
-import com.ocpsoft.rewrite.logging.Logger;
 
 /**
  * <p>

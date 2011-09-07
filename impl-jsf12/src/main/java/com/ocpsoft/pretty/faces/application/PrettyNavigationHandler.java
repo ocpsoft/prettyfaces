@@ -18,8 +18,8 @@ package com.ocpsoft.pretty.faces.application;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 
+import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
-import com.ocpsoft.rewrite.logging.Logger;
 
 public class PrettyNavigationHandler extends NavigationHandler
 {
