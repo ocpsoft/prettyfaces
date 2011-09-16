@@ -78,18 +78,18 @@ public class PrettyPhaseListener implements PhaseListener
    {
       if (PhaseId.RESTORE_VIEW.equals(event.getPhaseId()))
       {
-         // TODO Test that validation occurs before injection
          /*
           * Parameter validation and injection must occur after RESTORE_VIEW in order to participate in
           * faces-navigation.
           */
-         if (!event.getFacesContext().getResponseComplete())
+         PrettyContext prettyContext = PrettyContext.getCurrentInstance(event.getFacesContext());
+         if (!event.getFacesContext().getResponseComplete() || prettyContext.shouldProcessDynaview())
          {
             // run parameter validation
             validator.validateParameters(event.getFacesContext());
 
             // abort if validation failed, 404 response code has already been set
-            if (event.getFacesContext().getResponseComplete())
+            if (event.getFacesContext().getResponseComplete() && !prettyContext.shouldProcessDynaview())
             {
                return;
             }
@@ -98,7 +98,6 @@ public class PrettyPhaseListener implements PhaseListener
             injector.injectParameters(event.getFacesContext());
          }
 
-         PrettyContext prettyContext = PrettyContext.getCurrentInstance(event.getFacesContext());
          if (prettyContext.shouldProcessDynaview())
          {
             dynaview.processDynaView(prettyContext, event.getFacesContext());
