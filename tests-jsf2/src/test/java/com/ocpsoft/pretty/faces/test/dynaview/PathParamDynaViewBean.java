@@ -4,18 +4,20 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLValidator;
 
 @ManagedBean
 @RequestScoped
-@URLMapping(id = "dynaview", pattern = "/dynaview/#{ pathParamDynaViewBean.value }", 
-      viewId = "#{pathParamDynaViewBean.computeViewId}")
+@URLMapping(id = "pathParamMapping", pattern = "/pathparam/#{pathParamDynaViewBean.pathParam}", 
+      viewId = "#{pathParamDynaViewBean.computePathParamViewId}",
+      validation=@URLValidator(index=0, validatorIds="DynaViewParameterValidator"))
 public class PathParamDynaViewBean
 {
 
    /**
     * Injected value of the path parameter
     */
-   private String value;
+   private String pathParam;
 
    /**
     * This method is used to compute the view id! It will return
@@ -23,10 +25,10 @@ public class PathParamDynaViewBean
     * string <code>correct</code>. In all other cases it will return
     * <code>/wrong.jsf</code>.
     */
-   public String computeViewId()
+   public String computePathParamViewId()
    {
 
-      if (value != null && value.equals("correct"))
+      if (pathParam != null && pathParam.equals("correct"))
       {
          return "/correct.jsf";
       }
@@ -37,14 +39,14 @@ public class PathParamDynaViewBean
 
    }
 
-   public String getValue()
+   public String getPathParam()
    {
-      return value;
+      return pathParam;
    }
 
-   public void setValue(String value)
+   public void setPathParam(String value)
    {
-      this.value = value;
+      this.pathParam = value;
    }
 
 }
