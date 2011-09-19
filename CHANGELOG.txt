@@ -19,6 +19,8 @@ Bugfixes:
 * Implemented equals()/hashcode() for LazyExpression (#115)
 * Performance: URLPatternParser got created on every call to UrlMapping.getPatternParser()
 * Fixed incorrect handling of Spring AOP proxies during bean name lookup - thanks to mbenson for the patch #(119)
+* Dynaview: Parameter injection now correctly happens before view determination (#120)
+
 
 ------------------------------------
            VERSION 3.3.0
