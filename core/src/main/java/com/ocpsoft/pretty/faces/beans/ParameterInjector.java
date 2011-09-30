@@ -18,12 +18,10 @@ package com.ocpsoft.pretty.faces.beans;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 
 import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
-import com.ocpsoft.pretty.faces.config.mapping.PathConverter;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
 import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
@@ -31,7 +29,6 @@ import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
 import com.ocpsoft.pretty.faces.util.FacesStateUtils;
-import com.ocpsoft.pretty.faces.util.NullComponent;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -70,46 +67,19 @@ public class ParameterInjector
          String el = param.getExpression().getELExpression();
          if ((el != null) && !"".equals(el.trim()))
          {
-            String valueAsString = param.getValue();
             try
             {
 
-               // we will use this converter for the parameter
-               Converter converter = null;
+               // we may need the type of the referenced property
+               Class<?> expectedType = elUtils.getExpectedType(context, el);
                
-               // look for a user-specific converter
-               PathConverter pathConverter = mapping.getPathConverterForPathParam(param);
-               if(pathConverter != null && pathConverter.getConverterId() != null && pathConverter.getConverterId().trim().length() > 0) {
-                  
-                  converter = context.getApplication().createConverter(pathConverter.getConverterId().trim());
-                  
-                  // fail if the converter does not exist
-                  if(converter == null) {
-                     throw new IllegalStateException("Cannot find JSF converter: "+pathConverter.getConverterId());
-                  }
-                  
-               }
+               // perform conversion
+               ParameterConverter converter = new ParameterConverter(context, mapping, param);
+               Object convertedValue = converter.getAsObject(expectedType, param.getValue());
                
-               // use the default converter for the type otherwise
-               else {
-                  
-                  // get the type of the referenced property and try to obtain a converter for it
-                  Class<?> expectedType = elUtils.getExpectedType(context, el);
-                  converter = context.getApplication().createConverter(expectedType);
-                  
-               }
-
-               // Use the convert to create the correct type
-               if (converter != null)
-               {
-                  Object convertedValue = converter.getAsObject(context, new NullComponent(), valueAsString);
-                  elUtils.setValue(context, el, convertedValue);
-               }
-               else
-               {
-                  elUtils.setValue(context, el, valueAsString);
-               }
-
+               // write the property
+               elUtils.setValue(context, el, convertedValue);
+               
             }
             catch (Exception e)
             {
@@ -142,7 +112,12 @@ public class ParameterInjector
             {
                try
                {
-                  if (elUtils.getExpectedType(context, el).isArray())
+
+                  // we may need the type of the referenced property
+                  Class<?> expectedType = elUtils.getExpectedType(context, el);
+
+                  // we support only String arrays at the moment
+                  if (expectedType.isArray())
                   {
                      String[] values = queryString.getParameterValues(name);
                      elUtils.setValue(context, el, values);
@@ -150,43 +125,15 @@ public class ParameterInjector
                   else
                   {
 
+                     // we process only one occurrence of the query parameter here
                      String valueAsString = queryString.getParameter(name);
+                     
+                     // perform conversion
+                     ParameterConverter converter = new ParameterConverter(context, param);
+                     Object convertedValue = converter.getAsObject(expectedType, valueAsString);
 
-                     
-                     // we will use this converter for the parameter
-                     Converter converter = null;
-                     
-                     // look for a user-specific converter
-                     if(param.getConverterId() != null && param.getConverterId().trim().length() > 0) {
-                        
-                        converter = context.getApplication().createConverter(param.getConverterId().trim());
-                        
-                        // fail if the converter does not exist
-                        if(converter == null) {
-                           throw new IllegalStateException("Cannot find JSF converter: "+param.getConverterId());
-                        }
-                        
-                     }
-                     
-                     // use the default converter for the type otherwise
-                     else {
-                        
-                        // get the type of the referenced property and try to obtain a converter for it
-                        Class<?> expectedType = elUtils.getExpectedType(context, el);
-                        converter = context.getApplication().createConverter(expectedType);
-                        
-                     }                     
-                     
-                     // Use the convert to create the correct type
-                     if (converter != null)
-                     {
-                        Object convertedValue = converter.getAsObject(context, new NullComponent(), valueAsString);
-                        elUtils.setValue(context, el, convertedValue);
-                     }
-                     else
-                     {
-                        elUtils.setValue(context, el, valueAsString);
-                     }
+                     // write the property
+                     elUtils.setValue(context, el, convertedValue);
 
                   }
                }

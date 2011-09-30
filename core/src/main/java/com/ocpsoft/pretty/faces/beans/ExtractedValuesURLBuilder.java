@@ -20,10 +20,8 @@ import java.util.List;
 
 import javax.el.ELException;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 
 import com.ocpsoft.pretty.PrettyException;
-import com.ocpsoft.pretty.faces.config.mapping.PathConverter;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
 import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
@@ -31,8 +29,6 @@ import com.ocpsoft.pretty.faces.url.QueryString;
 import com.ocpsoft.pretty.faces.url.URL;
 import com.ocpsoft.pretty.faces.url.URLPatternParser;
 import com.ocpsoft.pretty.faces.util.FacesElUtils;
-import com.ocpsoft.pretty.faces.util.NullComponent;
-import com.ocpsoft.pretty.faces.util.StringUtils;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
@@ -72,15 +68,9 @@ public class ExtractedValuesURLBuilder
                         + mapping.getId() + " >, Required value " + " < " + expression + " > was null");
             }
 
-            // search for a custom converter
-            String customConverterId = null;
-            PathConverter pathConverter = mapping.getPathConverterForPathParam(injection);
-            if(pathConverter != null) {
-               customConverterId = StringUtils.trimToNull(pathConverter.getConverterId());
-            }
-
             // convert the value to the corresponding string
-            String valueAsString = convertObjectToString(context, value, customConverterId);
+            ParameterConverter converter = new ParameterConverter(context, mapping, injection);
+            String valueAsString = converter.getAsString(value);
             if (valueAsString == null)
             {
                throw new PrettyException("PrettyFaces: The converter returned null while converting the object <"
@@ -119,7 +109,7 @@ public class ExtractedValuesURLBuilder
          for (QueryParameter injection : queryParams)
          {
             String name = injection.getName();
-            String customConverterId = StringUtils.trimToNull(injection.getConverterId());
+            ParameterConverter converter = new ParameterConverter(context, injection);
 
             expression = injection.getExpression().getELExpression();
             value = elUtils.getValue(context, expression);
@@ -131,16 +121,12 @@ public class ExtractedValuesURLBuilder
                   Object[] values = (Object[]) value;
                   for (Object temp : values)
                   {
-                     // convert the object to a string and add the query parameter
-                     String valueAsString = convertObjectToString(context, temp, customConverterId);
-                     queryParameterValues.add(new QueryParameter(name, valueAsString));
+                     queryParameterValues.add(new QueryParameter(name, converter.getAsString(temp)));
                   }
                }
                else
                {
-                  // convert the object to a string and add the query parameter
-                  String valueAsString = convertObjectToString(context, value, customConverterId);
-                  queryParameterValues.add(new QueryParameter(name, valueAsString));
+                  queryParameterValues.add(new QueryParameter(name, converter.getAsString(value)));
                }
             }
          }
@@ -155,53 +141,6 @@ public class ExtractedValuesURLBuilder
       }
 
       return result;
-   }
-   
-   /**
-    * This method will convert the supplied object to its string representation. The method will either use the JSF
-    * default converter for the type or use the custom converter (if supplied).
-    * 
-    * @param context the current {@link FacesContext}
-    * @param value The object to convert
-    * @param customConverterId An optional custom converter
-    * @return the string representation or <code>null</code> if value is <code>null</code>
-    */
-   private String convertObjectToString(FacesContext context, Object value, String customConverterId)
-   {
-
-      // return null for null values
-      if (value == null) {
-         return null;
-      }
-
-      // use this converter for creating the string representation of the object
-      Converter converter = null;
-
-      // check for a custom converter
-      if (StringUtils.isNotBlank(customConverterId)) {
-
-         converter = context.getApplication().createConverter(customConverterId);
-
-         // fail if the converter does not exist
-         if (converter == null) {
-            throw new IllegalStateException("Cannot find JSF converter: " + customConverterId);
-         }
-
-      }
-
-      // use the default converter
-      else {
-         converter = context.getApplication().createConverter(value.getClass());
-      }
-
-      // return the converted value
-      if (converter != null) {
-         return converter.getAsString(context, new NullComponent(), value);
-      }
-      else {
-         return value.toString();
-      }
-
    }
 
 }
