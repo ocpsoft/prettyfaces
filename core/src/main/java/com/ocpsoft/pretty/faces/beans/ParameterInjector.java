@@ -23,6 +23,7 @@ import javax.faces.convert.Converter;
 import com.ocpsoft.logging.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.PrettyException;
+import com.ocpsoft.pretty.faces.config.mapping.PathConverter;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
 import com.ocpsoft.pretty.faces.config.mapping.QueryParameter;
 import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
@@ -73,9 +74,30 @@ public class ParameterInjector
             try
             {
 
-               // get the type of the referenced property and try to obtain a converter for it
-               Class<?> expectedType = elUtils.getExpectedType(context, el);
-               Converter converter = context.getApplication().createConverter(expectedType);
+               // we will use this converter for the parameter
+               Converter converter = null;
+               
+               // look for a user-specific converter
+               PathConverter pathConverter = mapping.getPathConverterForPathParam(param);
+               if(pathConverter != null && pathConverter.getConverterId() != null && pathConverter.getConverterId().trim().length() > 0) {
+                  
+                  converter = context.getApplication().createConverter(pathConverter.getConverterId().trim());
+                  
+                  // fail if the converter does not exist
+                  if(converter == null) {
+                     throw new IllegalStateException("Cannot find JSF converter: "+pathConverter.getConverterId());
+                  }
+                  
+               }
+               
+               // use the default converter for the type otherwise
+               else {
+                  
+                  // get the type of the referenced property and try to obtain a converter for it
+                  Class<?> expectedType = elUtils.getExpectedType(context, el);
+                  converter = context.getApplication().createConverter(expectedType);
+                  
+               }
 
                // Use the convert to create the correct type
                if (converter != null)
@@ -130,10 +152,31 @@ public class ParameterInjector
 
                      String valueAsString = queryString.getParameter(name);
 
-                     // get the type of the referenced property and try to obtain a converter for it
-                     Class<?> expectedType = elUtils.getExpectedType(context, el);
-                     Converter converter = context.getApplication().createConverter(expectedType);
-
+                     
+                     // we will use this converter for the parameter
+                     Converter converter = null;
+                     
+                     // look for a user-specific converter
+                     if(param.getConverterId() != null && param.getConverterId().trim().length() > 0) {
+                        
+                        converter = context.getApplication().createConverter(param.getConverterId().trim());
+                        
+                        // fail if the converter does not exist
+                        if(converter == null) {
+                           throw new IllegalStateException("Cannot find JSF converter: "+param.getConverterId());
+                        }
+                        
+                     }
+                     
+                     // use the default converter for the type otherwise
+                     else {
+                        
+                        // get the type of the referenced property and try to obtain a converter for it
+                        Class<?> expectedType = elUtils.getExpectedType(context, el);
+                        converter = context.getApplication().createConverter(expectedType);
+                        
+                     }                     
+                     
                      // Use the convert to create the correct type
                      if (converter != null)
                      {

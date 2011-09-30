@@ -83,6 +83,51 @@
 	               </xs:documentation>
 	            </xs:annotation>
 	            <xs:sequence>
+	               <xs:element minOccurs="0" name="convert"
+	                  maxOccurs="unbounded">
+	                  <xs:annotation>
+	                     <xs:documentation>
+	                        Specify converters for this mapping.
+	                     </xs:documentation>
+	                  </xs:annotation>
+	                  <xs:complexType>
+	                     <xs:annotation>
+	                        <xs:documentation>
+	                           A converter for this mapping.
+	                           Converters must be attached to individual
+	                           parameters in each dynamic URL.
+	                        </xs:documentation>
+	                     </xs:annotation>
+	                     <xs:attribute name="index" type="xs:int"
+	                        use="required">
+	                        <xs:annotation>
+	                           <xs:documentation>
+	                              The value index of the pattern on
+	                              which this converter will operate.
+
+	                              Eg:
+
+	                              <pattern
+	                                 value="/convert/#{bean.pathInput}/#{bean.pathInput2}">
+	                                 <convert index="0"
+	                                    converterId="converter1" />
+	                                 <convert index="1"
+	                                    converterId="converter2" />
+	                              </pattern>
+	                           </xs:documentation>
+	                        </xs:annotation>
+	                     </xs:attribute>
+	                     <xs:attribute name="converterId"
+	                        type="xs:string">
+	                        <xs:annotation>
+	                           <xs:documentation>
+	                              The ID of the JSF converter to use for 
+	                              the parameter.
+	                           </xs:documentation>
+	                        </xs:annotation>
+	                     </xs:attribute>
+	                  </xs:complexType>
+	               </xs:element>
 	               <xs:element minOccurs="0" name="validate"
 	                  maxOccurs="unbounded">
 	                  <xs:annotation>
@@ -238,6 +283,15 @@
 	                        <xs:documentation>
 	                           The pretty:mappingId or #{bean.method} to
 	                           evaluate, should validation fail.
+	                        </xs:documentation>
+	                     </xs:annotation>
+	                  </xs:attribute>
+	                  <xs:attribute name="converterId"
+	                     type="xs:string">
+	                     <xs:annotation>
+	                        <xs:documentation>
+	                           The ID of the JSF converter to use for 
+	                           the parameter.
 	                        </xs:documentation>
 	                     </xs:annotation>
 	                  </xs:attribute>

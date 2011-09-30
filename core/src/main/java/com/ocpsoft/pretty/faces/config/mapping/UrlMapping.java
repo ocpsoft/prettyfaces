@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ocpsoft.pretty.faces.config.types.ActionElement;
+import com.ocpsoft.pretty.faces.config.types.ConvertElement;
 import com.ocpsoft.pretty.faces.config.types.QueryParamElement;
 import com.ocpsoft.pretty.faces.config.types.UrlMappingElement;
 import com.ocpsoft.pretty.faces.config.types.ValidateElement;
@@ -39,6 +40,7 @@ public class UrlMapping
    private String pattern = "";
    private List<QueryParameter> queryParams = new ArrayList<QueryParameter>();
    private List<PathValidator> pathValidators = new ArrayList<PathValidator>();
+   private List<PathConverter> pathConverters = new ArrayList<PathConverter>();
    private boolean onPostback = true;
    private URLPatternParser parser = null;
 
@@ -91,6 +93,13 @@ public class UrlMapping
                pathValidators.add(new PathValidator(validateElement));
             }
          }
+         if (mappingElement.getPattern().getConvert() != null)
+         {
+            for (ConvertElement converterElement : mappingElement.getPattern().getConvert())
+            {
+               pathConverters.add(new PathConverter(converterElement));
+            }
+         }
       }
       for (ActionElement actionElement : mappingElement.getAction())
       {
@@ -138,6 +147,30 @@ public class UrlMapping
          }
       }
       return result;
+   }
+
+   /**
+    * Adds a new converter to the list of path parameter converters
+    */
+   public void addPathConverter(PathConverter converter)
+   {
+      this.pathConverters.add(converter);
+   }
+
+   /**
+    * Returns the {@link PathConverter} for the supplied {@link PathParameter}. If no converter has been explicitly
+    * configured for the parameter the method will return <code>null</code>.
+    */
+   public PathConverter getPathConverterForPathParam(final PathParameter param)
+   {
+      for (PathConverter converter : pathConverters)
+      {
+         if (converter.getIndex() == param.getPosition())
+         {
+            return converter;
+         }
+      }
+      return null;
    }
 
    /**

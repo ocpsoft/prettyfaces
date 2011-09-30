@@ -97,6 +97,18 @@ public @interface URLMapping
     * </p>
     */
    String viewId();
+   
+   /**
+    * <p>
+    * Specify the URL converters for this mapping.
+    * </p>
+    * <p>
+    * Please not that the <code>index</code> property of the
+    * {@link URLConverter} annotations must be set to identify the path
+    * parameter you want the converter to refer to.
+    * </p>
+    */
+   URLConverter[] converter() default {};
 
    /**
     * <p>

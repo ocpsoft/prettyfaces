@@ -22,12 +22,14 @@ import java.util.List;
 import com.ocpsoft.pretty.faces.config.types.QueryParamElement;
 import com.ocpsoft.pretty.faces.el.ConstantExpression;
 import com.ocpsoft.pretty.faces.el.PrettyExpression;
+import com.ocpsoft.pretty.faces.util.StringUtils;
 
 /**
  * @author Lincoln Baxter, III <lincoln@ocpsoft.com>
  */
 public class QueryParameter extends RequestParameter
 {
+    private String converterId;
     private String validatorIds = "";
     private PrettyExpression validatorExpression;
     private String onError = "";
@@ -46,6 +48,9 @@ public class QueryParameter extends RequestParameter
      */
     public QueryParameter(QueryParamElement queryParamElement)
     {
+        if(StringUtils.isNotBlank(queryParamElement.getConverterId())) {
+            converterId = queryParamElement.getConverterId().trim();
+        }
         if (queryParamElement.getValidatorIds() != null)
         {
             validatorIds = queryParamElement.getValidatorIds().trim();
@@ -145,6 +150,16 @@ public class QueryParameter extends RequestParameter
     public void setOnPostback(boolean onPostback)
     {
        this.onPostback = onPostback;
+    }
+
+    public String getConverterId()
+    {
+       return converterId;
+    }
+
+    public void setConverterId(String converterId)
+    {
+       this.converterId = converterId;
     }
 
 }

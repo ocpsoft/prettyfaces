@@ -18,5 +18,9 @@ public class StringUtils
    public static boolean isNotBlank(String s) {
       return s != null && s.trim().length() > 0;
    }
+   
+   public static String trimToNull(String s) {
+      return s == null || s.trim().length() == 0 ? null : s.trim();
+   }
 
 }
