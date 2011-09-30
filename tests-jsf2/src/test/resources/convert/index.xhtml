@@ -39,6 +39,30 @@
       <h:outputText value="Path Parameter Custom Converter" />
     </pretty:link>
   </p>
+  
+  <h:form prependId="false">
+	  
+	  <p>
+	    <h:commandButton id="queryParameterDefaultConverterButton" value="Click me!" 
+	    	action="#{startPageBean.queryParameterDefaultConverter}"/>
+	  </p>
+	  
+	  <p>
+	    <h:commandButton id="pathParameterDefaultConverterButton" value="Click me!" 
+	    	action="#{startPageBean.pathParameterDefaultConverter}"/>
+	  </p>
+	  
+	  <p>
+	    <h:commandButton id="queryParameterCustomConverterButton" value="Click me!" 
+	    	action="#{startPageBean.queryParameterCustomConverter}"/>
+	  </p>
+	  
+	  <p>
+	    <h:commandButton id="pathParameterCustomConverterButton" value="Click me!" 
+	    	action="#{startPageBean.pathParameterCustomConverter}"/>
+	  </p>
+	  
+  </h:form>
 
 </body>
 

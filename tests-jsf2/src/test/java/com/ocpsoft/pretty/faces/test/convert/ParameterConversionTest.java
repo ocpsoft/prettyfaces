@@ -23,6 +23,7 @@ public class ParameterConversionTest extends PrettyFacesTestBase
    {
       return PrettyFacesTestBase.createDeployment()
                .addClass(CustomNumberConverter.class)
+               .addClass(StartPageBean.class)
                .addClass(ParamConversionBean.class)
                .addClass(AnnotationQueryParamConversionBean.class)
                .addClass(AnnotationPathParamConversionBean.class)
@@ -157,6 +158,40 @@ public class ParameterConversionTest extends PrettyFacesTestBase
       assertEquals("/test/xml/pathparam/default/two", 
                client.getElement("pathParameterDefaultConverterLink").getAttribute("href"));
       */
+
+   }
+
+   @Test
+   public void testConversionWithActionMethods() throws Exception
+   {
+      
+      // access the page
+      JSFSession jsfSession = new JSFSession("/index.jsf");
+      JSFClientSession client = jsfSession.getJSFClientSession();
+
+      // default converter query parameters
+      client.click("queryParameterDefaultConverterButton");
+      assertTrue("Invalid URL generated: " + client.getContentPage().getUrl().toString(),
+               client.getContentPage().getUrl().toString().endsWith("/test/xml/queryparam/default?number=2"));
+      client.click("back");
+      
+      // default converter path parameters
+      client.click("pathParameterDefaultConverterButton");
+      assertTrue("Invalid URL generated: " + client.getContentPage().getUrl().toString(),
+               client.getContentPage().getUrl().toString().endsWith("/test/xml/pathparam/default/2"));
+      client.click("back");
+      
+      // custom converter query parameters
+      client.click("queryParameterCustomConverterButton");
+      assertTrue("Invalid URL generated: " + client.getContentPage().getUrl().toString(),
+               client.getContentPage().getUrl().toString().endsWith("/test/xml/queryparam/custom?number=two"));
+      client.click("back");
+      
+      // custom converter path parameters
+      client.click("pathParameterCustomConverterButton");
+      assertTrue("Invalid URL generated: " + client.getContentPage().getUrl().toString(),
+               client.getContentPage().getUrl().toString().endsWith("/test/xml/pathparam/custom/two"));
+      client.click("back");
 
    }
 

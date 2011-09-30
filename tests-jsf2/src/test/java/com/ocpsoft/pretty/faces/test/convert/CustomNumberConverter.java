@@ -21,7 +21,7 @@ public class CustomNumberConverter implements Converter
       if("three".equals(value)) {
          return 3;
       }
-      throw new IllegalStateException("Value not supported: "+value);
+      return 0;
    }
 
    @Override
@@ -36,7 +36,7 @@ public class CustomNumberConverter implements Converter
       if(Integer.valueOf(3).equals(value)) {
          return "three";
       }
-      throw new IllegalStateException("Value not supported: "+value);
+      return "unknown";
    }
 
 }
