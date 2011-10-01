@@ -1,6 +1,10 @@
 ------------------------------------
            VERSION 4.0.0
 ------------------------------------
+
+Features & Enhancements:
+* Support for custom converters for query and path parameters (#51)
+
 Regression Impact:
 * ViewID must now be strictly defined using the "value" attribute. E.g.: <view-id value="/view.id" />
  -- This can be done using the following regular expression replacement:
