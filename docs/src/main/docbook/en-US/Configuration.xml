@@ -17,6 +17,7 @@
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/Dynamic_views.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/Page_actions.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/Validation.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/Conversion.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/Annotations.xml" />
 
 </chapter>

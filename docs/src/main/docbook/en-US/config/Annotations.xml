@@ -349,6 +349,55 @@ public class CategoryBean {
 
 
   <!-- ========================================================== -->
+  <!--                 Parameters Conversion                      -->
+  <!-- ========================================================== -->
+
+  <section id="config.annotations.conversion">
+
+    <title>Parameter conversion</title>
+    
+    <para>
+      The configuration of parameter converters is very simple when using
+      PrettyFaces annotations. To specify a custom converter for a query parameter,
+      just add a <code>@URLConverter</code> annotation with a JSF converter ID
+      to the field.
+    </para>
+    
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+public class LanguageBean {
+ 
+  @URLQueryParameter("language")
+  @URLConverter(converterId="languageConverter")
+  private Locale language;
+  
+  /* Getters + Setters */
+}]]></programlisting>
+
+    <para>
+      To specify custom converters for path parameters, you have to add the 
+      <code>@URLConverter</code> to the <code>@URLMapping</code> and specify the 
+      index of the path parameter you are referring to.
+    </para>
+
+    <programlisting><![CDATA[@Named("bean")
+@RequestScoped
+@URLMapping(id = "viewItem", pattern = "/store/item/#{ bean.itemId }/", viewId = "/faces/shop/item.jsf",
+  converter=@URLConverter(index=0, converterId="ItemIdConverter"))
+public class CategoryBean {
+  /* some code */
+}
+]]></programlisting>
+
+    <para>
+      This will tell PrettyFaces to convert the first path parameter
+      <code>#{bean.itemId}</code> with the converter <code>ItemIdConverter</code>.
+    </para>
+
+  </section>
+
+
+  <!-- ========================================================== -->
   <!--                   Bean name resolving                      -->
   <!-- ========================================================== -->
 

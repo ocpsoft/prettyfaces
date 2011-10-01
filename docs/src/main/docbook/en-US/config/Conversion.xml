@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<section id="config.conversion">
+
+  <title>* Parameter conversion</title>
+
+  <para>
+    PrettyFaces supports automatic conversion of path and query parameters into common
+    Java types. Additionally it is possible to register custom converters for individual
+    parameters. The configuration required to attach a custom converter differs between
+    path and query parameters.
+  </para>
+
+  <section id="config.conversion.queryparam">
+
+    <title>Query parameters</title>
+
+    <para>
+      To attach a custom JSF converter to a query parameter, just add the <code>converterId</code>
+      attribute to the parameter configuration.
+    </para>
+
+    <programlisting><![CDATA[<query-param name="lang" converterId="languageConverter"> #{bean.language} </query-param>]]></programlisting>
+
+    <para>
+      Please not that the <code>converterId</code> must refer to a valid JSF converter ID. 
+      The following listing shows an example for a converter that is able to convert
+      ISO 639 codes into Java <code>Locale</code> objects.  
+    </para>
+
+    <programlisting><![CDATA[@FacesConverter("languageConverter")
+public class LanguageConverter implements Converter
+{
+
+   @Override
+   public Object getAsObject(FacesContext context, UIComponent component, String value)
+   {
+      return new Locale(value);
+   }
+
+   @Override
+   public String getAsString(FacesContext context, UIComponent component, Object value)
+   {
+      return ((Locale) value).getLanguage();
+   }
+
+}
+]]></programlisting>
+
+  </section>
+
+  <section id="config.conversion.pathparam">
+
+    <title>Path parameters</title>
+
+    <para>
+      Conversion of path parameters is very similar to the conversion of query parameters.
+      The only important difference is that you have to specify the <code>index</code> of 
+      the path parameter you want to convert. The <code>index</code> is the absolute position 
+      of the path parameter in the pattern. The first parameter is addressed with <code>0</code>.
+    </para>
+
+    <programlisting><![CDATA[<url-mapping id="viewItem">
+  <pattern value="/store/item/#{ bean.itemId }/">
+    <convert index="0" converterId="ItemIdConverter" />
+  </pattern>
+  <view-id value="/faces/shop/item.jsf" /> 
+</url-mapping>]]></programlisting>
+
+  </section>
+
+</section>
