@@ -143,7 +143,7 @@ public class URL
    {
       try
       {
-         final URI uri = new URI(("http://localhost/" + segment).replace(" ", "%20"));
+         final URI uri = new URI(("http://localhost/" + segment).replace(" ", "%20").replace("\"", "%22"));
          return uri.getPath().substring(1);
       }
       catch (URISyntaxException e)
