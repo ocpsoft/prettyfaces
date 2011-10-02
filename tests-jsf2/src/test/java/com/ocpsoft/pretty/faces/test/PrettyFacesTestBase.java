@@ -43,6 +43,7 @@ public class PrettyFacesTestBase
                         "com.ocpsoft.rewrite:rewrite-impl-servlet:1.0.0-SNAPSHOT"))
                .addLibrary(MavenArtifactResolver.resolve(
                         "com.ocpsoft:prettyfaces-jsf2:4.0.0-SNAPSHOT"))
-               .setWebXML("jsf-web.xml");
+               .setWebXML("jsf-web.xml")
+               .addWebResource("jetty-env.xml");
    }
 }
