@@ -100,7 +100,7 @@ public class ParentingPostProcessor implements ConfigurationPostProcessor
       List<UrlAction> result = new ArrayList<UrlAction>();
       for (UrlAction action : parent.getActions())
       {
-         if (!result.contains(action))
+         if (!result.contains(action) && action.isInheritable())
          {
             result.add(copy(action));
          }
@@ -151,7 +151,8 @@ public class ParentingPostProcessor implements ConfigurationPostProcessor
       UrlAction result = new UrlAction();
       result.setAction(urlAction.getAction());
       result.setOnPostback(urlAction.onPostback());
-      result.setPhaseId(result.getPhaseId());
+      result.setPhaseId(urlAction.getPhaseId());
+      result.setInheritable(urlAction.isInheritable());
       return result;
    }
 

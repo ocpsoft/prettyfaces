@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.1.1"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.1.1 
-	http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.1.1.xsd">
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
    <url-mapping id="parent">
       <pattern value="/parent" />
       <query-param name="parent">#{myBean.parentParam}</query-param>
       <view-id value="/parent.jsf" />
-      <action>#{myBean.parentAction}</action>
+      <action inheritable="true">#{myBean.parentAction}</action>
    </url-mapping>
 
    <url-mapping id="child" parentId="parent">

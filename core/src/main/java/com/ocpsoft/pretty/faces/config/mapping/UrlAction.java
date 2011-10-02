@@ -28,6 +28,7 @@ public class UrlAction
    private PrettyExpression action;
    private PhaseId phaseId = PhaseId.RESTORE_VIEW;
    private boolean onPostback = true;
+   private boolean inheritable = false;
 
    /**
     * Create a new {@link UrlAction} with empty values
@@ -56,6 +57,7 @@ public class UrlAction
       {
          phaseId = PhaseId.valueOf(actionElement.getPhaseId().trim().toUpperCase());
       }
+      inheritable = actionElement.isInheritable();
    }
 
    /**
@@ -134,6 +136,16 @@ public class UrlAction
       this.action = new ConstantExpression(action);
    }
 
+   public boolean isInheritable()
+   {
+      return inheritable;
+   }
+
+   public void setInheritable(boolean inheritable)
+   {
+      this.inheritable = inheritable;
+   }
+   
    @Override
    public int hashCode()
    {
@@ -188,7 +200,7 @@ public class UrlAction
    @Override
    public String toString()
    {
-      return "UrlAction [action=" + action + ", onPostback=" + onPostback + ", phaseId=" + phaseId + "]";
+      return "UrlAction [action=" + action + ", onPostback=" + onPostback + ", phaseId=" + phaseId + ", inheritable=" + inheritable + "]";
    }
 
 }

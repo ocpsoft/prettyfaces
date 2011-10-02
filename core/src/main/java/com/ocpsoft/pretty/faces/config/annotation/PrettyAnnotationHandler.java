@@ -408,6 +408,7 @@ public class PrettyAnnotationHandler
       ActionSpec actionSpec = new ActionSpec();
       actionSpec.setMethod(method);
       actionSpec.setOnPostback(actionAnnotation.onPostback());
+      actionSpec.setInheritable(actionAnnotation.inheritable());
       actionSpec.setPhaseId(actionAnnotation.phaseId());
 
       // check which mapping the action belongs to
@@ -483,6 +484,7 @@ public class PrettyAnnotationHandler
             UrlAction urlAction = new UrlAction();
             urlAction.setPhaseId(actionSpec.getPhaseId());
             urlAction.setOnPostback(actionSpec.isOnPostback());
+            urlAction.setInheritable(actionSpec.isInheritable());
 
             // try to get bean name
             Class clazz = actionSpec.getMethod().getDeclaringClass();
@@ -645,6 +647,7 @@ public class PrettyAnnotationHandler
       private boolean onPostback;
       private PhaseId phaseId;
       private String[] mappingIds;
+      private boolean inheritable;
 
       public boolean isOnPostback()
       {
@@ -684,6 +687,16 @@ public class PrettyAnnotationHandler
       public void setMappingIds(final String[] mappingIds)
       {
          this.mappingIds = mappingIds;
+      }
+
+      public boolean isInheritable()
+      {
+         return inheritable;
+      }
+
+      public void setInheritable(boolean inheritable)
+      {
+         this.inheritable = inheritable;
       }
 
    }
