@@ -98,5 +98,10 @@ public @interface URLAction
     * </p>
     */
    PhaseId phaseId() default PhaseId.RESTORE_VIEW;
+   
+   /**
+    * Whether child mappings inherit this action or not.
+    */
+   boolean inheritable() default false;
 
 }

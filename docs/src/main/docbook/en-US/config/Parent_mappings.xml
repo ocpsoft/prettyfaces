@@ -40,9 +40,21 @@
 </url-mapping>
 ]]></programlisting>
 	
-	  At this time, only the pattern and path-parameter 
-      <link linkend="config.validation">validators</link> will be inherited by child mappings;
-      however, this may be enhanced in future versions.
+      Child mappings will inherit all properties from the parent mapping. This includes the pattern,
+      validators and query parameters. URL actions won't be inherited per default. If you want an action
+      to be inherited by child mappings, set it's <code>inheritable</code> attribute to <code>true</code>. 
 	</para>
+
+      <programlisting><![CDATA[<url-mapping id="store"> 
+   <pattern value="/store/" /> 
+   <view-id value="/faces/shop/store.jsf" />
+   <action inheritable="true">#{storeBean.someAction}</action>
+</url-mapping>
+
+<url-mapping parentId="store" id="category"> 
+   <pattern value="/#{category}" /> 
+   <view-id value="/faces/shop/category.jsf" /> 
+</url-mapping>
+]]></programlisting>
 	
 </section>

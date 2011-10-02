@@ -316,6 +316,15 @@
 	                  <xs:attribute name="onPostback"
 	                     type="xs:boolean">
 	                  </xs:attribute>
+	                  <xs:attribute name="inheritable"
+	                     type="xs:boolean" default="false">
+	                     <xs:annotation>
+	                        <xs:documentation>
+	                           Whether child mappings inherit
+	                           this action or not.
+	                        </xs:documentation>
+	                     </xs:annotation>
+	                  </xs:attribute>
 	               </xs:extension>
 	            </xs:simpleContent>
 	         </xs:complexType>
