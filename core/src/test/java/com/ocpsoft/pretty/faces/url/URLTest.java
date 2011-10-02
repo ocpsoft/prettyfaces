@@ -109,6 +109,10 @@ public class URLTest
       
       // decode
       assertEquals("/a b", new URL("/a%20b").decode().toURL());
+      
+      // decode of not-encoded character
+      assertEquals("/a b", new URL("/a b").decode().toURL());
+      
    }
 
    @Test
@@ -119,6 +123,22 @@ public class URLTest
 
      // decode
      assertEquals("/a?b", new URL("/a%3Fb").decode().toURL());
+     
+   }
+   
+   @Test
+   public void testQuoteCharacterEncodingAndDecoding() throws Exception
+   {
+      
+      // encode
+      assertEquals("/a%22b", new URL("/a\"b").encode().toURL());
+      
+      // decode
+      assertEquals("/a\"b", new URL("/a%22b").decode().toURL());
+      
+      // decode of not-encoded character
+      assertEquals("/a\"b", new URL("/a\"b").decode().toURL());
+      
    }
    
 }
