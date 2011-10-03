@@ -165,7 +165,7 @@ public class UrlMappingRuleAdaptor implements Rule
          else
          {
             log.trace("Forwarding mapped request [" + url.toURL() + "] to resource [" + viewId + "]");
-            if (url.decode().toURL().matches(viewId))
+            if (url.decode().toURL().equals(viewId))
             {
                ((HttpServletRewrite) event).proceed();
             }
