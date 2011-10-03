@@ -101,7 +101,7 @@ public class PrettyFilter implements Filter
                               query.getParameterMap());
 
                   log.trace("Sending mapped request [" + url.toURL() + "] to resource [" + viewId + "]");
-                  if (url.decode().toURL().matches(viewId))
+                  if (url.decode().toURL().equals(viewId))
                   {
                      chain.doFilter(wrappedRequest, response);
                   }
