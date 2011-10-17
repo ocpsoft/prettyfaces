@@ -214,6 +214,7 @@ public class PrettyFilter implements Filter
                /*
                 * The URL was modified, but no redirect occurred; forward instead.
                 */
+               setRewriteOccurred(req); // make sure we don't get here twice
                req.getRequestDispatcher(newUrl).forward(req, resp);
             }
 
