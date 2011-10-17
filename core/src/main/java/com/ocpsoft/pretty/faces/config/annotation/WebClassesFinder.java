@@ -19,13 +19,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
 
 /**
- * Implementation of {@link ClassFinder} that searches for classes in the
- * <code>/WEB-INF/classes</code> directory of a web application.
+ * Implementation of {@link ClassFinder} that searches for classes in the <code>/WEB-INF/classes</code> directory of a web
+ * application. Please note that this class is stateful. It should be used only for one class to
+ * {@link #findClasses(PrettyAnnotationHandler)}.
  * 
  * @author Christian Kaltepoth
  */
@@ -37,6 +39,11 @@ public class WebClassesFinder extends AbstractClassFinder
     */
    private final static String CLASSES_FOLDER = "/WEB-INF/classes/";
 
+   /**
+    * Manage a set of classes already processed
+    */
+   private final Set<String> processedClasses = new HashSet<String>();
+   
    /**
     * Initialization
     */
@@ -124,8 +131,11 @@ public class WebClassesFinder extends AbstractClassFinder
             String className = getClassName(entryRelativeName);
 
             // check filter
-            if (mustProcessClass(className))
+            if (mustProcessClass(className) && !processedClasses.contains(className))
             {
+
+               // mark this class as processed
+               processedClasses.add(className);
 
                // the class file stream
                InputStream classFileStream = null;
