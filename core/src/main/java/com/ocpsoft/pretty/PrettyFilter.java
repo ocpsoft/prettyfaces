@@ -135,7 +135,13 @@ public class PrettyFilter implements Filter
       if (!rewriteOccurred(req))
       {
          RewriteEngine rewriteEngine = new RewriteEngine();
-         URL url = PrettyContext.getCurrentInstance(req).getRequestURL();
+         
+         /*
+          * Get the URL from a new detached instance of PrettyContext
+          * so that we get the forwarded URL instead of the original one
+          * if the filter is called for a forwarded request.
+          */
+         URL url = PrettyContext.newDetachedInstance(req).getRequestURL();
 
          try
          {
@@ -222,10 +228,6 @@ public class PrettyFilter implements Filter
          catch (Exception e)
          {
             throw new PrettyException("Error occurred during canonicalization of request <[" + url + "]>", e);
-         }
-         finally
-         {
-            setRewriteOccurred(req);
          }
       }
    }
