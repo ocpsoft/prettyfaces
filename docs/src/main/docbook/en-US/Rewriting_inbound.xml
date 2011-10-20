@@ -104,12 +104,9 @@
 								<entry>
 									(Optional.) Specify a custom processor class to perform more complex, custom URL-rewriting. 
 									This class must implement the interface: 'com.ocpsoft.pretty.faces.rewrite.Processor'
-									<programlisting>public class CustomClassProcessor implements Processor {
-	public static final String RESULT = "I PROCESSED!";
-
-	public String process(final RewriteRule rewrite, final String url) {
-		return RESULT;
-	}
+									<programlisting> public interface Processor {
+   String processInbound(HttpServletRequest request, HttpServletResponse response, RewriteRule rule, String url);
+   String processOutbound(HttpServletRequest request, HttpServletResponse response, RewriteRule rule, String url);
 }</programlisting>
 								</entry>
 							</row>
