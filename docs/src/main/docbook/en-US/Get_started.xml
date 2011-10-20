@@ -12,7 +12,7 @@
 	<section id="getstarted.getprettyfaces">
 		<title>Get PrettyFaces</title>
 		<para>
-			This step is pretty straight-forward, right? Copy necessary JAR files into 
+			This step is pretty straight-forward, right? Copy the PrettyFaces JAR file into 
 			your /WEB-INF/lib directory, or include a <ulink url="http://maven.apache.org/">
 			Maven</ulink> dependency in your pom.xml (recommended):
 		</para>
@@ -24,14 +24,7 @@
 		</para>
 		<note>
 			<para>
-				Non-Maven Users must also include the following required JAR dependencies
-				(downloaded separately) in addition to the PrettyFaces JAR file:
-				<itemizedlist>
-					<listitem><para><ulink url="http://commons.apache.org/beanutils/">commons-beanutils.jar (1.x)</ulink></para></listitem>
-					<listitem><para><ulink url="http://commons.apache.org/digester/">commons-digester.jar (2.x)</ulink></para></listitem>
-					<listitem><para><ulink url="http://commons.apache.org/collections/">commons-collections.jar (2.x)</ulink></para></listitem>
-					<listitem><para><ulink url="http://commons.apache.org/logging/">commons-logging.jar (1.1.x)</ulink></para></listitem>
-				</itemizedlist>
+				As of PrettyFaces 3.3.0, no additional JAR files for are required for Non-Maven users; installation is just a single download and install.
 			</para>
 		</note>
 		
