@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
 import com.ocpsoft.pretty.faces.config.PrettyConfigurator;
 import com.ocpsoft.pretty.faces.config.mapping.PathParameter;
+import com.ocpsoft.pretty.faces.config.reload.PrettyConfigReloader;
 import com.ocpsoft.pretty.faces.config.rewrite.Redirect;
 import com.ocpsoft.pretty.faces.config.rewrite.RewriteRule;
 import com.ocpsoft.pretty.faces.rewrite.RewriteEngine;
@@ -56,6 +57,8 @@ public class PrettyFilter implements Filter
 
    private ServletContext servletContext;
 
+   private PrettyConfigReloader reloader = new PrettyConfigReloader();
+
    /**
     * Determine if the current request is mapped using PrettyFaces. If it is, process the pattern, storing parameters
     * into the request map, then forward the request to the specified viewId.
@@ -64,6 +67,11 @@ public class PrettyFilter implements Filter
             throws IOException, ServletException
    {
       HttpServletRequest request = (HttpServletRequest) req;
+
+      // let PrettyConfigReloader reload the configuration if required
+      if(!PrettyContext.isInstantiated(request)) {
+         reloader.onNewRequest(request);
+      }
 
       HttpServletResponse response = new PrettyFacesWrappedResponse(request.getContextPath(), request,
                (HttpServletResponse) resp, getConfig());

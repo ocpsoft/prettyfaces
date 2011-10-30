@@ -12,10 +12,6 @@
 			<others />
 		</before>
 	</ordering>
-	
-	<listener>
-		<listener-class>com.ocpsoft.pretty.faces.config.PrettyConfigListener</listener-class>
-	</listener>
 
 	<filter>
 		<filter-name>Pretty Filter</filter-name>
