@@ -135,7 +135,6 @@
 
 </pretty-config>]]></programlisting>
 		</example>
-	</section>
 
 	<tip>
 		<para>
@@ -157,4 +156,36 @@
 		configuration options, framework integration with JavaServer Faces, and
 		special use-cases.
 	</para>
+  
+  </section>
+
+  <section id="getstarted.dev_mode">
+
+    <title>PrettyFaces Development Mode</title>
+    
+    <para>
+      During the development of your application you will typically have to make changes to your 
+      <filename>pretty-config.xml</filename> very often. As server restarts take a lot of time and decrease productivity,
+      PrettyFaces is capable of reloading its configuration on a regular basis. As the configuration reloading
+      may be a time consuming process for large applications, PrettyFaces reloads its configuration only 
+      if the application is executed in development mode.
+    </para>
+    
+    <para>
+      To enable the development mode, add the following context parameter to your <filename>web.xml</filename>:
+    </para>
+    
+    <programlisting><![CDATA[<context-param>
+  <param-name>com.ocpsoft.pretty.DEVELOPMENT</param-name>
+  <param-value>true</param-value>
+</context-param>]]></programlisting>
+
+    <para>
+      If your are using the JSF 2.0 version of PrettyFaces, you typically won't have to explicitly enable
+      the development mode. In this case the development mode is automatically enabled for all project
+      stages except for <constant>Production</constant>. 
+    </para>
+    
+  </section>
+
 </chapter>

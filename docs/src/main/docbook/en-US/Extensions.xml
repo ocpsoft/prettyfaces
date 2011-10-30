@@ -134,4 +134,53 @@
    
    </section>
 
+   <section id="DevelopmentModeDetector">
+      <title>com.ocpsoft.pretty.faces.spi.DevelopmentModeDetector</title>
+      
+       <para>
+         If PrettyFaces is executed in development mode, the configuration will be automatically reloaded
+         every few seconds. This allows the developer to modify the <filename>pretty-config.xml</filename>
+         and immediately test the changes without restarting the servlet container. 
+       </para>
+       
+       <para>
+         The DevelopmentModeDetector SPI allows the user to implement custom strategies to determine whether the application
+         is in development mode. The following class shows a simple detector which enables the development
+         mode if the system property <constant>devmode</constant> is set to <constant>true</constant>. 
+       </para>
+       
+       <programlisting><![CDATA[public class CustomDevelopmentModeDetector implements DevelopmentModeDetector {
+
+   public int getPriority() {
+      return 10;
+   }
+
+   public Boolean isDevelopmentMode(ServletContext servletContext) {
+      return System.getProperty("devmode", "false").equals("true");
+   }
+
+}]]></programlisting>
+   
+       <tip>
+         <para>
+           You can give your own implementation a high precedence of the other implementations by giving
+           it a very low priority. 
+         </para>
+       </tip>
+
+       <para>
+         To let PrettyFaces know about your custom detector, you'll have to register your
+         implementation by creating a file named 
+         <code>META-INF/services/com.ocpsoft.pretty.faces.spi.DevelopmentModeDetector</code>
+         in your classpath and add the fully-qualified class name of your implementation
+         class there.
+       </para>
+
+       <programlisting>
+         <filename>META-INF/services/com.ocpsoft.pretty.faces.spi.DevelopmentModeDetector</filename>
+         com.example.CustomDevelopmentModeDetector
+       </programlisting>
+   
+   </section>
+
 </chapter>

@@ -4,6 +4,7 @@
 
 Features & Enhancements:
 * Support of query parameter and action inheritance (#75)
+* Development mode can now be enabled by setting the context parameter 'com.ocpsoft.pretty.DEVELOPMENT'
 
 Bugfixes:
 * Implemented equals()/hashcode() for LazyExpression (#115)
@@ -13,6 +14,7 @@ Bugfixes:
 * Fixed decoding of quotation mark character. Thanks to Bruno Aranda for the patch. (#122)
 * Use equals() instead of matches() to compare URL with view-id. Thanks to mbenson for bringing this up.
 * Prevent rewrite loops by avoiding nested rewrites for forwarded requests (#121)
+* Fixed bug causing CDIBeanNameResolver to don't reload configuration in development mode on JBoss AS7
 
 ------------------------------------
            VERSION 3.3.0
