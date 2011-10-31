@@ -22,7 +22,7 @@
 
 	<groupId>com.ocpsoft</groupId>
 	<artifactId>prettyfaces-docs</artifactId>
-	<version>3.3.1-SNAPSHOT</version>
+	<version>3.3.1</version>
 	<packaging>jdocbook</packaging>
 
 	<name>PrettyFaces Reference Guide</name>
