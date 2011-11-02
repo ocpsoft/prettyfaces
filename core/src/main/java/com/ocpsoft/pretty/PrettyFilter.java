@@ -70,7 +70,7 @@ public class PrettyFilter implements Filter
 
       // let PrettyConfigReloader reload the configuration if required
       if(!PrettyContext.isInstantiated(request)) {
-         reloader.onNewRequest(request);
+         reloader.onNewRequest(servletContext);
       }
 
       HttpServletResponse response = new PrettyFacesWrappedResponse(request.getContextPath(), request,

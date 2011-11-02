@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,13 +59,13 @@ public class PrettyConfigReloader
     * Called from
     * {@link PrettyFilter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
     */
-   public void onNewRequest(HttpServletRequest request)
+   public void onNewRequest(ServletContext servletContext)
    {
 
       // the development mode detection is started when the first request is received
       if (developmentMode == null) {
 
-         developmentMode = isDevelopmentModeActive(request.getServletContext());
+         developmentMode = isDevelopmentModeActive(servletContext);
 
          if (log.isDebugEnabled()) {
             if (developmentMode) {
@@ -99,7 +98,7 @@ public class PrettyConfigReloader
             lastUpdate = System.currentTimeMillis();
 
             // run the configuration procedure again
-            PrettyConfigurator configurator = new PrettyConfigurator(request.getServletContext());
+            PrettyConfigurator configurator = new PrettyConfigurator(servletContext);
             configurator.configure();
 
          }
