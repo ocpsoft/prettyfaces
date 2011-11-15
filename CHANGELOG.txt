@@ -1,4 +1,11 @@
 ------------------------------------
+           VERSION 3.3.3
+------------------------------------
+
+Bugfixes:
+* Fixed potential NullPointerException in annotation scanning code 
+
+------------------------------------
            VERSION 3.3.2
 ------------------------------------
 

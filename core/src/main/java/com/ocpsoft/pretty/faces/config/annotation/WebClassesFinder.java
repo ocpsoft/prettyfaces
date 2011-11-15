@@ -113,85 +113,88 @@ public class WebClassesFinder extends AbstractClassFinder
       // call getResourcePaths to get directory entries
       Set<?> paths = servletContext.getResourcePaths(CLASSES_FOLDER+relativeDirectoryName);
 
-      // loop over all entries of the directory
-      for (Object relativePath : paths)
-      {
+      if (paths != null) {
 
-         // get full URL for this entry
-         URL entryUrl = servletContext.getResource(relativePath.toString());
-
-         // if this URL ends with .class it is a Java class
-         if (entryUrl.getPath().endsWith(".class"))
+         // loop over all entries of the directory
+         for (Object relativePath : paths)
          {
 
-            // the name of the entry relative to the '/WEB-INF/classes/' folder
-            String entryRelativeName = getPathRelativeToClassesFolder(entryUrl.getPath(), classesFolderPath);
-            
-            // build class name from relative name
-            String className = getClassName(entryRelativeName);
+            // get full URL for this entry
+            URL entryUrl = servletContext.getResource(relativePath.toString());
 
-            // check filter
-            if (mustProcessClass(className) && !processedClasses.contains(className))
+            // if this URL ends with .class it is a Java class
+            if (entryUrl.getPath().endsWith(".class"))
             {
 
-               // mark this class as processed
-               processedClasses.add(className);
+               // the name of the entry relative to the '/WEB-INF/classes/' folder
+               String entryRelativeName = getPathRelativeToClassesFolder(entryUrl.getPath(), classesFolderPath);
 
-               // the class file stream
-               InputStream classFileStream = null;
+               // build class name from relative name
+               String className = getClassName(entryRelativeName);
 
-               // close the stream in finally block
-               try
+               // check filter
+               if (mustProcessClass(className) && !processedClasses.contains(className))
                {
 
-                  /*
-                   * Try to open the .class file. If an IOException is thrown,
-                   * we will scan it anyway.
-                   */
+                  // mark this class as processed
+                  processedClasses.add(className);
+
+                  // the class file stream
+                  InputStream classFileStream = null;
+
+                  // close the stream in finally block
                   try
                   {
-                     classFileStream = entryUrl.openStream();
-                  }
-                  catch (IOException e)
-                  {
-                     if (log.isDebugEnabled())
-                     {
-                        log.debug("Cound not obtain InputStream for class file: "+entryUrl.toString(), e);
-                     }
-                  }
 
-                  // analyze the class (with or without classFileStream)
-                  processClass(className, classFileStream, handler);
+                     /*
+                      * Try to open the .class file. If an IOException is thrown,
+                      * we will scan it anyway.
+                      */
+                     try
+                     {
+                        classFileStream = entryUrl.openStream();
+                     }
+                     catch (IOException e)
+                     {
+                        if (log.isDebugEnabled())
+                        {
+                           log.debug("Cound not obtain InputStream for class file: " + entryUrl.toString(), e);
+                        }
+                     }
 
-               }
-               finally
-               {
-                  try
+                     // analyze the class (with or without classFileStream)
+                     processClass(className, classFileStream, handler);
+
+                  }
+                  finally
                   {
-                     if (classFileStream != null)
+                     try
                      {
-                        classFileStream.close();
+                        if (classFileStream != null)
+                        {
+                           classFileStream.close();
+                        }
+                     }
+                     catch (IOException e)
+                     {
+                        if (log.isDebugEnabled())
+                        {
+                           log.debug("Failed to close input stream: " + e.getMessage());
+                        }
                      }
                   }
-                  catch (IOException e)
-                  {
-                     if (log.isDebugEnabled())
-                     {
-                        log.debug("Failed to close input stream: " + e.getMessage());
-                     }
-                  }
                }
+
             }
 
-         }
+            // if this URL ends with a slash, its a directory
+            if (entryUrl.getPath().endsWith("/"))
+            {
 
-         // if this URL ends with a slash, its a directory
-         if (entryUrl.getPath().endsWith("/"))
-         {
+               // walk down the directory
+               processDirectory(classesFolderUrl, entryUrl, handler);
 
-            // walk down the directory
-            processDirectory(classesFolderUrl, entryUrl, handler);
-
+            }
          }
       }
    }
