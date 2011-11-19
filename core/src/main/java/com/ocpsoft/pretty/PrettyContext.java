@@ -47,7 +47,7 @@ public class PrettyContext implements Serializable
    private static final String CONTEXT_REQUEST_KEY = "prettyContext";
 
    private static final String JSESSIONID_REPLACEMENT = "$1$2";
-   private static final String JSESSIONID_REGEX = "(?i)^(.*);jsessionid=\\w+(.*)";
+   private static final String JSESSIONID_REGEX = "(?i)^(.*);jsessionid=[\\w\\.]+(.*)";
 
    private PrettyConfig config;
 
