@@ -4,6 +4,7 @@
 
 Bugfixes:
 * Fixed potential NullPointerException in annotation scanning code 
+* Fixed PrettyContext.JSESSIONID_REGEX to support clustered session IDs
 
 ------------------------------------
            VERSION 3.3.2
