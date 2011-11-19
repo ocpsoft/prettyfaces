@@ -16,8 +16,8 @@
       of another URL-mapping. See examples below:
 
       <programlisting><![CDATA[<url-mapping id="store"> 
-   <pattern value="/store/" /> 
-   <~-- Result: /store/ -->
+   <pattern value="/store" /> 
+   <~-- Result: /store -->
    <view-id value="/faces/shop/store.jsf" />
 </url-mapping>
 
@@ -46,7 +46,7 @@
 	</para>
 
       <programlisting><![CDATA[<url-mapping id="store"> 
-   <pattern value="/store/" /> 
+   <pattern value="/store" /> 
    <view-id value="/faces/shop/store.jsf" />
    <action inheritable="true">#{storeBean.someAction}</action>
 </url-mapping>
