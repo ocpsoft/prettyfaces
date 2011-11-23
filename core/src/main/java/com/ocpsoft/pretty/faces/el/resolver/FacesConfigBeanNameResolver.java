@@ -278,12 +278,12 @@ public class FacesConfigBeanNameResolver implements ELBeanNameResolver
       catch (IOException e)
       {
          // may be thrown when reading the file
-         log.error("Failed to parse: " + url.toString(), e);
+         log.warn("Failed to parse: " + url.toString() + ": " + e.getMessage());
       }
       catch (SAXException e)
       {
          // parsing errors
-         log.error("Failed to parse: " + url.toString(), e);
+         log.warn("Failed to parse: " + url.toString() + ": " + e.getMessage());
       }
       finally
       {
