@@ -140,5 +140,35 @@ public class URLTest
       assertEquals("/a\"b", new URL("/a\"b").decode().toURL());
       
    }
-   
+
+   @Test
+   public void testSquareBracketEncodingAndDecoding() throws Exception
+   {
+
+      // encode
+      assertEquals("/%5Ba%5D", new URL("/[a]").encode().toURL());
+
+      // decode
+      assertEquals("/[a]", new URL("/%5Ba%5D").decode().toURL());
+
+      // decode of not-encoded character
+      assertEquals("/[a]", new URL("/[a]").decode().toURL());
+
+   }
+
+   @Test
+   public void testLessGreaterThanEncodingAndDecoding() throws Exception
+   {
+
+      // encode
+      assertEquals("/%3Ca%3E", new URL("/<a>").encode().toURL());
+
+      // decode
+      assertEquals("/<a>", new URL("/%3Ca%3E").decode().toURL());
+
+      // decode of not-encoded character
+      assertEquals("/<a>", new URL("/<a>").decode().toURL());
+
+   }
+  
 }
