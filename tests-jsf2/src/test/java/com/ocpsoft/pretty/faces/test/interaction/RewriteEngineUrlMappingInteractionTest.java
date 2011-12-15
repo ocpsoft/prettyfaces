@@ -36,6 +36,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    public static WebArchive createDeployment()
    {
       return PrettyFacesTestBase.createDeployment()
+               .addClass(InteractionDynaViewBean.class)
                .addResource("interaction/interaction-page.xhtml", "page.xhtml")
                .addWebResource("interaction/interaction-pretty-config.xml", "pretty-config.xml");
    }
@@ -44,7 +45,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
     * Accessing the page using the URL mapping
     */
    @Test @Ignore
-   public void testUrlMapping() throws Exception
+   public void testSimpleUrlMapping() throws Exception
    {
       JSFSession jsfSession = new JSFSession("/page");
       JSFClientSession client = jsfSession.getJSFClientSession();
@@ -52,6 +53,18 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
       assertTrue(client.getPageAsText().contains("The page rendered fine!"));
    }
 
+   /**
+    * Accessing the page using a dynaview
+    */
+   @Test @Ignore
+   public void testDynaViewUrlMapping() throws Exception
+   {
+      JSFSession jsfSession = new JSFSession("/dyna/page");
+      JSFClientSession client = jsfSession.getJSFClientSession();
+      assertTrue(client.getContentPage().getUrl().toString().endsWith("/dyna/page"));
+      assertTrue(client.getPageAsText().contains("The page rendered fine!"));
+   }
+   
    /**
     * Rewrite rule forwards to the URL mapping
     */
@@ -76,6 +89,30 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
       assertTrue(client.getPageAsText().contains("The page rendered fine!"));
    }
 
+   /**
+    * Rewrite rule forwards to the dynaview
+    */
+   @Test
+   public void testRewriteForwardsToDynaviewMapping() throws Exception
+   {
+      JSFSession jsfSession = new JSFSession("/rewrite-forwards-to-dynaview");
+      JSFClientSession client = jsfSession.getJSFClientSession();
+      assertTrue(client.getContentPage().getUrl().toString().endsWith("/rewrite-forwards-to-dynaview"));
+      assertTrue(client.getPageAsText().contains("The page rendered fine!"));
+   }
+
+   /**
+    * Rewrite rule redirects to the dynaview
+    */
+   @Test @Ignore
+   public void testRewriteRedirectsToDynaviewMapping() throws Exception
+   {
+      JSFSession jsfSession = new JSFSession("/rewrite-redirects-to-dynaview");
+      JSFClientSession client = jsfSession.getJSFClientSession();
+      assertTrue(client.getContentPage().getUrl().toString().endsWith("/dyna/page"));
+      assertTrue(client.getPageAsText().contains("The page rendered fine!"));
+   }
+   
    /**
     * Directly accessing the view-id should redirect to the pretty URL
     */
