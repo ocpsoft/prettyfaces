@@ -38,7 +38,7 @@ public abstract class PrettyFacesTestBase
       return ShrinkWrap.create(WebArchive.class, "test.war")
                .addWebResource("faces-config.xml")
                .addLibrary(MavenArtifactResolver.resolve(
-                        "com.ocpsoft:prettyfaces-jsf2:3.3.1-SNAPSHOT"))
+                        "com.ocpsoft:prettyfaces-jsf2:3.3.3-SNAPSHOT"))
                .setWebXML("jsf-web.xml")
                .addWebResource("jetty-env.xml");
    }
