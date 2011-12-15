@@ -55,6 +55,8 @@ public class PrettyFilter implements Filter
 
    private static final String REWRITE_OCCURRED_KEY = "com.ocpsoft.pretty.rewrite";
 
+   private static final String URL_MAPPING_FORWARD_KEY = "com.ocpsoft.pretty.url_mapping_forward";
+
    private ServletContext servletContext;
 
    private PrettyConfigReloader reloader = new PrettyConfigReloader();
@@ -98,6 +100,7 @@ public class PrettyFilter implements Filter
                if (context.shouldProcessDynaview())
                {
                   log.trace("Forwarding mapped request [" + url.toURL() + "] to dynaviewId [" + viewId + "]");
+                  setUrlMappingForward(request);
                   req.getRequestDispatcher(context.getDynaViewId()).forward(req, response);
                }
                else
@@ -115,6 +118,7 @@ public class PrettyFilter implements Filter
                   }
                   else
                   {
+                     setUrlMappingForward(request);
                      req.getRequestDispatcher(viewId).forward(wrappedRequest, response);
                   }
                }
@@ -140,7 +144,7 @@ public class PrettyFilter implements Filter
       /*
        * FIXME Refactor this horrible method.
        */
-      if (!rewriteOccurred(req))
+      if (!rewriteOccurred(req) && !isUrlMappingForward(req))
       {
          RewriteEngine rewriteEngine = new RewriteEngine();
          
@@ -291,6 +295,16 @@ public class PrettyFilter implements Filter
    private boolean rewriteOccurred(final ServletRequest req)
    {
       return Boolean.TRUE.equals(req.getAttribute(REWRITE_OCCURRED_KEY));
+   }
+
+   private void setUrlMappingForward(final ServletRequest req)
+   {
+      req.setAttribute(URL_MAPPING_FORWARD_KEY, true);
+   }
+
+   private boolean isUrlMappingForward(final ServletRequest req)
+   {
+      return Boolean.TRUE.equals(req.getAttribute(URL_MAPPING_FORWARD_KEY));
    }
 
    public PrettyConfig getConfig()

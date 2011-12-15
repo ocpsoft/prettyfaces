@@ -23,7 +23,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,7 +43,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    /**
     * Accessing the page using the URL mapping
     */
-   @Test @Ignore
+   @Test
    public void testSimpleUrlMapping() throws Exception
    {
       JSFSession jsfSession = new JSFSession("/page");
@@ -56,7 +55,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    /**
     * Accessing the page using a dynaview
     */
-   @Test @Ignore
+   @Test
    public void testDynaViewUrlMapping() throws Exception
    {
       JSFSession jsfSession = new JSFSession("/dyna/page");
@@ -80,7 +79,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    /**
     * Rewrite rule redirects to the URL mapping
     */
-   @Test @Ignore
+   @Test
    public void testRewriteRedirectsToUrlMapping() throws Exception
    {
       JSFSession jsfSession = new JSFSession("/rewrite-redirects-to-page-mapping");
@@ -104,7 +103,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    /**
     * Rewrite rule redirects to the dynaview
     */
-   @Test @Ignore
+   @Test
    public void testRewriteRedirectsToDynaviewMapping() throws Exception
    {
       JSFSession jsfSession = new JSFSession("/rewrite-redirects-to-dynaview");
@@ -116,7 +115,7 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    /**
     * Directly accessing the view-id should redirect to the pretty URL
     */
-   @Test @Ignore
+   @Test
    public void testJsfViewIdRedirectsToMapping() throws Exception
    {
       JSFSession jsfSession = new JSFSession("/page.jsf");
