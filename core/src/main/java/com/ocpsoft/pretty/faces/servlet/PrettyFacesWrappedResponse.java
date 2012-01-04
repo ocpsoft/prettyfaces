@@ -119,8 +119,23 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
 
          List<UrlMapping> matches = new ArrayList<UrlMapping>();
 
-         QueryString queryString = QueryString.build(strippedUrl);
-         String mappingId = queryString.getParameter("com.ocpsoft.mappingId");
+         /*
+          * First build an empty query string. We will add the parameters
+          * only if the URL contains a ? character in the next step
+          */
+         final QueryString queryString = QueryString.build("");
+
+         /*
+          * Try to identify the mapping for this URL. Remove the metadata
+          * from the URL if it exists.
+          */
+         String mappingId = null;
+         if (strippedUrl.contains("?")) {
+            queryString.addParameters(strippedUrl);
+            mappingId = queryString.getParameter(REWRITE_MAPPING_ID_KEY);
+            queryString.removeParameter(REWRITE_MAPPING_ID_KEY);
+         }
+
          if (mappingId != null)
          {
             matches.add(prettyConfig.getMappingById(mappingId));
@@ -147,15 +162,7 @@ public class PrettyFacesWrappedResponse extends HttpServletResponseWrapper
             {
                List<UIParameter> uiParams = new ArrayList<UIParameter>();
 
-               QueryString qs = QueryString.build("");
-               if (url.contains("?"))
-               {
-                  qs.addParameters(url);
-
-                  // remove own own metadata
-                  qs.removeParameter("com.ocpsoft.mappingId");
-               }
-               Map<String, String[]> queryParams = qs.getParameterMap();
+               Map<String, String[]> queryParams = queryString.getParameterMap();
 
                List<PathParameter> pathParams = m.getPatternParser().getPathParameters();
 
