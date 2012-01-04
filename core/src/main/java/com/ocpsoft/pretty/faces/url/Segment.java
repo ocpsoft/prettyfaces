@@ -27,6 +27,8 @@ public class Segment
 {
    private static final String SUFFIX = "#-p#";
    private static final String PREFIX = "#p-#";
+   
+   private static final Pattern TEMPLATE_PATTERN = Pattern.compile(PREFIX + "(\\d+)" + SUFFIX);
 
    private String template;
    private String regex;
@@ -47,7 +49,7 @@ public class Segment
     */
    public static Matcher getTemplateMatcher(final String target)
    {
-      return Pattern.compile(PREFIX + "(\\d+)" + SUFFIX).matcher(target);
+      return TEMPLATE_PATTERN.matcher(target);
    }
 
    /**

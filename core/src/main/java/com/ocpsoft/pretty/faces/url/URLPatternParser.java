@@ -32,6 +32,9 @@ import com.ocpsoft.pretty.faces.el.Expressions;
  */
 public class URLPatternParser
 {
+	
+   private static final Pattern EL_REGEX_PATTERN = Pattern.compile(Expressions.EL_REGEX);
+	
    private final String originalPattern;
    private boolean elPattern;
    private URL urlPattern = null;
@@ -50,7 +53,7 @@ public class URLPatternParser
    public URLPatternParser(final String pattern)
    {
       originalPattern = pattern;
-      Matcher expressionMatcher = Pattern.compile(Expressions.EL_REGEX).matcher(pattern);
+      Matcher expressionMatcher = EL_REGEX_PATTERN.matcher(pattern);
       StringBuffer segmentableExpressions = new StringBuffer();
 
       elPattern = false;
