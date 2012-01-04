@@ -53,7 +53,7 @@ public class ParameterValidator
       log.trace("Validating parameters.");
       PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       URL url = prettyContext.getRequestURL();
-      UrlMapping mapping = prettyContext.getConfig().getMappingForUrl(url);
+      UrlMapping mapping = prettyContext.getCurrentMapping();
 
       if (mapping != null)
       {

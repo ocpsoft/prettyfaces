@@ -30,6 +30,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -90,8 +91,10 @@ public class PrettyFilter implements Filter
       else
       {
          URL url = context.getRequestURL();
-         if (getConfig().isURLMapped(url))
+         UrlMapping mapping = getConfig().getMappingForUrl(url);
+         if (mapping != null)
          {
+            context.setCurrentMapping(mapping);
             PrettyContext.setCurrentContext(request, context); // set
 
             String viewId = context.getCurrentViewId();

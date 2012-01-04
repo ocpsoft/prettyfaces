@@ -258,6 +258,17 @@ public class PrettyContext implements Serializable
    }
 
    /**
+    * Called once from PrettyFilter to initialize the currentMapping property.
+    * This leads to better performance because the filter already knows the mapping
+    * and we won't have to do the mapping identification again in the getter for
+    * the property. 
+    */
+   void setCurrentMapping(UrlMapping mapping)
+   {
+      currentMapping = mapping;
+   }
+
+   /**
     * Return the current viewId to which the current request will be forwarded
     * to JSF.
     */

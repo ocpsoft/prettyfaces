@@ -47,7 +47,7 @@ public class ParameterInjector
       log.trace("Injecting parameters");
       PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       URL url = prettyContext.getRequestURL();
-      UrlMapping mapping = prettyContext.getConfig().getMappingForUrl(url);
+      UrlMapping mapping = prettyContext.getCurrentMapping();
 
       if (mapping != null)
       {
