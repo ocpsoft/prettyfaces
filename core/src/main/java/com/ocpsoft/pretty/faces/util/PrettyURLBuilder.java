@@ -185,7 +185,7 @@ public class PrettyURLBuilder
       String result = "";
       if (urlMapping != null)
       {
-         URLPatternParser parser = new URLPatternParser(urlMapping.getPattern());
+         URLPatternParser parser = urlMapping.getPatternParser();
          List<String> pathParams = new ArrayList<String>();
          List<QueryParameter> queryParams = new ArrayList<QueryParameter>();
 

@@ -56,7 +56,7 @@ public class ExtractedValuesURLBuilder
       {
          FacesContext context = FacesContext.getCurrentInstance();
 
-         URLPatternParser parser = new URLPatternParser(mapping.getPattern());
+         URLPatternParser parser = mapping.getPatternParser();
          List<PathParameter> parameters = parser.getPathParameters();
          List<String> parameterValues = new ArrayList<String>();
          for (PathParameter injection : parameters)
