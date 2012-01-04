@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class URL
 {
@@ -31,6 +32,7 @@ public class URL
    private List<String> segments;
 
    private final Map<String, List<String>> decodedSegments = new HashMap<String, List<String>>();
+   private static final Pattern SLASH_PATTERN = Pattern.compile("/", Pattern.LITERAL);
 
    /**
     * Create a URL object for the given url String. The input string must not yet have been decoded.
@@ -52,7 +54,7 @@ public class URL
          }
 
          String trimmedUrl = trimSurroundingSlashes(url);
-         String[] segments = trimmedUrl.split("/");
+         String[] segments = SLASH_PATTERN.split(trimmedUrl);
 
          this.segments = Arrays.asList(segments);
       }
