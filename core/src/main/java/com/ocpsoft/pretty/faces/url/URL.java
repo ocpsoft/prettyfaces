@@ -33,6 +33,7 @@ public class URL
 
    private final Map<String, List<String>> decodedSegments = new HashMap<String, List<String>>();
    private static final Pattern SLASH_PATTERN = Pattern.compile("/", Pattern.LITERAL);
+   private static final int NEGATIVE_PATTERN_LIMIT = -1;
 
    /**
     * Create a URL object for the given url String. The input string must not yet have been decoded.
@@ -54,7 +55,7 @@ public class URL
          }
 
          String trimmedUrl = trimSurroundingSlashes(url);
-         String[] segments = SLASH_PATTERN.split(trimmedUrl);
+         String[] segments = SLASH_PATTERN.split(trimmedUrl, NEGATIVE_PATTERN_LIMIT);
 
          this.segments = Arrays.asList(segments);
       }

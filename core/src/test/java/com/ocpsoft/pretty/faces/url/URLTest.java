@@ -23,6 +23,22 @@ import org.junit.Test;
 
 public class URLTest
 {
+	
+   @Test
+   public void testURLWithEmptySegmentsConstruction() throws Exception
+   {
+      final String URL_WITH_TRAILING_EMPTY_SEGMENT = "/test//";
+      final String URL_WITH_LEADING_EMPTY_SEGMENT = "//test/";
+      final String URL_WITH_LEADING_AND_TRAILING_EMPTY_SEGMENTS = "//test//";
+      
+      assertEquals(URL_WITH_TRAILING_EMPTY_SEGMENT, 
+    		  new URL(URL_WITH_TRAILING_EMPTY_SEGMENT).decode().toURL());
+      assertEquals(URL_WITH_LEADING_EMPTY_SEGMENT, 
+    		  new URL(URL_WITH_LEADING_EMPTY_SEGMENT).decode().toURL());
+      assertEquals(URL_WITH_LEADING_AND_TRAILING_EMPTY_SEGMENTS, 
+    		  new URL(URL_WITH_LEADING_AND_TRAILING_EMPTY_SEGMENTS).decode().toURL());
+   }
+	
    @Test
    public void testURLPreservesOriginalURL() throws Exception
    {
