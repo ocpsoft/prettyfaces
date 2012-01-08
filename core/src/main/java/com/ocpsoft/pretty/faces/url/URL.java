@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+
+import com.ocpsoft.pretty.faces.util.StringUtils;
 
 public class URL
 {
@@ -32,31 +33,30 @@ public class URL
    private List<String> segments;
 
    private final Map<String, List<String>> decodedSegments = new HashMap<String, List<String>>();
-   private static final Pattern SLASH_PATTERN = Pattern.compile("/", Pattern.LITERAL);
 
    /**
     * Create a URL object for the given url String. The input string must not yet have been decoded.
     * 
     * @param url The raw, un-decoded url String
     */
-   public URL(final String url)
+   public URL(String url)
    {
       if (url != null)
       {
-         originalURL = url.trim();
-         if (originalURL.endsWith("/"))
-         {
-            metadata.setTrailingSlash(true);
-         }
-         if (originalURL.startsWith("/"))
+         url =url.trim();
+         originalURL = url;
+         if (StringUtils.hasLeadingSlash(url))
          {
             metadata.setLeadingSlash(true);
+            url = url.substring(1);
+         }
+         if (StringUtils.hasTrailingSlash(url))
+         {
+            metadata.setTrailingSlash(true);
+            url = url.substring(0, url.length() - 1);
          }
 
-         String trimmedUrl = trimSurroundingSlashes(url);
-         String[] segments = SLASH_PATTERN.split(trimmedUrl);
-
-         this.segments = Arrays.asList(segments);
+         this.segments = Arrays.asList(StringUtils.splitBySlash(url));
       }
       else
       {
@@ -262,26 +262,5 @@ public class URL
    public void setMetadata(final Metadata metadata)
    {
       this.metadata = metadata;
-   }
-
-   /*
-    * Helpers
-    */
-   private String trimSurroundingSlashes(final String url)
-   {
-      String result = null;
-      if (url != null)
-      {
-         result = url.trim();
-         if (result.startsWith("/"))
-         {
-            result = result.substring(1);
-         }
-         if (result.endsWith("/"))
-         {
-            result = result.substring(0, result.length() - 1);
-         }
-      }
-      return result;
    }
 }
