@@ -30,6 +30,7 @@ public class URLTest
       final String URL_WITH_TRAILING_EMPTY_SEGMENT = "/test//";
       final String URL_WITH_LEADING_EMPTY_SEGMENT = "//test/";
       final String URL_WITH_LEADING_AND_TRAILING_EMPTY_SEGMENTS = "//test//";
+      final String URL_WITH_INNER_EMPTY_SEGMENTS = "/test//test2/";
       
       assertEquals(URL_WITH_TRAILING_EMPTY_SEGMENT, 
     		  new URL(URL_WITH_TRAILING_EMPTY_SEGMENT).decode().toURL());
@@ -37,6 +38,8 @@ public class URLTest
     		  new URL(URL_WITH_LEADING_EMPTY_SEGMENT).decode().toURL());
       assertEquals(URL_WITH_LEADING_AND_TRAILING_EMPTY_SEGMENTS, 
     		  new URL(URL_WITH_LEADING_AND_TRAILING_EMPTY_SEGMENTS).decode().toURL());
+      assertEquals(URL_WITH_INNER_EMPTY_SEGMENTS, 
+            new URL(URL_WITH_INNER_EMPTY_SEGMENTS).decode().toURL());
    }
 	
    @Test
