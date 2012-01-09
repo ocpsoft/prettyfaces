@@ -56,7 +56,7 @@ public class InboundRewriteRuleAdaptor implements Rule
    {
       if ((event instanceof HttpInboundServletRewrite)
                && rule.isInbound()
-               && rule.matches(URLBuilder.build(((HttpServletRewrite) event).getRequestPath()).decode().toURL()
+               && rule.matches(URLBuilder.createFrom(((HttpServletRewrite) event).getRequestPath()).decode().toURL()
                         + QueryString.build(((HttpServletRewrite) event).getRequestQueryStringSeparator()
                                  + ((HttpServletRewrite) event).getRequestQueryString()).toQueryString()))
       {
@@ -69,7 +69,7 @@ public class InboundRewriteRuleAdaptor implements Rule
    public void perform(final Rewrite event, final com.ocpsoft.rewrite.context.EvaluationContext context)
    {
       RewriteEngine engine = new RewriteEngine();
-      String originalUrl = URLBuilder.build(((HttpServletRewrite) event).getRequestPath()).decode().toURL()
+      String originalUrl = URLBuilder.createFrom(((HttpServletRewrite) event).getRequestPath()).decode().toURL()
                + QueryString.build(((HttpServletRewrite) event).getRequestQueryStringSeparator()
                         + ((HttpServletRewrite) event).getRequestQueryString()).toQueryString();
       String newUrl = engine.processInbound(((HttpServletRewrite) event).getRequest(),
