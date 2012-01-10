@@ -23,17 +23,17 @@ public class StringUtils
    
    public static boolean hasLeadingSlash(final String s)
    {
-      return s != null && !s.isEmpty() && SLASH == s.charAt(0);
+      return s != null && isNotBlank(s) && SLASH == s.charAt(0);
    }
 
    public static boolean hasTrailingSlash(final String s)
    {
-      return s != null && !s.isEmpty() && SLASH == s.charAt(s.length() - 1);
+      return s != null && isNotBlank(s) && SLASH == s.charAt(s.length() - 1);
    }
 
    public static String[] splitBySlash(final String s)
    {
-      if (s == null || s.isEmpty())
+      if (s == null || isBlank(s))
       {
          return new String[0];
       }
