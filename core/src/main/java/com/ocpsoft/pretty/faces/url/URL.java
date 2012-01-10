@@ -1,17 +1,12 @@
 /*
- * Copyright 2010 Lincoln Baxter, III
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010 Lincoln Baxter, III Licensed under the Apache License, Version
+ * 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package com.ocpsoft.pretty.faces.url;
 
@@ -23,7 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+
+import com.ocpsoft.pretty.faces.util.StringUtils;
 
 public class URL
 {
@@ -32,31 +28,31 @@ public class URL
    private List<String> segments;
 
    private final Map<String, List<String>> decodedSegments = new HashMap<String, List<String>>();
-   private static final Pattern SLASH_PATTERN = Pattern.compile("/", Pattern.LITERAL);
 
    /**
-    * Create a URL object for the given url String. The input string must not yet have been decoded.
+    * Create a URL object for the given url String. The input string must not
+    * yet have been decoded.
     * 
-    * @param url The raw, un-decoded url String
+    * @param url
+    *           The raw, un-decoded url String
     */
-   public URL(final String url)
+   public URL(String url)
    {
       if (url != null)
       {
-         originalURL = url.trim();
-         if (originalURL.endsWith("/"))
-         {
-            metadata.setTrailingSlash(true);
-         }
-         if (originalURL.startsWith("/"))
+         url = url.trim();
+         originalURL = url;
+         if (StringUtils.hasLeadingSlash(url))
          {
             metadata.setLeadingSlash(true);
+            url = url.substring(1);
          }
-
-         String trimmedUrl = trimSurroundingSlashes(url);
-         String[] segments = SLASH_PATTERN.split(trimmedUrl);
-
-         this.segments = Arrays.asList(segments);
+         if (StringUtils.hasTrailingSlash(url))
+         {
+            metadata.setTrailingSlash(true);
+            url = url.substring(0, url.length() - 1);
+         }
+         this.segments = Arrays.asList(StringUtils.splitBySlash(url));
       }
       else
       {
@@ -70,8 +66,9 @@ public class URL
    }
 
    /**
-    * Create a URL object for the given url segments (separated by '/' from the original url string), using the given
-    * metadata object to represent the encoding and leading/trailing slash information about this URL.
+    * Create a URL object for the given url segments (separated by '/' from the
+    * original url string), using the given metadata object to represent the
+    * encoding and leading/trailing slash information about this URL.
     */
    public URL(final List<String> segments, final Metadata metadata)
    {
@@ -119,7 +116,8 @@ public class URL
    /**
     * Encodes a segment using the {@link URI} class.
     * 
-    * @param segment The segment to encode
+    * @param segment
+    *           The segment to encode
     * @return the encoded segment
     */
    private static String encodeSegment(final String segment)
@@ -138,21 +136,16 @@ public class URL
    /**
     * Decodes a segment using the {@link URI} class.
     * 
-    * @param segment The segment to decode
+    * @param segment
+    *           The segment to decode
     * @return the decoded segment
     */
    private static String decodeSegment(final String segment)
    {
       try
       {
-         final URI uri = new URI(("http://localhost/" + segment)
-                  .replace(" ", "%20")
-                  .replace("\"", "%22")
-                  .replace("[", "%5B")
-                  .replace("]", "%5D")
-                  .replace("<", "%3C")
-                  .replace(">", "%3E")
-                  );
+         final URI uri = new URI(("http://localhost/" + segment).replace(" ", "%20").replace("\"", "%22")
+               .replace("[", "%5B").replace("]", "%5D").replace("<", "%3C").replace(">", "%3E"));
          return uri.getPath().substring(1);
       }
       catch (URISyntaxException e)
@@ -262,26 +255,5 @@ public class URL
    public void setMetadata(final Metadata metadata)
    {
       this.metadata = metadata;
-   }
-
-   /*
-    * Helpers
-    */
-   private String trimSurroundingSlashes(final String url)
-   {
-      String result = null;
-      if (url != null)
-      {
-         result = url.trim();
-         if (result.startsWith("/"))
-         {
-            result = result.substring(1);
-         }
-         if (result.endsWith("/"))
-         {
-            result = result.substring(0, result.length() - 1);
-         }
-      }
-      return result;
    }
 }
