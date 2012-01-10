@@ -62,6 +62,7 @@ public class PrettyRedirector
             String target = contextPath + url.encode() + query.toQueryString();
             log.trace("Refreshing requested page [" + url + "]");
             String redirectUrl = externalContext.encodeActionURL(target);
+            redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
             externalContext.redirect(redirectUrl);
             return true;
          }
@@ -74,6 +75,7 @@ public class PrettyRedirector
                         + builder.buildQueryString(mapping);
                log.trace("Redirecting to mappingId [" + mapping.getId() + "], [" + url + "]");
                String redirectUrl = externalContext.encodeActionURL(url);
+               redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
                externalContext.redirect(redirectUrl);
             }
             else
@@ -103,7 +105,7 @@ public class PrettyRedirector
       }
    }
 
-   private boolean isPrettyNavigationCase(PrettyContext prettyContext, final String action)
+   private boolean isPrettyNavigationCase(final PrettyContext prettyContext, final String action)
    {
       PrettyConfig config = prettyContext.getConfig();
       return (action != null) && config.isMappingId(action) && action.trim().startsWith(PrettyContext.PRETTY_PREFIX);
