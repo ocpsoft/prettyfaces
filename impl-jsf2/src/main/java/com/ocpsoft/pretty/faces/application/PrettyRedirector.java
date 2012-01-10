@@ -61,6 +61,7 @@ public class PrettyRedirector
             String target = contextPath + url.encode().toURL() + query.toQueryString();
             log.trace("Refreshing requested page [" + url + "]");
             String redirectUrl = externalContext.encodeRedirectURL(target, null);
+            redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
             externalContext.redirect(redirectUrl);
             return true;
          }
@@ -73,6 +74,7 @@ public class PrettyRedirector
                         + builder.buildQueryString(mapping).toString();
                log.trace("Redirecting to mappingId [" + mapping.getId() + "], [" + url + "]");
                String redirectUrl = externalContext.encodeRedirectURL(url, null);
+               redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
                externalContext.redirect(redirectUrl);
             }
             else
