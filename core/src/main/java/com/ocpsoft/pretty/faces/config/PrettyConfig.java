@@ -38,6 +38,7 @@ public class PrettyConfig
    private List<RewriteRule> globalRewriteRules = new ArrayList<RewriteRule>();
    private String dynaviewId = "";
    private final Map<String, UrlMapping> cachedMappings = new HashMap<String, UrlMapping>();
+   private boolean useEncodeUrlForRedirects = false;
 
    /**
     * Creates an empty {@link PrettyConfig} object
@@ -50,8 +51,7 @@ public class PrettyConfig
    /**
     * Initializes the instance using the supplied JAXB object
     * 
-    * @param prettyConfigElement
-    *           The JAXB object
+    * @param prettyConfigElement The JAXB object
     */
    public PrettyConfig(PrettyConfigElement prettyConfigElement)
    {
@@ -209,6 +209,16 @@ public class PrettyConfig
          }
       }
       return null;
+   }
+
+   public boolean isUseEncodeUrlForRedirects()
+   {
+      return useEncodeUrlForRedirects;
+   }
+
+   public void setUseEncodeUrlForRedirects(boolean useEncodeUrlForRedirects)
+   {
+      this.useEncodeUrlForRedirects = useEncodeUrlForRedirects;
    }
 
    @Override
