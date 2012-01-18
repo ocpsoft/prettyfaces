@@ -30,7 +30,7 @@ import javax.servlet.ServletContext;
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
 public class CDIBeanNameResolverTest
 {
 
@@ -43,7 +43,8 @@ public class CDIBeanNameResolverTest
 
       // ClassLoader that always throws ClassNotFoundExceptions
       ClassLoader classLoader = EasyMock.createNiceMock(ClassLoader.class);
-      EasyMock.expect(classLoader.loadClass((String) EasyMock.anyObject())).andThrow(new ClassNotFoundException()).once();
+      EasyMock.expect(classLoader.loadClass((String) EasyMock.anyObject())).andThrow(new ClassNotFoundException())
+               .once();
       EasyMock.replay(classLoader);
 
       // initialize resolver and verify that initialization failed

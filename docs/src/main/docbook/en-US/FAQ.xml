@@ -140,6 +140,21 @@ log4j.logger.com.ocpsoft=debug</programlisting>
       </example>
     </step>
 
+    <step>
+      <title>Q. My Orchestra conversationContext parameter is not working with PrettyFaces?</title>
+      <para>
+        A. This can happen depending on JSF version and Orchestra version where Orchestra does not properly override encodeRedirectURL.
+        To solve this problem, enable the following context parameter in your web.xml:
+      </para>
+      <example>
+        <title>web.xml</title>
+        <programlisting><![CDATA[<context-param>
+    <param-name>com.ocpsoft.pretty.USE_ENCODE_URL_FOR_REDIRECTS</param-name>
+    <param-value>true</param-value>
+  </context-param>]]></programlisting>
+      </example>
+    </step>
+
 
 	</procedure>
 </chapter>

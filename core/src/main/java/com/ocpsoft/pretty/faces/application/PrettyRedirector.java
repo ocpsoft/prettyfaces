@@ -61,9 +61,7 @@ public class PrettyRedirector
 
             String target = contextPath + url.encode() + query.toQueryString();
             log.trace("Refreshing requested page [" + url + "]");
-            String redirectUrl = externalContext.encodeActionURL(target);
-            redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
-            externalContext.redirect(redirectUrl);
+            encodeURL(externalContext, config, target);
             return true;
          }
          else if (isPrettyNavigationCase(prettyContext, action))
@@ -71,12 +69,10 @@ public class PrettyRedirector
             UrlMapping mapping = config.getMappingById(action);
             if (mapping != null)
             {
-               String url = contextPath + builder.buildURL(mapping).encode()
+               String target = contextPath + builder.buildURL(mapping).encode()
                         + builder.buildQueryString(mapping);
-               log.trace("Redirecting to mappingId [" + mapping.getId() + "], [" + url + "]");
-               String redirectUrl = externalContext.encodeActionURL(url);
-               redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
-               externalContext.redirect(redirectUrl);
+               log.trace("Redirecting to mappingId [" + mapping.getId() + "], [" + target + "]");
+               encodeURL(externalContext, config, target);
             }
             else
             {
@@ -90,6 +86,20 @@ public class PrettyRedirector
          throw new RuntimeException("PrettyFaces: redirect failed for target: " + action, e);
       }
       return false;
+   }
+
+   private void encodeURL(ExternalContext externalContext, PrettyConfig config, String target) throws IOException
+   {
+      String redirectUrl = externalContext.encodeActionURL(target);
+      if (config.isUseEncodeUrlForRedirects())
+      {
+         redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeURL(redirectUrl);
+      }
+      else
+      {
+         redirectUrl = ((HttpServletResponse) externalContext.getResponse()).encodeRedirectURL(redirectUrl);
+      }
+      externalContext.redirect(redirectUrl);
    }
 
    public void send404(final FacesContext facesContext)

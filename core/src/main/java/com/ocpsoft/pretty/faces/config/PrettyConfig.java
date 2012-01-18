@@ -34,7 +34,16 @@ public class PrettyConfig
    private List<UrlMapping> mappings = new ArrayList<UrlMapping>();
    private List<RewriteRule> globalRewriteRules = new ArrayList<RewriteRule>();
    private String dynaviewId = "";
-   private Map<String, UrlMapping> cachedMappings = new HashMap<String, UrlMapping>();
+   private final Map<String, UrlMapping> cachedMappings = new HashMap<String, UrlMapping>();
+   private boolean useEncodeUrlForRedirects = false;
+
+   /**
+    * Creates an empty {@link PrettyConfig} object
+    */
+   public PrettyConfig()
+   {
+      // nothing
+   }
 
    /**
     * Set the current DynaView ID. This is used when calculating dynamic viewIds specified in pretty-config.xml (Do not
@@ -96,7 +105,7 @@ public class PrettyConfig
    {
       final String mappingKey = url.toURL();
       if (cachedMappings.containsKey(mappingKey)) {
-          return cachedMappings.get(mappingKey);
+         return cachedMappings.get(mappingKey);
       }
       for (UrlMapping mapping : getMappings())
       {
@@ -148,7 +157,7 @@ public class PrettyConfig
          for (UrlMapping mapping : mappings)
          {
             if (viewId.equals(mapping.getViewId())
-                  || (viewId.startsWith("/") && viewId.substring(1).equals(mapping.getViewId())))
+                     || (viewId.startsWith("/") && viewId.substring(1).equals(mapping.getViewId())))
             {
                return true;
             }
@@ -180,6 +189,16 @@ public class PrettyConfig
          }
       }
       return null;
+   }
+
+   public boolean isUseEncodeUrlForRedirects()
+   {
+      return useEncodeUrlForRedirects;
+   }
+
+   public void setUseEncodeUrlForRedirects(boolean useEncodeUrlForRedirects)
+   {
+      this.useEncodeUrlForRedirects = useEncodeUrlForRedirects;
    }
 
    @Override
