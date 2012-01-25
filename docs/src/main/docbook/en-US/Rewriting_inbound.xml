@@ -26,6 +26,15 @@
 			unless the redirect attribute is set to “chain”:
 			
 			<programlisting><![CDATA[<rewrite toCase="lowercase" redirect="chain" />]]></programlisting>
+         
+            You should also note that rewrite rules apply to ALL Servlet requests and Servlet forwards alike;
+            thus, can potentially apply both to the first requested URL pattern, and also to subsequent
+            forwards to internal view-IDs. If you need to prevent rewrite rules from triggering on a view-Id, 
+            it is recommended to use a "negative lookahead" in your match statement. For instance, the 
+            following match expression prevents the rule from matching on view-id:
+         
+            <programlisting><![CDATA[<rewrite match="^(?!.*\.xhtml.*).*" trailingSlash="append" redirect="301" />]]></programlisting>
+            
 		</para>
 	</section>
 	
