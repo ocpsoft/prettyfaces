@@ -12,6 +12,12 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
+   <parent>
+      <groupId>com.ocpsoft</groupId>
+      <artifactId>ocpsoft-parent</artifactId>
+      <version>2</version>
+   </parent>
+
    <name>PrettyFaces Parent</name>
    <groupId>com.ocpsoft</groupId>
    <artifactId>prettyfaces-parent</artifactId>
@@ -81,10 +87,6 @@
    </properties>
 
    <repositories>
-      <repository>
-         <id>OCPSoft</id>
-         <url>http://ocpsoft.com/repository/</url>
-      </repository>
       <repository>
          <id>JBOSS_NEXUS</id>
          <url>http://repository.jboss.org/nexus/content/groups/public</url>
@@ -203,13 +205,6 @@
       </license>
    </licenses>
 
-   <distributionManagement>
-      <repository>
-         <id>ocpsoft.ftp.public</id>
-         <url>ftp://ocpsoft.com/ocpsoft.com/repository</url>
-      </repository>
-   </distributionManagement>
-
    <scm>
       <developerConnection>scm:git:ssh:git@github.com:ocpsoft/prettyfaces.git</developerConnection>
       <url>scm:git:ssh:git@github.com:ocpsoft/prettyfaces.git</url>
@@ -245,23 +240,7 @@
                </execution>
             </executions>
          </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <version>2.1</version>
-            <artifactId>maven-release-plugin</artifactId>
-            <configuration>
-               <pushChanges>false</pushChanges>
-               <localCheckout>true</localCheckout>
-            </configuration>
-         </plugin>
       </plugins>
-      <extensions>
-         <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-ftp</artifactId>
-            <version>1.0-beta-3</version>
-         </extension>
-      </extensions>
    </build>
 
    <reporting>
