@@ -17,6 +17,8 @@ package com.ocpsoft.pretty;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
@@ -46,8 +48,8 @@ public class PrettyContext implements Serializable
    public static final String PRETTY_PREFIX = "pretty:";
    private static final String CONTEXT_REQUEST_KEY = "prettyContext";
 
+   private static final Pattern JSESSIONID_PATTERN = Pattern.compile("(?i)^(.*);jsessionid=[\\w\\.]+(.*)");
    private static final String JSESSIONID_REPLACEMENT = "$1$2";
-   private static final String JSESSIONID_REGEX = "(?i)^(.*);jsessionid=[\\w\\.]+(.*)";
 
    private PrettyConfig config;
 
@@ -84,9 +86,10 @@ public class PrettyContext implements Serializable
    public static URL getRequestURL(final HttpServletRequest request)
    {
       String url = stripContextPath(request.getContextPath(), request.getRequestURI());
-      if (url.matches(JSESSIONID_REGEX))
+      Matcher sessionIdMatcher = JSESSIONID_PATTERN.matcher(url);
+      if (sessionIdMatcher.matches())
       {
-         url = url.replaceFirst(JSESSIONID_REGEX, JSESSIONID_REPLACEMENT);
+         url = sessionIdMatcher.replaceFirst(JSESSIONID_REPLACEMENT);
       }
 
       String encoding = request.getCharacterEncoding() == null ? DEFAULT_ENCODING : request.getCharacterEncoding();
