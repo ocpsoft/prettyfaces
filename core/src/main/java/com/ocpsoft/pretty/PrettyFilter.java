@@ -142,7 +142,7 @@ public class PrettyFilter implements Filter
     * 
     * @return True if forward/redirect occurred, false if not.
     */
-   private void rewrite(final HttpServletRequest req, final HttpServletResponse resp)
+   private void rewrite(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException
    {
       /*
        * FIXME Refactor this horrible method.
@@ -158,92 +158,84 @@ public class PrettyFilter implements Filter
           */
          URL url = PrettyContext.newDetachedInstance(req).getRequestURL();
 
-         try
+         String queryString = req.getQueryString();
+         if ((queryString != null) && !"".equals(queryString))
          {
+            queryString = "?" + queryString;
+         }
+         else if (queryString == null)
+         {
+            queryString = "";
+         }
 
-            String queryString = req.getQueryString();
-            if ((queryString != null) && !"".equals(queryString))
+         // TODO test this now that query string is included in rewrites
+         String originalUrl = url.toURL() + queryString;
+         String newUrl = originalUrl;
+         for (RewriteRule rule : getConfig().getGlobalRewriteRules())
+         {
+            if (rule.matches(newUrl))
             {
-               queryString = "?" + queryString;
-            }
-            else if (queryString == null)
-            {
-               queryString = "";
-            }
-
-            // TODO test this now that query string is included in rewrites
-            String originalUrl = url.toURL() + queryString;
-            String newUrl = originalUrl;
-            for (RewriteRule rule : getConfig().getGlobalRewriteRules())
-            {
-               if (rule.matches(newUrl))
+               newUrl = rewriteEngine.processInbound(req, resp, rule, newUrl);
+               if (!Redirect.CHAIN.equals(rule.getRedirect()))
                {
-                  newUrl = rewriteEngine.processInbound(req, resp, rule, newUrl);
-                  if (!Redirect.CHAIN.equals(rule.getRedirect()))
+
+                  /*
+                   * An HTTP redirect has been triggered; issue one if we have a URL or if the current URL has been
+                   * modified.
+                   */
+
+                  String redirectURL = null;
+
+                  /*
+                   * The rewrite changed the URL and no 'url' attribute has been set for the rule.
+                   */
+                  if (StringUtils.isBlank(rule.getUrl()) && !originalUrl.equals(newUrl))
                   {
 
                      /*
-                      * An HTTP redirect has been triggered; issue one if we have a URL or if the current URL has been
-                      * modified.
+                      * Add context path and encode request using encodeRedirectURL().
                       */
-
-                     String redirectURL = null;
+                     redirectURL = resp.encodeRedirectURL(req.getContextPath() + newUrl);
+                  }
+                  else if (StringUtils.isNotBlank(rule.getUrl()))
+                  {
 
                      /*
-                      * The rewrite changed the URL and no 'url' attribute has been set for the rule.
+                      * This is a custom location - don't call encodeRedirectURL() and don't add context path, just
+                      * redirect to the encoded URL
                       */
-                     if (StringUtils.isBlank(rule.getUrl()) && !originalUrl.equals(newUrl))
-                     {
-
-                        /*
-                         * Add context path and encode request using encodeRedirectURL().
-                         */
-                        redirectURL = resp.encodeRedirectURL(req.getContextPath() + newUrl);
-                     }
-                     else if (StringUtils.isNotBlank(rule.getUrl()))
-                     {
-
-                        /*
-                         * This is a custom location - don't call encodeRedirectURL() and don't add context path, just
-                         * redirect to the encoded URL
-                         */
-                        redirectURL = newUrl.trim();
-
-                     }
-
-                     // we have to send a redirect
-                     if (redirectURL != null)
-                     {
-
-                        // try to encode the redirect target
-                        String encodedRedirectURL = encodeUrlWithQueryString(redirectURL);
-
-                        // send redirect
-                        resp.setHeader("Location", encodedRedirectURL);
-                        resp.setStatus(rule.getRedirect().getStatus());
-                        resp.flushBuffer();
-                        break;
-
-                     }
+                     redirectURL = newUrl.trim();
 
                   }
+
+                  // we have to send a redirect
+                  if (redirectURL != null)
+                  {
+
+                     // try to encode the redirect target
+                     String encodedRedirectURL = encodeUrlWithQueryString(redirectURL);
+
+                     // send redirect
+                     resp.setHeader("Location", encodedRedirectURL);
+                     resp.setStatus(rule.getRedirect().getStatus());
+                     resp.flushBuffer();
+                     break;
+
+                  }
+
                }
             }
-
-            if (!originalUrl.equals(newUrl) && !resp.isCommitted())
-            {
-               /*
-                * The URL was modified, but no redirect occurred; forward instead.
-                */
-               setRewriteOccurred(req); // make sure we don't get here twice
-               req.getRequestDispatcher(newUrl).forward(req, resp);
-            }
-
          }
-         catch (Exception e)
+
+         if (!originalUrl.equals(newUrl) && !resp.isCommitted())
          {
-            throw new PrettyException("Error occurred during canonicalization of request <[" + url + "]>", e);
+            /*
+             * The URL was modified, but no redirect occurred; forward instead.
+             */
+            setRewriteOccurred(req); // make sure we don't get here twice
+            req.getRequestDispatcher(newUrl).forward(req, resp);
          }
+
       }
    }
 
