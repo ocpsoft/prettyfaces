@@ -4,10 +4,15 @@
 
 Features & Enhancements:
 * Exceptions aren't wrapped by PrettyFilter anymore
+* Added configuration parameter to enable a workaround for ORCHESTRA-60 (#125)
+* Major performance improvements - thanks to Piotr Jastrzebski and Frank Caputo
 
 Bugfixes:
 * Fixed potential NullPointerException in annotation scanning code 
 * Fixed PrettyContext.JSESSIONID_REGEX to support clustered session IDs
+* Empty segments are now handled correctly - thanks to Piotr Jastrzebski for the patch (#123)
+* Fixed encoding for square brackets and less/greater than characters
+* Don't apply rewrite rule to requests forwarded by URL-mappings anymore
 
 ------------------------------------
            VERSION 3.3.2
