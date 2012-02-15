@@ -38,34 +38,4 @@
     </dependency>
   </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.7.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generateDirectory>src/main/generated-sources</generateDirectory>
-                    <strict>true</strict>
-                    <verbose>false</verbose>
-                    <bindingDirectory>src/main/jaxb</bindingDirectory>
-                    <bindingIncludes>
-                        <include>*.jxb</include>
-                    </bindingIncludes>
-                    <schemaDirectory>src/main/resources</schemaDirectory>
-                    <schemaIncludes>
-                        <include>META-INF/*.xsd</include>
-                    </schemaIncludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
