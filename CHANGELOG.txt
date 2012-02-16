@@ -13,6 +13,7 @@ Bugfixes:
 * Empty segments are now handled correctly - thanks to Piotr Jastrzebski for the patch (#123)
 * Fixed encoding for square brackets and less/greater than characters
 * Don't apply rewrite rule to requests forwarded by URL-mappings anymore
+* Fixed encoding/decoding of vertical bar (|) character
 
 ------------------------------------
            VERSION 3.3.2

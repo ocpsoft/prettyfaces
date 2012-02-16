@@ -152,6 +152,7 @@ public class URL
                   .replace("]", "%5D")
                   .replace("<", "%3C")
                   .replace(">", "%3E")
+                  .replace("|", "%7C")
                   );
          return uri.getPath().substring(1);
       }

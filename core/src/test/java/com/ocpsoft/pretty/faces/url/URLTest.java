@@ -188,5 +188,21 @@ public class URLTest
       assertEquals("/<a>", new URL("/<a>").decode().toURL());
 
    }
-  
+
+   @Test
+   public void testPipeEncodingAndDecoding() throws Exception
+   {
+
+      // encode
+      assertEquals("/%7C", new URL("/|").encode().toURL());
+
+      // decode
+      assertEquals("/|", new URL("/%7C").decode().toURL());
+
+      // decode of not-encoded character
+      assertEquals("/|", new URL("/|").decode().toURL());
+
+   }
+   
+   
 }
