@@ -91,7 +91,19 @@ public class PrettyFilter implements Filter
       else
       {
          URL url = context.getRequestURL();
-         UrlMapping mapping = getConfig().getMappingForUrl(url);
+
+         /*
+          * This code will be executed even for the requests already forwarded by PrettyFaces.
+          * As some patterns may also match viewIds to which PrettyFaces forwards, we lookup
+          * the matching URL mapping only if we are not already in a forward.
+          * (Fix for #128)
+          */
+         UrlMapping mapping = null;
+         if (!isUrlMappingForward(req))
+         {
+            mapping = getConfig().getMappingForUrl(url);
+         }
+
          if (mapping != null)
          {
             context.setCurrentMapping(mapping);
