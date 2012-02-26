@@ -13,9 +13,6 @@
    <listener>
       <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
    </listener>
-   <listener>
-      <listener-class>com.ocpsoft.pretty.faces.config.PrettyConfigListener</listener-class>
-   </listener>
    
    <context-param>
       <param-name>com.sun.faces.expressionFactory</param-name>
