@@ -6,6 +6,7 @@ Features & Enhancements:
 * Exceptions aren't wrapped by PrettyFilter anymore
 * Added configuration parameter to enable a workaround for ORCHESTRA-60 (#125)
 * Major performance improvements - thanks to Piotr Jastrzebski and Frank Caputo
+* Enabled <distributable/> mode in web-fragment.xml, for clustering support
 
 Bugfixes:
 * Fixed potential NullPointerException in annotation scanning code 
