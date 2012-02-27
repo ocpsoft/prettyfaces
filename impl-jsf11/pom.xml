@@ -38,13 +38,6 @@
 		<url>http://code.google.com/p/prettyfaces/issues/list</url>
 	</issueManagement>
 
-	<distributionManagement>
-		<repository>
-			<id>ocpsoft.ftp.public</id>
-			<url>ftp://ocpsoft.com/ocpsoft.com/repository</url>
-		</repository>
-	</distributionManagement>
-
 	<developers>
 		<developer>
 			<id>lincolnbaxter</id>
