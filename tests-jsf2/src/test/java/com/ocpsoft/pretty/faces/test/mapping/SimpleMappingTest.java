@@ -2,7 +2,7 @@ package com.ocpsoft.pretty.faces.test.mapping;
 
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
@@ -20,9 +20,9 @@ public class SimpleMappingTest extends PrettyFacesTestBase
    public static WebArchive createDeployment()
    {
       return PrettyFacesTestBase.createDeployment()
-            .addResource("mapping/page.xhtml", "page.xhtml")
-            .addResource("mapping/page.xhtml", "unusual-view-id-(.xhtml")
-            .addWebResource("mapping/pretty-config.xml", "pretty-config.xml");
+            .addAsWebResource("mapping/page.xhtml", "page.xhtml")
+            .addAsWebResource("mapping/page.xhtml", "unusual-view-id-(.xhtml")
+            .addAsWebInfResource("mapping/pretty-config.xml", "pretty-config.xml");
    }
 
    @Test

@@ -3,7 +3,7 @@ package com.ocpsoft.pretty.faces.test.dynaview;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
@@ -24,8 +24,8 @@ public class ParameterizedDynaViewTest extends PrettyFacesTestBase
             .addClass(PathParamDynaViewBean.class)
             .addClass(QueryParamDynaViewBean.class)
             .addClass(DynaViewParameterValidator.class)
-            .addResource("dynaview/index.xhtml", "index.xhtml")
-            .addResource("dynaview/correct.xhtml", "correct.xhtml");
+            .addAsWebResource("dynaview/index.xhtml", "index.xhtml")
+            .addAsWebResource("dynaview/correct.xhtml", "correct.xhtml");
    }
 
    @Test

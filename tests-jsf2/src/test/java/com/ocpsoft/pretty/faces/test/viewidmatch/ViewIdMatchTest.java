@@ -3,7 +3,7 @@ package com.ocpsoft.pretty.faces.test.viewidmatch;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
@@ -23,7 +23,7 @@ public class ViewIdMatchTest extends PrettyFacesTestBase
    {
       return PrettyFacesTestBase.createDeployment()
                .addClass(ViewIdMatchBean.class)
-               .addResource("viewidmatch/viewidmatch.xhtml", "path/viewidmatch.xhtml");
+               .addAsWebResource("viewidmatch/viewidmatch.xhtml", "path/viewidmatch.xhtml");
    }
 
    @Test

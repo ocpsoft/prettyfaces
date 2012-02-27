@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
@@ -40,8 +40,8 @@ public class URLRedirectTest extends PrettyFacesTestBase
    {
       return PrettyFacesTestBase.createDeployment()
                .addClass(RedirectBean.class)
-               .addResource("redirect/redirect.xhtml", "redirect.xhtml")
-               .addWebResource("redirect/redirect-pretty-config.xml", "pretty-config.xml");
+               .addAsWebResource("redirect/redirect.xhtml", "redirect.xhtml")
+               .addAsWebInfResource("redirect/redirect-pretty-config.xml", "pretty-config.xml");
    }
 
    @Test

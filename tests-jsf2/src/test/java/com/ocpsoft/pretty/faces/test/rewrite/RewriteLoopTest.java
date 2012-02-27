@@ -2,7 +2,7 @@ package com.ocpsoft.pretty.faces.test.rewrite;
 
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
@@ -20,8 +20,8 @@ public class RewriteLoopTest extends PrettyFacesTestBase
    public static WebArchive createDeployment()
    {
       return PrettyFacesTestBase.createDeployment()
-            .addResource("rewrite/rewrite-loop.xhtml", "rewrite-loop.xhtml")
-            .addWebResource("rewrite/rewrite-loop-config.xml", "pretty-config.xml");
+            .addAsWebResource("rewrite/rewrite-loop.xhtml", "rewrite-loop.xhtml")
+            .addAsWebInfResource("rewrite/rewrite-loop-config.xml", "pretty-config.xml");
    }
 
    @Test

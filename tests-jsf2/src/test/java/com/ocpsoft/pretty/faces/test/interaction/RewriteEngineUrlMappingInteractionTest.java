@@ -18,7 +18,7 @@ package com.ocpsoft.pretty.faces.test.interaction;
 
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
@@ -36,8 +36,8 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTestBase
    {
       return PrettyFacesTestBase.createDeployment()
                .addClass(InteractionDynaViewBean.class)
-               .addResource("interaction/interaction-page.xhtml", "page.xhtml")
-               .addWebResource("interaction/interaction-pretty-config.xml", "pretty-config.xml");
+               .addAsWebResource("interaction/interaction-page.xhtml", "page.xhtml")
+               .addAsWebInfResource("interaction/interaction-pretty-config.xml", "pretty-config.xml");
    }
 
    /**

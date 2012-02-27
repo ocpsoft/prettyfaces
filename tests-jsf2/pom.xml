@@ -28,11 +28,12 @@
    <url>http://ocpsoft.com/prettyfaces/</url>
 
 	<properties>
-	   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <version.arquillian>1.0.0.Alpha4</version.arquillian>
-      <version.jetty>8.0.0.M1</version.jetty>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <version.arquillian>1.0.0.CR7</version.arquillian>
+      <version.arquillian.jetty>1.0.0.CR1</version.arquillian.jetty>
+      <version.jetty>8.1.1.v20120215</version.jetty>
       <version.tomcat>6.0.29</version.tomcat>
-      <version.weld-servlet>1.1.0.Beta1</version.weld-servlet>
+      <version.weld-servlet>1.1.4.Final</version.weld-servlet>
    </properties>
 
    <repositories>
@@ -62,11 +63,19 @@
          <version>1.0</version>
          <scope>provided</scope>
       </dependency>
+      
+      <!-- We don't use weld-servlet because it shades and incompatible SLF4J version -->      
       <dependency>
-         <groupId>org.jboss.weld.servlet</groupId>
-         <artifactId>weld-servlet</artifactId>
+         <groupId>org.jboss.weld</groupId>
+         <artifactId>weld-core</artifactId>
          <version>${version.weld-servlet}</version>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.weld.servlet</groupId>
+         <artifactId>weld-servlet-core</artifactId>
+         <version>${version.weld-servlet}</version>
+      </dependency>
+
       <dependency>
          <!-- Required until the Servlet 3.0 API can be resolved in Central -->
          <groupId>org.glassfish</groupId>
@@ -74,6 +83,7 @@
          <version>3.0</version>
          <scope>provided</scope>
       </dependency>
+      
       <!-- FIXME Java APIs should be grouped by container profile -->
       <dependency>
          <groupId>javax.servlet.jsp</groupId>
@@ -85,16 +95,33 @@
          <artifactId>jsf-api</artifactId>
          <version>2.0.3</version>
       </dependency>
+
       <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-junit</artifactId>
+         <groupId>org.jboss.arquillian.junit</groupId>
+         <artifactId>arquillian-junit-container</artifactId>
          <version>${version.arquillian}</version>
       </dependency>
+
+      <!-- We need to force this version because the Jetty adapter would include an older one -->
       <dependency>
-         <groupId>org.jboss.arquillian.framework</groupId>
-         <artifactId>arquillian-framework-jsfunit</artifactId>
+         <groupId>org.jboss.arquillian.container</groupId>
+         <artifactId>arquillian-container-spi</artifactId>
          <version>${version.arquillian}</version>
       </dependency>
+
+      <!-- Force this version because JSFUnit would include an incompatible one -->
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+         <artifactId>shrinkwrap-descriptors-impl</artifactId>
+         <version>1.0.0-beta-1</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.jsfunit</groupId>
+         <artifactId>jsfunit-arquillian</artifactId>
+         <version>2.0.0.Beta2</version>
+      </dependency>
+
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
@@ -112,15 +139,24 @@
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jetty-embedded-7</artifactId>
-               <version>${version.arquillian}</version>
+               <version>${version.arquillian.jetty}</version>
                <scope>test</scope>
-            </dependency>
+            </dependency>         
             <dependency>
                <groupId>org.eclipse.jetty</groupId>
                <artifactId>jetty-webapp</artifactId>
                <version>${version.jetty}</version>
                <scope>test</scope>
             </dependency>
+            
+            <!-- Jetty needs SLF4J 1.6.x  -->
+            <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-api</artifactId>
+               <version>1.6.4</version>
+               <scope>test</scope>
+            </dependency>
+            
             <!-- FIXME only required if we want to use @Resource injection -->
             <dependency>
                <groupId>org.eclipse.jetty</groupId>

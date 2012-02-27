@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.framework.Environment;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
@@ -41,8 +41,8 @@ public class PrettyContextTest extends PrettyFacesTestBase
    public static WebArchive createDeployment()
    {
       return PrettyFacesTestBase.createDeployment()
-               .addResource("basic/index.xhtml", "index.xhtml")
-               .addWebResource("pretty-config.xml");
+               .addAsWebResource("basic/index.xhtml", "index.xhtml")
+               .addAsWebInfResource("pretty-config.xml");
    }
 
    @Test

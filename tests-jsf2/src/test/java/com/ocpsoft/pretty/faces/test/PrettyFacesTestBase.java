@@ -22,7 +22,7 @@
 package com.ocpsoft.pretty.faces.test;
 
 import org.jboss.arquillian.MavenArtifactResolver;
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -36,10 +36,10 @@ public abstract class PrettyFacesTestBase
    public static WebArchive createDeployment()
    {
       return ShrinkWrap.create(WebArchive.class, "test.war")
-               .addWebResource("faces-config.xml")
-               .addLibrary(MavenArtifactResolver.resolve(
+               .addAsWebInfResource("faces-config.xml")
+               .addAsLibrary(MavenArtifactResolver.resolve(
                         "com.ocpsoft:prettyfaces-jsf2:3.3.3-SNAPSHOT"))
                .setWebXML("jsf-web.xml")
-               .addWebResource("jetty-env.xml");
+               .addAsWebInfResource("jetty-env.xml");
    }
 }

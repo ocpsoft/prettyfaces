@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
@@ -42,8 +42,8 @@ public class URLEncodingTest extends PrettyFacesTestBase
    {
       return PrettyFacesTestBase.createDeployment()
                .addClass(EncodingBean.class)
-               .addResource("encoding/encoding.xhtml", "encoding.xhtml")
-               .addWebResource("encoding/encoding-pretty-config.xml", "pretty-config.xml");
+               .addAsWebResource("encoding/encoding.xhtml", "encoding.xhtml")
+               .addAsWebInfResource("encoding/encoding-pretty-config.xml", "pretty-config.xml");
    }
 
    /**

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
 import org.jboss.jsfunit.jsfsession.JSFSession;
@@ -22,8 +22,8 @@ public class InfiniteLoopTest extends PrettyFacesTestBase
    public static WebArchive createDeployment()
    {
       return PrettyFacesTestBase.createDeployment()
-               .addResource("loop/loop.xhtml", "loop.xhtml")
-               .addWebResource("loop/loop-pretty-config.xml", "pretty-config.xml");
+               .addAsWebResource("loop/loop.xhtml", "loop.xhtml")
+               .addAsWebInfResource("loop/loop-pretty-config.xml", "pretty-config.xml");
    }
 
    @Test

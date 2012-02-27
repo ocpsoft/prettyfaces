@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.faces.context.FacesContext;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.jboss.jsfunit.jsfsession.JSFServerSession;
@@ -42,8 +42,8 @@ public class AmbiguousViewidTest extends PrettyFacesTestBase
       return PrettyFacesTestBase.createDeployment()
                .addClass(RedirectBean.class)
                .addClass(AmbiguousBean.class)
-               .addResource("basic/ambiguousViewId.xhtml", "index.xhtml")
-               .addWebResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml");
+               .addAsWebResource("basic/ambiguousViewId.xhtml", "index.xhtml")
+               .addAsWebInfResource("basic/ambiguous-pretty-config.xml", "pretty-config.xml");
    }
 
    @Test
