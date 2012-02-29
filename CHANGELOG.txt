@@ -16,6 +16,7 @@ Bugfixes:
 * Don't apply rewrite rule to requests forwarded by URL-mappings anymore
 * Fixed encoding/decoding of vertical bar (|) character
 * Fixed bug that caused mappings to also match viewIds of other mappings (#128)
+* Fixed detection of jsessionid for GAE application (#15)
 
 ------------------------------------
            VERSION 3.3.2

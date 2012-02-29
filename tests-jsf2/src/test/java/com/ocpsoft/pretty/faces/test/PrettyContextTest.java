@@ -111,4 +111,20 @@ public class PrettyContextTest extends PrettyFacesTestBase
        assertEquals("bar", prettyContext.getRequestQueryString().getParameter("foo"));
        assertNotNull(prettyContext.getConfig());
    }
+
+   @Test
+   public void testGAEJSessionIdRemovedAutomatically() throws Exception
+   {
+       JSFSession jsfSession = new JSFSession("/;jsessionid=1E-y6jzfx53ou9wymGmcfw?foo=bar");
+       JSFServerSession server = jsfSession.getJSFServerSession();
+       FacesContext context = server.getFacesContext();
+
+       PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
+
+       assertTrue(prettyContext.isPrettyRequest());
+       assertEquals("/", prettyContext.getRequestURL().toString());
+       assertEquals("bar", prettyContext.getRequestQueryString().getParameter("foo"));
+       assertNotNull(prettyContext.getConfig());
+   }
+
 }
