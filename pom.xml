@@ -28,7 +28,7 @@
    <name>PrettyFaces Parent</name>
    <groupId>com.ocpsoft</groupId>
    <artifactId>prettyfaces-parent</artifactId>
-   <version>3.3.3-SNAPSHOT</version>
+   <version>3.3.3</version>
    <packaging>pom</packaging>
 
    <url>http://ocpsoft.com/prettyfaces/</url>
