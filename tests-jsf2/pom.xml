@@ -21,7 +21,7 @@
 
    <groupId>com.ocpsoft</groupId>
    <artifactId>prettyfaces-tests-jsf2</artifactId>
-   <version>3.3.3</version>
+   <version>3.3.4-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <name>PrettyFaces JSF 2.0.x - Tests</name>
