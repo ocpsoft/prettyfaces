@@ -145,6 +145,14 @@ public class URL
    {
       try
       {
+         
+         /*
+          * Note: The replacement allows to call decode() on an already decoded URL 
+          * and supports decoding of strings that contain not encoded characters. 
+          * IHMO this is only needed because there seem to be situation in PrettyFaces 
+          * where decoded URLs are decoded again.
+          */
+         
          final URI uri = new URI(("http://localhost/" + segment)
                   .replace(" ", "%20")
                   .replace("\"", "%22")
