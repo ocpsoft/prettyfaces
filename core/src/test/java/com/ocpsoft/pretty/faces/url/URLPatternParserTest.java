@@ -292,4 +292,13 @@ public class URLPatternParserTest
       URLPatternParser regexParser = new URLPatternParser("/(foo|bar|baz|cat|dog).jsf");
       List<PathParameter> params = regexParser.parse(new URL("/foo.jsf"));
    }
+   
+   @Test
+   public void testBackslashHandling()
+   {
+      URLPatternParser regexParser = new URLPatternParser("/#{string}/");
+      List<PathParameter> params = regexParser.parse(new URL("/a\\b/"));
+      assertEquals(1, params.size());
+      assertEquals("a\\b", params.get(0).getValue());
+   }
 }
