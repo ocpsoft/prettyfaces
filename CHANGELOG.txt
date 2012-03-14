@@ -1,4 +1,15 @@
 ------------------------------------
+           VERSION 3.3.4
+------------------------------------
+
+Features & Enhancements:
+* Added 'relative' attribute to urlbuffer component. Thanks to 0swald for the patch.
+
+Bugfixes:
+* Fixed bug that caused URL to get decoded twice (#16)
+
+
+------------------------------------
            VERSION 3.3.3
 ------------------------------------
 

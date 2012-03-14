@@ -55,13 +55,16 @@ public class UrlBufferRenderer extends Renderer
          throw new PrettyException("Mapping id was null when attempting to build URL for component: "
                   + component.toString() + " <" + component.getClientId(context) + ">");
       }
+      
+      String relative = (String) urlBuffer.getAttributes().get("relative");
 
       PrettyContext prettyContext = PrettyContext.getCurrentInstance(context);
       PrettyConfig prettyConfig = prettyContext.getConfig();
       UrlMapping urlMapping = prettyConfig.getMappingById(mappingId);
 
-      String href = context.getExternalContext().getRequestContextPath()
-               + urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
+      String prettyHref = urlBuilder.build(urlMapping, true, urlBuilder.extractParameters(component));
+      String contextPath = context.getExternalContext().getRequestContextPath();
+      String href = (relative == null || "false".equals(relative)) ? contextPath + prettyHref : prettyHref;
 
       context.getExternalContext().getRequestMap().put(var, href);
    }

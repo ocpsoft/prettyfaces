@@ -363,5 +363,16 @@
 				Accessed via #{requestScope.var}
 			</description>
 		</attribute>
+    <attribute>
+      <name>relative</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+      <description>
+        Boolean flag defining whether url should be relative to
+        web application context path ("true") or server root ("false").
+        Default value is "false".
+      </description>
+    </attribute>
 	</tag>
 </taglib>

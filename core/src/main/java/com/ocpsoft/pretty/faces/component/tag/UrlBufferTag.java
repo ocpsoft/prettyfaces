@@ -27,6 +27,7 @@ public class UrlBufferTag extends PrettyTagBase
 {
     private String var;
     private String mappingId;
+    private String relative;
 
     @Override
     public String getComponentType()
@@ -53,6 +54,7 @@ public class UrlBufferTag extends PrettyTagBase
         super.setProperties(component);
         setAttributeProperites(component, "var", var);
         setAttributeProperites(component, "mappingId", mappingId);
+        setAttributeProperites(component, "relative", relative);
 
     }
 
@@ -76,4 +78,13 @@ public class UrlBufferTag extends PrettyTagBase
         this.mappingId = mappingId;
     }
 
+    public String getRelative()
+    {
+       return relative;
+    }
+
+    public void setRelative(final String relative)
+    {
+      this.relative = relative;
+    }
 }

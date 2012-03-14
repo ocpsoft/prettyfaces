@@ -53,7 +53,7 @@
 		<title>The &lt;pretty:urlbuffer&gt; component</title>
 		<para>
 			PrettyFaces provides a JSF component to generate a URL for use as a page scoped variable 
-			through El. This tag requires a mapping-id (specified in the pretty-config.xml)
+			through El. This tag requires a mapping-id (specified in the pretty-config.xml).
 		</para>
 		<example>
 			<title>Using the URL buffer component</title>
@@ -75,6 +75,11 @@
 			<para>Output:</para>
 			<programlisting> /store/shoes/24?language=en_US</programlisting>
 		</example>
+    <para>
+      URL can be relative to context path or server root, which is determined by &quot;relative&quot; attribute.
+      When set to &quot;true&quot;, generated URL will be relative to web application context path.
+    </para>
+
 	</section>
 	
 	<section id="components.jsf">
