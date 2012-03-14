@@ -276,7 +276,20 @@ public class URLPatternParser
             StringBuffer sb = new StringBuffer();
             while (parameterMatcher.find())
             {
-               String replacement = parameters[paramIndex].toString().replace("$", "\\$");
+               /*
+                * We need to escape $ and \ because they have a special meaning when 
+                * used in Matcher#appendReplacement(). From the docs:
+                * 
+                * Note that backslashes (\) and dollar signs ($) in the replacement string 
+                * may cause the results to be different than if it were being treated as a 
+                * literal replacement string. Dollar signs may be treated as references to 
+                * captured subsequences as described above, and backslashes are used to 
+                * escape literal characters in the replacement string.
+                */
+               String replacement = parameters[paramIndex].toString()
+                        .replace("$", "\\$")
+                        .replace("\\", "\\\\");
+
                parameterMatcher.appendReplacement(sb, replacement);
                paramIndex++;
             }

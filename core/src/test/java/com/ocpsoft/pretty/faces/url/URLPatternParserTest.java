@@ -296,9 +296,17 @@ public class URLPatternParserTest
    @Test
    public void testBackslashHandling()
    {
+      
+      // simple path parameter
       URLPatternParser regexParser = new URLPatternParser("/#{string}/");
-      List<PathParameter> params = regexParser.parse(new URL("/a\\b/"));
+      
+      // parse an URL containing a \ character
+      List<PathParameter> params = regexParser.parse(new URL("/\\/"));
       assertEquals(1, params.size());
-      assertEquals("a\\b", params.get(0).getValue());
+      assertEquals("\\", params.get(0).getValue());
+      
+      // generate URL
+      URL url = regexParser.getMappedURL(new Object[] { "\\" });
+      assertEquals("/\\/", url.toURL());
    }
 }

@@ -7,7 +7,7 @@ Features & Enhancements:
 
 Bugfixes:
 * Fixed bug that caused URL to get decoded twice (#16)
-
+* Fixed handling of '\' in generated URLs (#16)
 
 ------------------------------------
            VERSION 3.3.3
