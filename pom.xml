@@ -105,8 +105,8 @@
    </scm>
 
    <issueManagement>
-      <system>Google Code</system>
-      <url>http://code.google.com/p/prettyfaces/issues/list</url>
+      <system>GitHub</system>
+      <url>https://github.com/ocpsoft/prettyfaces/issues</url>
    </issueManagement>
 
    <build>
