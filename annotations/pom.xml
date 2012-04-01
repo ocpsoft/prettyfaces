@@ -23,6 +23,10 @@
    <name>PrettyFaces Annotations</name>
    <description>Annotation Support</description>
    <url>http://ocpsoft.org/prettyfaces/</url>
+   
+   <properties>
+      <version.rewrite>1.0.4-SNAPSHOT</version.rewrite>
+   </properties>
 
    <dependencies>
 
@@ -30,6 +34,18 @@
          <groupId>org.ocpsoft.prettyfaces</groupId>
          <artifactId>prettyfaces-core</artifactId>
          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-impl-servlet</artifactId>
+         <version>${version.rewrite}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-config-annotations-impl</artifactId>
+         <version>${version.rewrite}</version>
       </dependency>
 
    </dependencies>

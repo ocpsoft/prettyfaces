@@ -1,4 +1,4 @@
-package org.ocpsoft.prettyfaces.annotation.api;
+package org.ocpsoft.prettyfaces.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface URLPattern {
+public @interface ForwardTo {
 
     String value();
 

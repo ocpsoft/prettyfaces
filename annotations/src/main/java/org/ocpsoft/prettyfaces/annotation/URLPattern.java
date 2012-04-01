@@ -1,4 +1,4 @@
-package org.ocpsoft.prettyfaces.annotation.api;
+package org.ocpsoft.prettyfaces.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 
 @Inherited
 @Documented
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NamedParameter {
+public @interface URLPattern {
 
-    String value() default "";
+    String value();
 
 }

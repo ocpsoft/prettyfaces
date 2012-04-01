@@ -3,9 +3,9 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
-import org.ocpsoft.prettyfaces.annotation.api.NamedParameter;
-import org.ocpsoft.prettyfaces.annotation.scan.MappingBuilder;
-import org.ocpsoft.prettyfaces.annotation.spi.AnnotationHandler;
+import org.ocpsoft.prettyfaces.annotation.NamedParameter;
+import org.ocpsoft.rewrite.annotation.api.ClassContext;
+import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
 
 public class NamedParameterHandler implements AnnotationHandler<NamedParameter>
 {
@@ -17,22 +17,24 @@ public class NamedParameterHandler implements AnnotationHandler<NamedParameter>
    }
 
    @Override
-    public void process(NamedParameter annotation, AnnotatedElement element, MappingBuilder builder) {
+   public void process(ClassContext context, AnnotatedElement element, NamedParameter annotation)
+   {
 
-      if(element instanceof Field) {
+      if (element instanceof Field) {
          Field field = (Field) element;
 
          // default name is the name of the field
          String paramName = field.getName();
-         
+
          // but the name specified in the annotation is preferred
-         if(!annotation.value().isEmpty()) {
+         if (!annotation.value().isEmpty()) {
             paramName = annotation.value();
          }
-         
-         builder.addParameterInjection(field, paramName);
-         
+
+         // TODO walk the rule and add El binding to matching parameters
+         // builder.addParameterInjection(field, paramName);
+
       }
-    
-    }
+
+   }
 }
