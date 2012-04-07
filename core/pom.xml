@@ -24,10 +24,6 @@
    <description>Core Library</description>
    <url>http://ocpsoft.com/prettyfaces/</url>
    
-   <properties>
-      <version.rewrite>1.0.4-SNAPSHOT</version.rewrite>
-   </properties>
-
    <dependencies>
 
       <dependency>

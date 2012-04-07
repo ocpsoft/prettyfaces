@@ -32,6 +32,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <jboss.spec.version>1.0.0.Final</jboss.spec.version>
+      <version.rewrite>1.0.5-SNAPSHOT</version.rewrite>
    </properties>
 
    <repositories>
