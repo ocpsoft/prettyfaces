@@ -46,6 +46,12 @@
          <version>${version.rewrite}</version>
       </dependency>
 
+      <dependency>
+         <groupId>org.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-integration-faces</artifactId>
+         <version>${version.rewrite}</version>
+      </dependency>
+
    </dependencies>
 
 </project>

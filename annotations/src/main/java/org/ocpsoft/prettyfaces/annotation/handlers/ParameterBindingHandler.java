@@ -3,12 +3,17 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
+import javax.faces.event.PhaseId;
+
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
+import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.El;
+import org.ocpsoft.rewrite.bind.Submission;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Visitor;
+import org.ocpsoft.rewrite.faces.config.PhaseBinding;
 import org.ocpsoft.rewrite.param.Parameterized;
 
 public class ParameterBindingHandler implements AnnotationHandler<ParameterBinding>
@@ -63,12 +68,12 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
       @SuppressWarnings("rawtypes")
       public void visit(Condition condition)
       {
-
          if (condition instanceof Parameterized) {
             Parameterized parameterized = (Parameterized) condition;
-            parameterized.where(param, El.property(expression));
+            El binding = El.property(expression);
+            Binding deferredBinding = PhaseBinding.to(binding).after(PhaseId.RESTORE_VIEW);
+            parameterized.where(param, deferredBinding);
          }
-
       }
    }
 
