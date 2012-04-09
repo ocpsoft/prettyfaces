@@ -52,6 +52,13 @@
          <version>${version.rewrite}</version>
       </dependency>
 
+      <dependency>
+         <groupId>org.ocpsoft.prettyfaces</groupId>
+         <artifactId>prettyfaces-test-harness</artifactId>
+         <version>${project.version}</version>
+         <scope>test</scope>
+      </dependency>
+
    </dependencies>
 
 </project>

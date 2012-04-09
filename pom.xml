@@ -25,6 +25,7 @@
    <url>http://ocpsoft.com/prettyfaces/</url>
 
    <modules>
+      <module>test-harness</module>
       <module>core</module>
       <module>annotations</module>
    </modules>
