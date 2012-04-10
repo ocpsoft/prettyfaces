@@ -3,8 +3,6 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 
-import javax.faces.event.PhaseId;
-
 import org.ocpsoft.prettyfaces.annotation.URLAction;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
@@ -37,7 +35,7 @@ public class URLActionHandler implements AnnotationHandler<URLAction>
 
          // create Operation for executing this method
          Operation invocation = Invoke.binding(El.retrievalMethod(expression));
-         Operation deferredInvocation = PhaseAction.enqueue(invocation).after(PhaseId.RESTORE_VIEW);
+         Operation deferredInvocation = PhaseAction.enqueue(invocation).after(annotation.phaseId().getPhaseId());
 
          // append this operation to the rule
          Operation composite = context.getRuleBuilder().getOperationBuilder().and(deferredInvocation);

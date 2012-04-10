@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface URLAction
 {
+
+   PhaseId phaseId() default PhaseId.RESTORE_VIEW;
 }
