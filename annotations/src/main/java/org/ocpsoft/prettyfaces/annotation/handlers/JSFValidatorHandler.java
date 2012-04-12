@@ -3,23 +3,25 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
-import javax.faces.context.FacesContext;
-import javax.faces.validator.Validator;
+import javax.faces.FactoryFinder;
+import javax.faces.application.Application;
+import javax.faces.application.ApplicationFactory;
 import javax.faces.validator.ValidatorException;
 
+import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
+import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
-import org.ocpsoft.rewrite.config.CompositeCondition;
-import org.ocpsoft.rewrite.config.Condition;
-import org.ocpsoft.rewrite.config.DefaultConditionBuilder;
+import org.ocpsoft.rewrite.bind.BindingBuilder;
+import org.ocpsoft.rewrite.bind.Validator;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
-import org.ocpsoft.rewrite.param.Constraint;
-import org.ocpsoft.rewrite.param.Parameterized;
 
 public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
 {
+
+   private final Logger log = Logger.getLogger(JSFValidatorHandler.class);
 
    @Override
    public Class<JSFValidator> handles()
@@ -27,79 +29,84 @@ public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
       return JSFValidator.class;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
-   public void process(ClassContext context, AnnotatedElement element, JSFValidator annotation)
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void process(ClassContext classContext, AnnotatedElement element, JSFValidator annotation)
    {
 
       // works only for fields and not for methods
-      if (element instanceof Field) {
+      if (element instanceof Field && classContext instanceof FieldContext) {
 
          Field field = (Field) element;
+         FieldContext context = (FieldContext) classContext;
 
-         // create the custom constraint
-         String validatorId = annotation.validatorId();
-         JSFValidatorConstraint constraint = new JSFValidatorConstraint(validatorId);
-
-         // register the constraint
-         DefaultConditionBuilder condition = context.getRuleBuilder().getConditionBuilder();
-
-         visitCondition(condition, field, constraint);
-
-      }
-
-   }
-
-   private void visitCondition(Condition condition, Field field, Constraint<?> constraint)
-   {
-      if (condition instanceof CompositeCondition)
-      {
-         for (Condition c : ((CompositeCondition) condition).getConditions()) {
-            if (condition instanceof CompositeCondition)
-               visitCondition(condition, field, constraint);
+         // locate the binding previously created by @ParameterBinding
+         BindingBuilder bindingBuilder = context.getBindingBuilder();
+         if (bindingBuilder == null) {
+            throw new IllegalStateException("No binding found for field: " + field.getName());
          }
+
+         // create the validator and attach it to the binding
+         String validatorId = annotation.validatorId();
+         JSFRewriteValidator validator = new JSFRewriteValidator(validatorId);
+         bindingBuilder.validatedBy(validator);
+
+         if (log.isTraceEnabled()) {
+            log.trace("Attaching JSF validator [{}] to field [{}] of class [{}]", new Object[] {
+                     validatorId, field.getName(), field.getDeclaringClass().getName()
+            });
+         }
+
       }
-      else if (condition instanceof Parameterized)
-      {
-         ((Parameterized) condition).where(field.getName()).constrainedBy(constraint);
-      }
+
    }
 
    /**
-    * 
-    * Implementation of {@link Constraint} which validates using a JSF validator
+    * Implementation of {@link Validator} that uses the supplied JSF validator for validation
     * 
     * @author Christian Kaltepoth
-    * 
     */
-   public static class JSFValidatorConstraint implements Constraint<String>
+   private static class JSFRewriteValidator<T> implements Validator<T>
    {
 
       private final String validatorId;
 
-      public JSFValidatorConstraint(String validatorId)
+      public JSFRewriteValidator(String validatorId)
       {
          this.validatorId = validatorId;
       }
 
       @Override
-      public boolean isSatisfiedBy(Rewrite event, EvaluationContext context, String value)
+      public boolean validate(Rewrite event, EvaluationContext context, T value)
       {
 
+         // we need to create the Application ourself using the ApplicationFactory
+         ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
+         if (factory == null) {
+            throw new IllegalArgumentException("Could not find ApplicationFactory");
+         }
+
+         // try to obtain the Application instance from the factory
+         Application application = factory.getApplication();
+         if (application == null) {
+            throw new IllegalArgumentException("Unable to create Application");
+         }
+
          // obtain the JSF validator
-         FacesContext facesContext = FacesContext.getCurrentInstance();
-         Validator validator = facesContext.getApplication().createValidator(validatorId);
+         javax.faces.validator.Validator validator = application.createValidator(validatorId);
 
          // perform validation
          try {
 
-            validator.validate(facesContext, null, value);
+            validator.validate(null, null, value);
             return true;
          }
          catch (ValidatorException e) {
             return false;
          }
+
       }
 
    }
+
 }

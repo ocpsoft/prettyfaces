@@ -5,12 +5,12 @@ import java.lang.reflect.Field;
 
 import javax.faces.event.PhaseId;
 
+import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
+import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
-import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.El;
-import org.ocpsoft.rewrite.bind.Submission;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Visitor;
 import org.ocpsoft.rewrite.faces.config.PhaseBinding;
@@ -19,6 +19,8 @@ import org.ocpsoft.rewrite.param.Parameterized;
 public class ParameterBindingHandler implements AnnotationHandler<ParameterBinding>
 {
 
+   private final Logger log = Logger.getLogger(ParameterBindingHandler.class);
+
    @Override
    public Class<ParameterBinding> handles()
    {
@@ -26,11 +28,12 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
    }
 
    @Override
-   public void process(ClassContext context, AnnotatedElement element, ParameterBinding annotation)
+   public void process(ClassContext classContext, AnnotatedElement element, ParameterBinding annotation)
    {
 
-      if (element instanceof Field) {
+      if (element instanceof Field && classContext instanceof FieldContext) {
          Field field = (Field) element;
+         FieldContext context = (FieldContext) classContext;
 
          // default name is the name of the field
          String param = field.getName();
@@ -47,7 +50,11 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
          String expression = "#{" + beanName + "." + field.getName() + "}";
 
          // add bindings to conditions by walking over the condition tree
-         context.getRuleBuilder().accept(new AddBindingVisitor(param, expression));
+         context.getRuleBuilder().accept(new AddBindingVisitor(context, field, param, expression));
+
+         if (log.isTraceEnabled()) {
+            log.trace("Binding parameter [{}] to EL expression: {}", param, expression);
+         }
 
       }
 
@@ -57,9 +64,13 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
    {
       private final String param;
       private final String expression;
+      private final FieldContext context;
+      private final Field field;
 
-      public AddBindingVisitor(String paramName, String expression)
+      public AddBindingVisitor(FieldContext context, Field field, String paramName, String expression)
       {
+         this.context = context;
+         this.field = field;
          this.param = paramName;
          this.expression = expression;
       }
@@ -70,9 +81,17 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
       {
          if (condition instanceof Parameterized) {
             Parameterized parameterized = (Parameterized) condition;
-            El binding = El.property(expression);
-            Binding deferredBinding = PhaseBinding.to(binding).after(PhaseId.RESTORE_VIEW);
-            parameterized.where(param, deferredBinding);
+
+            // build an deferred EL binding
+            El elBinding = El.property(expression);
+            PhaseBinding deferredBinding = PhaseBinding.to(elBinding).after(PhaseId.RESTORE_VIEW);
+
+            // add the parameter and the binding
+            parameterized.where(param).bindsTo(deferredBinding);
+
+            // register the binding builder in the field context
+            context.setBindingBuilder(elBinding);
+
          }
       }
    }
