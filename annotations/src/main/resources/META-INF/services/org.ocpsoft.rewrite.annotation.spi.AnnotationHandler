@@ -5,3 +5,4 @@ org.ocpsoft.prettyfaces.annotation.handlers.URLPatternHandler
 org.ocpsoft.prettyfaces.annotation.handlers.MappingIdHandler
 org.ocpsoft.prettyfaces.annotation.handlers.PriorityHandler
 org.ocpsoft.prettyfaces.annotation.handlers.URLActionHandler
+org.ocpsoft.prettyfaces.annotation.handlers.JSFConverterHandler
