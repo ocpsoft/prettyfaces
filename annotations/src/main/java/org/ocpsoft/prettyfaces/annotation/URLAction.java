@@ -15,4 +15,7 @@ public @interface URLAction
 {
 
    PhaseId phaseId() default PhaseId.RESTORE_VIEW;
+
+   boolean onPostback() default true;
+
 }
