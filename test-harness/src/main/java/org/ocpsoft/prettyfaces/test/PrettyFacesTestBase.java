@@ -77,10 +77,15 @@ public class PrettyFacesTestBase
    protected String getPageAsString(String path) throws IOException
    {
       HttpClient client = new DefaultHttpClient();
-      HttpGet get = new HttpGet("http://localhost:9090/prettyfaces-test" + path);
+      HttpGet get = new HttpGet(getFullUrl(path));
       HttpResponse response = client.execute(get);
       String page = EntityUtils.toString(response.getEntity());
       return page;
+   }
+
+   protected String getFullUrl(String path)
+   {
+      return "http://localhost:9090/prettyfaces-test" + path;
    }
 
 }
