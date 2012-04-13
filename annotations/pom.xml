@@ -26,13 +26,11 @@
    
    <dependencies>
 
-<!-- 
       <dependency>
          <groupId>org.ocpsoft.prettyfaces</groupId>
          <artifactId>prettyfaces-core</artifactId>
          <version>${project.version}</version>
       </dependency>
- -->
 
       <dependency>
          <groupId>org.ocpsoft.rewrite</groupId>

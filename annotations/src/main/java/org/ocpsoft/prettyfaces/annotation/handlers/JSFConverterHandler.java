@@ -10,6 +10,7 @@ import javax.faces.convert.ConverterException;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFConverter;
+import org.ocpsoft.prettyfaces.core.util.NullComponent;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
@@ -100,7 +101,7 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
          // run conversion
          String valueAsString = value != null ? value.toString() : null;
          try {
-            return (T) converter.getAsObject(null, null, valueAsString);
+            return (T) converter.getAsObject(null, new NullComponent(), valueAsString);
          }
          catch (ConverterException e) {
             return null;

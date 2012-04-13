@@ -10,6 +10,7 @@ import javax.faces.validator.ValidatorException;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
+import org.ocpsoft.prettyfaces.core.util.NullComponent;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
@@ -98,7 +99,7 @@ public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
          // perform validation
          try {
 
-            validator.validate(null, null, value);
+            validator.validate(null, new NullComponent(), value);
             return true;
          }
          catch (ValidatorException e) {
