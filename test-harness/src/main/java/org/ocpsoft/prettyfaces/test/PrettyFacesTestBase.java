@@ -37,9 +37,9 @@ public class PrettyFacesTestBase
                /*
                 * Rewrite
                 */
-               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-impl-servlet:jar:1.0.5-SNAPSHOT"))
-               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-config-annotations-impl:jar:1.0.5-SNAPSHOT"))
-               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-integration-faces:jar:1.0.5-SNAPSHOT"))
+               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-impl-servlet:jar:1.0.6-SNAPSHOT"))
+               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-config-annotations-impl:jar:1.0.6-SNAPSHOT"))
+               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-integration-faces:jar:1.0.6-SNAPSHOT"))
 
                /*
                 * JSF implementation
