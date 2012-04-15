@@ -3,13 +3,9 @@ package org.ocpsoft.prettyfaces.shiro;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -113,18 +109,6 @@ public class ShiroUsersTest extends PrettyFacesTestBase
       assertEquals(404, afterLogout.getStatusLine().getStatusCode());
       readBody(afterLogout);
 
-   }
-
-   private HttpResponse get(HttpClient client, String path) throws IOException
-   {
-      HttpGet get = new HttpGet(getFullUrl(path));
-      HttpResponse response = client.execute(get);
-      return response;
-   }
-
-   private String readBody(HttpResponse response) throws IOException
-   {
-      return EntityUtils.toString(response.getEntity());
    }
 
 }

@@ -74,13 +74,26 @@ public class PrettyFacesTestBase
                .addAsResource(new File("../annotations/target/classes"));
    }
 
-   protected String getPageAsString(String path) throws IOException
+   protected HttpResponse get(String path) throws IOException
    {
-      HttpClient client = new DefaultHttpClient();
+      return get(new DefaultHttpClient(), path);
+   }
+
+   protected HttpResponse get(HttpClient client, String path) throws IOException
+   {
       HttpGet get = new HttpGet(getFullUrl(path));
       HttpResponse response = client.execute(get);
-      String page = EntityUtils.toString(response.getEntity());
-      return page;
+      return response;
+   }
+
+   protected String readBody(HttpResponse response) throws IOException
+   {
+      return EntityUtils.toString(response.getEntity());
+   }
+
+   protected String getPageAsString(String path) throws IOException
+   {
+      return readBody(get(new DefaultHttpClient(), path));
    }
 
    protected String getFullUrl(String path)
