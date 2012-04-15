@@ -4,13 +4,17 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
 import javax.faces.FactoryFinder;
-import javax.faces.application.Application;
-import javax.faces.application.ApplicationFactory;
+import javax.faces.context.FacesContext;
+import javax.faces.context.FacesContextFactory;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
 import org.ocpsoft.prettyfaces.core.util.NullComponent;
+import org.ocpsoft.prettyfaces.core.util.NullLifecycle;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
@@ -18,6 +22,7 @@ import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.bind.Validator;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
+import org.ocpsoft.rewrite.servlet.http.event.HttpServletRewrite;
 
 public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
 {
@@ -81,30 +86,54 @@ public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
       public boolean validate(Rewrite event, EvaluationContext context, T value)
       {
 
-         // we need to create the Application ourself using the ApplicationFactory
-         ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
+         // we will build the FacesContext ourself
+         FacesContextFactory factory =
+                  (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
          if (factory == null) {
-            throw new IllegalArgumentException("Could not find ApplicationFactory");
+            throw new IllegalArgumentException("Could not find FacesContextFactory");
          }
 
-         // try to obtain the Application instance from the factory
-         Application application = factory.getApplication();
-         if (application == null) {
-            throw new IllegalArgumentException("Unable to create Application");
+         // we need HttpServletRewrite to obtain the HttpServletRequest, HttpServletResponse, etc
+         if (event instanceof HttpServletRewrite) {
+            HttpServletRewrite httpRewrite = (HttpServletRewrite) event;
+
+            // TODO: getting the ServletContext from the request works in Servlet 3.0 only!
+            ServletContext servletContext = httpRewrite.getRequest().getServletContext();
+            HttpServletRequest request = httpRewrite.getRequest();
+            HttpServletResponse response = httpRewrite.getResponse();
+
+            // we have to properly release the FacesContext
+            FacesContext facesContext = null;
+            try {
+
+               // build the FacesContext using a fake Lifecycle instance
+               facesContext = factory.getFacesContext(servletContext, request, response, new NullLifecycle());
+               if (facesContext == null) {
+                  throw new IllegalStateException("Could not create FacesContext");
+               }
+
+               // obtain the JSF validator
+               javax.faces.validator.Validator validator = facesContext.getApplication().createValidator(validatorId);
+
+               // perform validation
+               try {
+                  validator.validate(null, new NullComponent(), value);
+                  return true;
+               }
+               catch (ValidatorException e) {
+                  return false;
+               }
+
+            }
+            finally {
+               if (facesContext != null) {
+                  facesContext.release();
+               }
+            }
+
          }
 
-         // obtain the JSF validator
-         javax.faces.validator.Validator validator = application.createValidator(validatorId);
-
-         // perform validation
-         try {
-
-            validator.validate(null, new NullComponent(), value);
-            return true;
-         }
-         catch (ValidatorException e) {
-            return false;
-         }
+         throw new IllegalStateException("Unsupported Rewrite event type: " + event.getClass().getName());
 
       }
 

@@ -4,8 +4,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
 import javax.faces.FactoryFinder;
-import javax.faces.application.Application;
-import javax.faces.application.ApplicationFactory;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.convert.ConverterException;
@@ -56,7 +54,7 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
 
          // create the converter and attach it to the binding
          String converterId = annotation.converterId();
-         CustomFacesContextJSFRewriteConverter converter = new CustomFacesContextJSFRewriteConverter(converterId);
+         JSFRewriteConverter converter = new JSFRewriteConverter(converterId);
          bindingBuilder.convertedBy(converter);
 
          if (log.isTraceEnabled()) {
@@ -69,60 +67,12 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
 
    }
 
-   /**
-    * Implementation of {@link Converter} that uses the supplied JSF converter for conversion
-    * 
-    * @author Christian Kaltepoth
-    */
    private static class JSFRewriteConverter<T> implements Converter<T>
    {
 
       private final String converterId;
 
       public JSFRewriteConverter(String converterId)
-      {
-         this.converterId = converterId;
-      }
-
-      @Override
-      @SuppressWarnings("unchecked")
-      public T convert(Rewrite event, EvaluationContext context, Object value)
-      {
-
-         // we need to create the Application ourself using the ApplicationFactory
-         ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
-         if (factory == null) {
-            throw new IllegalArgumentException("Could not find ApplicationFactory");
-         }
-
-         // try to obtain the Application instance from the factory
-         Application application = factory.getApplication();
-         if (application == null) {
-            throw new IllegalArgumentException("Unable to create Application");
-         }
-
-         // obtain the JSF converter
-         javax.faces.convert.Converter converter = application.createConverter(converterId);
-
-         // run conversion
-         String valueAsString = value != null ? value.toString() : null;
-         try {
-            return (T) converter.getAsObject(null, new NullComponent(), valueAsString);
-         }
-         catch (ConverterException e) {
-            return null;
-         }
-
-      }
-
-   }
-
-   private static class CustomFacesContextJSFRewriteConverter<T> implements Converter<T>
-   {
-
-      private final String converterId;
-
-      public CustomFacesContextJSFRewriteConverter(String converterId)
       {
          this.converterId = converterId;
       }
