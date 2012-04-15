@@ -33,8 +33,12 @@
 			<version>${version.rewrite}</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>weld-servlet</artifactId>
 					<groupId>org.jboss.weld.servlet</groupId>
+					<artifactId>weld-servlet-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.weld</groupId>
+					<artifactId>weld-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -48,7 +52,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.4</version>
+			<version>1.5.10</version>
 		</dependency>
 
 	</dependencies>
