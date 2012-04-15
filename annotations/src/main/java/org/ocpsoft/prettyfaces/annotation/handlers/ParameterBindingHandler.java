@@ -50,7 +50,7 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
          String expression = "#{" + beanName + "." + field.getName() + "}";
 
          // add bindings to conditions by walking over the condition tree
-         context.getRuleBuilder().accept(new AddBindingVisitor(context, field, param, expression));
+         context.getRuleBuilder().accept(new AddBindingVisitor(context, param, expression));
 
          if (log.isTraceEnabled()) {
             log.trace("Binding parameter [{}] to EL expression: {}", param, expression);
@@ -65,12 +65,10 @@ public class ParameterBindingHandler implements AnnotationHandler<ParameterBindi
       private final String param;
       private final String expression;
       private final FieldContext context;
-      private final Field field;
 
-      public AddBindingVisitor(FieldContext context, Field field, String paramName, String expression)
+      public AddBindingVisitor(FieldContext context, String paramName, String expression)
       {
          this.context = context;
-         this.field = field;
          this.param = paramName;
          this.expression = expression;
       }
