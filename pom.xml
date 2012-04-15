@@ -28,6 +28,7 @@
       <module>test-harness</module>
       <module>core</module>
       <module>annotations</module>
+      <module>shiro</module>
    </modules>
 
    <properties>
