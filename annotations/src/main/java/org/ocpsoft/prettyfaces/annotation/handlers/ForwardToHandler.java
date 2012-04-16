@@ -27,9 +27,6 @@ public class ForwardToHandler implements AnnotationHandler<ForwardTo>
       // add new operation to the rule
       OperationBuilder operation = ruleBuilder.getOperationBuilder().and(Forward.to(annotation.value()));
       ruleBuilder.perform(operation);
-
-      // add rule to the configuration
-      context.getConfigurationBuilder().addRule(ruleBuilder);
    }
 
 }
