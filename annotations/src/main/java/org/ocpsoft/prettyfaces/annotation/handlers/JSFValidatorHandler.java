@@ -3,7 +3,12 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
+import javax.el.ELContext;
+import javax.el.ELException;
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
 import javax.faces.FactoryFinder;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.validator.ValidatorException;
@@ -52,15 +57,34 @@ public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
             throw new IllegalStateException("No binding found for field: " + field.getName());
          }
 
-         // create the validator and attach it to the binding
-         String validatorId = annotation.validatorId();
-         JSFRewriteValidator validator = new JSFRewriteValidator(validatorId);
-         bindingBuilder.validatedBy(validator);
+         // validation using a JSF validatorId
+         if (annotation.validatorId().trim().length() > 0) {
 
-         if (log.isTraceEnabled()) {
-            log.trace("Attaching JSF validator [{}] to field [{}] of class [{}]", new Object[] {
-                     validatorId, field.getName(), field.getDeclaringClass().getName()
-            });
+            // create the validator and attach it to the binding
+            JSFRewriteValidator validator = new JSFRewriteValidator(annotation.validatorId());
+            bindingBuilder.validatedBy(validator);
+
+            if (log.isTraceEnabled()) {
+               log.trace("Attaching JSF validator [{}] to field [{}] of class [{}]", new Object[] {
+                        annotation.validatorId(), field.getName(), field.getDeclaringClass().getName()
+               });
+            }
+
+         }
+
+         // validation using a JSF validator method
+         else if (annotation.validateWith().trim().length() > 0) {
+
+            // create the validator and attach it to the binding
+            JSFMethodRewriteValidator validator = new JSFMethodRewriteValidator(annotation.validateWith());
+            bindingBuilder.validatedBy(validator);
+
+            if (log.isTraceEnabled()) {
+               log.trace("Attaching JSF method validator expression [{}] to field [{}] of class [{}]", new Object[] {
+                        annotation.validateWith(), field.getName(), field.getDeclaringClass().getName()
+               });
+            }
+
          }
 
       }
@@ -122,6 +146,97 @@ public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
                }
                catch (ValidatorException e) {
                   return false;
+               }
+
+            }
+            finally {
+               if (facesContext != null) {
+                  facesContext.release();
+               }
+            }
+
+         }
+
+         throw new IllegalStateException("Unsupported Rewrite event type: " + event.getClass().getName());
+
+      }
+
+   }
+
+   /**
+    * Implementation of {@link Validator} that executes a validator method using the supplied EL expression
+    * 
+    * @author Christian Kaltepoth
+    */
+   private static class JSFMethodRewriteValidator<T> implements Validator<T>
+   {
+
+      private final Logger log = Logger.getLogger(JSFMethodRewriteValidator.class);
+
+      private final String expression;
+
+      public JSFMethodRewriteValidator(String expression)
+      {
+         this.expression = expression;
+      }
+
+      @Override
+      public boolean validate(Rewrite event, EvaluationContext context, T value)
+      {
+
+         // we will build the FacesContext ourself
+         FacesContextFactory factory =
+                  (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+         if (factory == null) {
+            throw new IllegalArgumentException("Could not find FacesContextFactory");
+         }
+
+         // we need HttpServletRewrite to obtain the HttpServletRequest, HttpServletResponse, etc
+         if (event instanceof HttpServletRewrite) {
+            HttpServletRewrite httpRewrite = (HttpServletRewrite) event;
+
+            // TODO: getting the ServletContext from the request works in Servlet 3.0 only!
+            ServletContext servletContext = httpRewrite.getRequest().getServletContext();
+            HttpServletRequest request = httpRewrite.getRequest();
+            HttpServletResponse response = httpRewrite.getResponse();
+
+            // we have to properly release the FacesContext
+            FacesContext facesContext = null;
+            try {
+
+               // build the FacesContext using a fake Lifecycle instance
+               facesContext = factory.getFacesContext(servletContext, request, response, new NullLifecycle());
+               if (facesContext == null) {
+                  throw new IllegalStateException("Could not create FacesContext");
+               }
+
+               // create a MethodExpression for the validation method
+               ELContext elContext = facesContext.getELContext();
+               ExpressionFactory expressionFactory = facesContext.getApplication().getExpressionFactory();
+               MethodExpression methodExpression = expressionFactory.createMethodExpression(elContext, expression,
+                        null, new Class[] { FacesContext.class, UIComponent.class, Object.class });
+
+               // invoke the method
+               try {
+
+                  methodExpression.invoke(elContext, new Object[] { facesContext, new NullComponent(), value });
+                  return true;
+
+               }
+
+               // exceptions may be unexpected or be caused by a validation failure
+               catch (ELException e) {
+
+                  // the method has thrown a ValidatorException
+                  if (e.getCause() instanceof ValidatorException) {
+                     return false;
+                  }
+
+                  // all other causes are unexpected
+                  else {
+                     log.error("Failed to invoke validator method: " + expression, e);
+                     return false;
+                  }
                }
 
             }

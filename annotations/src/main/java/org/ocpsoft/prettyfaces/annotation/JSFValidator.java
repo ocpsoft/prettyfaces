@@ -13,5 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JSFValidator
 {
-   String validatorId();
+   String validatorId() default "";
+   
+   String validateWith() default "";
 }
