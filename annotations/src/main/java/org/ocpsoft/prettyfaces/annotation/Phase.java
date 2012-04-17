@@ -1,8 +1,9 @@
 package org.ocpsoft.prettyfaces.annotation;
 
-public enum PhaseId
+public enum Phase
 {
 
+   NONE(null),
    RESTORE_VIEW(javax.faces.event.PhaseId.RESTORE_VIEW),
    APPLY_REQUEST_VALUES(javax.faces.event.PhaseId.APPLY_REQUEST_VALUES),
    PROCESS_VALIDATIONS(javax.faces.event.PhaseId.PROCESS_VALIDATIONS),
@@ -12,7 +13,7 @@ public enum PhaseId
 
    private final javax.faces.event.PhaseId phaseId;
 
-   private PhaseId(javax.faces.event.PhaseId phaseId)
+   private Phase(javax.faces.event.PhaseId phaseId)
    {
       this.phaseId = phaseId;
    }

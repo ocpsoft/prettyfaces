@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import javax.faces.context.FacesContext;
 
+import org.ocpsoft.prettyfaces.annotation.Phase;
 import org.ocpsoft.prettyfaces.annotation.URLAction;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
@@ -14,6 +15,7 @@ import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 import org.ocpsoft.rewrite.faces.config.PhaseAction;
+import org.ocpsoft.rewrite.faces.config.PhaseOperation;
 
 public class URLActionHandler implements AnnotationHandler<URLAction>
 {
@@ -46,7 +48,23 @@ public class URLActionHandler implements AnnotationHandler<URLAction>
          }
 
          // the action invocation must be deferred to get executed inside the JSF lifecycle
-         Operation deferredOperation = PhaseAction.enqueue(invocation).after(annotation.phaseId().getPhaseId());
+         PhaseOperation<?> deferredOperation = PhaseAction.enqueue(invocation);
+
+         // queue the operation for a specific time in the JSF lifecycle
+         if (annotation.after() == Phase.NONE && annotation.before() == Phase.NONE) {
+            deferredOperation.after(javax.faces.event.PhaseId.RESTORE_VIEW);
+         }
+         else if (annotation.after() == Phase.NONE && annotation.before() != Phase.NONE) {
+            deferredOperation.before(annotation.before().getPhaseId());
+         }
+         else if (annotation.after() != Phase.NONE && annotation.before() == Phase.NONE) {
+            deferredOperation.after(annotation.after().getPhaseId());
+         }
+         else {
+            throw new IllegalStateException("Error processing @" + handles().getSimpleName() + " annotation on method "
+                     + method.getDeclaringClass().getName() + "#" + method.getName()
+                     + ": You cannot use 'before' and 'after' at the same time.");
+         }
 
          // append this operation to the rule
          Operation composite = context.getRuleBuilder().getOperationBuilder().and(deferredOperation);

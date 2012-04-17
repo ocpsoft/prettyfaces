@@ -14,7 +14,9 @@ import java.lang.annotation.Target;
 public @interface URLAction
 {
 
-   PhaseId phaseId() default PhaseId.RESTORE_VIEW;
+   Phase before() default Phase.NONE;
+
+   Phase after() default Phase.NONE;
 
    boolean onPostback() default true;
 

@@ -5,7 +5,6 @@ import javax.faces.bean.RequestScoped;
 
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
-import org.ocpsoft.prettyfaces.annotation.PhaseId;
 import org.ocpsoft.prettyfaces.annotation.URLAction;
 import org.ocpsoft.prettyfaces.annotation.URLPattern;
 
@@ -21,7 +20,7 @@ public class BasicMappingBean
 
    private boolean actionInvoked = false;
 
-   @URLAction(phaseId=PhaseId.RESTORE_VIEW)
+   @URLAction
    public void action()
    {
       actionInvoked = true;
