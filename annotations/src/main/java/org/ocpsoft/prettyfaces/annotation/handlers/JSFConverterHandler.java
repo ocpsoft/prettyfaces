@@ -3,18 +3,12 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
-import javax.faces.FactoryFinder;
 import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextFactory;
 import javax.faces.convert.ConverterException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFConverter;
 import org.ocpsoft.prettyfaces.core.util.NullComponent;
-import org.ocpsoft.prettyfaces.core.util.NullLifecycle;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
@@ -22,11 +16,13 @@ import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.bind.Converter;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
-import org.ocpsoft.rewrite.servlet.http.event.HttpServletRewrite;
 
+/**
+ * @author Christian Kaltepoth
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
 {
-
    private final Logger log = Logger.getLogger(JSFConverterHandler.class);
 
    @Override
@@ -39,8 +35,6 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public void process(ClassContext classContext, AnnotatedElement element, JSFConverter annotation)
    {
-
-      // works only for fields and not for methods
       if (element instanceof Field && classContext instanceof FieldContext) {
 
          Field field = (Field) element;
@@ -52,7 +46,6 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
             throw new IllegalStateException("No binding found for field: " + field.getName());
          }
 
-         // create the converter and attach it to the binding
          String converterId = annotation.converterId();
          JSFRewriteConverter converter = new JSFRewriteConverter(converterId);
          bindingBuilder.convertedBy(converter);
@@ -62,14 +55,11 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
                      converterId, field.getName(), field.getDeclaringClass().getName()
             });
          }
-
       }
-
    }
 
    private static class JSFRewriteConverter<T> implements Converter<T>
    {
-
       private final String converterId;
 
       public JSFRewriteConverter(String converterId)
@@ -81,57 +71,20 @@ public class JSFConverterHandler implements AnnotationHandler<JSFConverter>
       @SuppressWarnings("unchecked")
       public T convert(Rewrite event, EvaluationContext context, Object value)
       {
-
-         // we will build the FacesContext ourself
-         FacesContextFactory factory =
-                  (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-         if (factory == null) {
-            throw new IllegalArgumentException("Could not find FacesContextFactory");
+         FacesContext facesContext = FacesContext.getCurrentInstance();
+         if (facesContext == null) {
+            throw new IllegalStateException("Could not get FacesContext");
          }
 
-         // we need HttpServletRewrite to obtain the HttpServletRequest, HttpServletResponse, etc
-         if (event instanceof HttpServletRewrite) {
-            HttpServletRewrite httpRewrite = (HttpServletRewrite) event;
+         javax.faces.convert.Converter converter = facesContext.getApplication().createConverter(converterId);
 
-            // TODO: getting the ServletContext from the request works in Servlet 3.0 only!
-            ServletContext servletContext = httpRewrite.getRequest().getServletContext();
-            HttpServletRequest request = httpRewrite.getRequest();
-            HttpServletResponse response = httpRewrite.getResponse();
-
-            // we have to properly release the FacesContext
-            FacesContext facesContext = null;
-            try {
-
-               // build the FacesContext using a fake Lifecycle instance
-               facesContext = factory.getFacesContext(servletContext, request, response, new NullLifecycle());
-               if (facesContext == null) {
-                  throw new IllegalStateException("Could not create FacesContext");
-               }
-
-               // get the converter from the new FacesContext
-               javax.faces.convert.Converter converter = facesContext.getApplication().createConverter(converterId);
-
-               // run conversion
-               String valueAsString = value != null ? value.toString() : null;
-               try {
-                  return (T) converter.getAsObject(facesContext, new NullComponent(), valueAsString);
-               }
-               catch (ConverterException e) {
-                  return null;
-               }
-
-            }
-            finally {
-               if (facesContext != null) {
-                  facesContext.release();
-               }
-            }
-
+         String valueAsString = value != null ? value.toString() : null;
+         try {
+            return (T) converter.getAsObject(facesContext, new NullComponent(), valueAsString);
          }
-
-         throw new IllegalStateException("Unsupported Rewrite event type: " + event.getClass().getName());
-
+         catch (ConverterException e) {
+            return null;
+         }
       }
    }
-
 }
