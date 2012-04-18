@@ -1,6 +1,5 @@
 package org.ocpsoft.prettyfaces.annotation.handlers;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +9,8 @@ import javax.faces.event.PhaseId;
 
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.QueryParameterBinding;
-import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
-import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
+import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.Bindable;
 import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.Bindings;
@@ -24,7 +22,7 @@ import org.ocpsoft.rewrite.servlet.config.HttpCondition;
 import org.ocpsoft.rewrite.servlet.http.event.HttpInboundServletRewrite;
 import org.ocpsoft.rewrite.servlet.http.event.HttpServletRewrite;
 
-public class QueryParameterBindingHandler implements AnnotationHandler<QueryParameterBinding>
+public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryParameterBinding>
 {
 
    private final Logger log = Logger.getLogger(QueryParameterBindingHandler.class);
@@ -36,44 +34,38 @@ public class QueryParameterBindingHandler implements AnnotationHandler<QueryPara
    }
 
    @Override
-   public void process(ClassContext classContext, AnnotatedElement element, QueryParameterBinding annotation)
+   public void process(FieldContext context, Field field, QueryParameterBinding annotation)
    {
 
-      if (element instanceof Field && classContext instanceof FieldContext) {
-         Field field = (Field) element;
-         FieldContext context = (FieldContext) classContext;
+      // default name is the name of the field
+      String queryParam = field.getName();
 
-         // default name is the name of the field
-         String queryParam = field.getName();
+      // but the name specified in the annotation is preferred
+      if (!annotation.value().isEmpty()) {
+         queryParam = annotation.value();
+      }
 
-         // but the name specified in the annotation is preferred
-         if (!annotation.value().isEmpty()) {
-            queryParam = annotation.value();
-         }
+      // FIXME: dirty way to build the EL expression
+      String simpleClassName = field.getDeclaringClass().getSimpleName();
+      String beanName = String.valueOf(simpleClassName.charAt(0)).toLowerCase()
+               + simpleClassName.substring(1);
+      String expression = "#{" + beanName + "." + field.getName() + "}";
 
-         // FIXME: dirty way to build the EL expression
-         String simpleClassName = field.getDeclaringClass().getSimpleName();
-         String beanName = String.valueOf(simpleClassName.charAt(0)).toLowerCase()
-                  + simpleClassName.substring(1);
-         String expression = "#{" + beanName + "." + field.getName() + "}";
+      // add the binding condition
+      QueryParameterBindingCondition bindingCondition = new QueryParameterBindingCondition(queryParam);
+      Condition conjunction = context.getRuleBuilder().getConditionBuilder().and(bindingCondition);
+      context.getRuleBuilder().when(conjunction);
 
-         // add the binding condition
-         QueryParameterBindingCondition bindingCondition = new QueryParameterBindingCondition(queryParam);
-         Condition conjunction = context.getRuleBuilder().getConditionBuilder().and(bindingCondition);
-         context.getRuleBuilder().when(conjunction);
+      // build an deferred EL binding
+      El elBinding = El.property(expression);
+      PhaseBinding deferredBinding = PhaseBinding.to(elBinding).after(PhaseId.RESTORE_VIEW);
+      bindingCondition.bindsTo(deferredBinding);
 
-         // build an deferred EL binding
-         El elBinding = El.property(expression);
-         PhaseBinding deferredBinding = PhaseBinding.to(elBinding).after(PhaseId.RESTORE_VIEW);
-         bindingCondition.bindsTo(deferredBinding);
+      // register the binding builder in the field context
+      context.setBindingBuilder(elBinding);
 
-         // register the binding builder in the field context
-         context.setBindingBuilder(elBinding);
-
-         if (log.isTraceEnabled()) {
-            log.trace("Binding query parameter [{}] to EL expression: {}", queryParam, expression);
-         }
-
+      if (log.isTraceEnabled()) {
+         log.trace("Binding query parameter [{}] to EL expression: {}", queryParam, expression);
       }
 
    }

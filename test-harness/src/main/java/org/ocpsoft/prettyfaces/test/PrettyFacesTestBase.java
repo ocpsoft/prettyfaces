@@ -64,7 +64,6 @@ public class PrettyFacesTestBase
    {
       return DependencyResolvers.use(MavenDependencyResolver.class)
                .artifacts(coords)
-               .loadReposFromPom("pom.xml")
                .resolveAs(GenericArchive.class);
    }
 

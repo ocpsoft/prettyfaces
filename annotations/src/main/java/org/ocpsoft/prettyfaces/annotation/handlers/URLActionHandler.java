@@ -1,14 +1,13 @@
 package org.ocpsoft.prettyfaces.annotation.handlers;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 
 import javax.faces.context.FacesContext;
 
 import org.ocpsoft.prettyfaces.annotation.Phase;
 import org.ocpsoft.prettyfaces.annotation.URLAction;
-import org.ocpsoft.rewrite.annotation.api.ClassContext;
-import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
+import org.ocpsoft.rewrite.annotation.api.MethodContext;
+import org.ocpsoft.rewrite.annotation.spi.MethodAnnotationHandler;
 import org.ocpsoft.rewrite.bind.El;
 import org.ocpsoft.rewrite.config.Invoke;
 import org.ocpsoft.rewrite.config.Operation;
@@ -17,7 +16,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
 import org.ocpsoft.rewrite.faces.config.PhaseAction;
 import org.ocpsoft.rewrite.faces.config.PhaseOperation;
 
-public class URLActionHandler implements AnnotationHandler<URLAction>
+public class URLActionHandler extends MethodAnnotationHandler<URLAction>
 {
 
    @Override
@@ -27,50 +26,45 @@ public class URLActionHandler implements AnnotationHandler<URLAction>
    }
 
    @Override
-   public void process(ClassContext context, AnnotatedElement element, URLAction annotation)
+   public void process(MethodContext context, Method method, URLAction annotation)
    {
 
-      if (element instanceof Method) {
-         Method method = (Method) element;
+      // FIXME: dirty way to build the EL expression
+      String simpleClassName = method.getDeclaringClass().getSimpleName();
+      String beanName = String.valueOf(simpleClassName.charAt(0)).toLowerCase()
+               + simpleClassName.substring(1);
+      String expression = "#{" + beanName + "." + method.getName() + "}";
 
-         // FIXME: dirty way to build the EL expression
-         String simpleClassName = method.getDeclaringClass().getSimpleName();
-         String beanName = String.valueOf(simpleClassName.charAt(0)).toLowerCase()
-                  + simpleClassName.substring(1);
-         String expression = "#{" + beanName + "." + method.getName() + "}";
+      // create Operation for executing this method
+      Operation invocation = Invoke.binding(El.retrievalMethod(expression));
 
-         // create Operation for executing this method
-         Operation invocation = Invoke.binding(El.retrievalMethod(expression));
-
-         // wrap the operation if it shouldn't be executed on postbacks
-         if (!annotation.onPostback()) {
-            invocation = new IgnorePostbackOperation(invocation);
-         }
-
-         // the action invocation must be deferred to get executed inside the JSF lifecycle
-         PhaseOperation<?> deferredOperation = PhaseAction.enqueue(invocation);
-
-         // queue the operation for a specific time in the JSF lifecycle
-         if (annotation.after() == Phase.NONE && annotation.before() == Phase.NONE) {
-            deferredOperation.after(javax.faces.event.PhaseId.RESTORE_VIEW);
-         }
-         else if (annotation.after() == Phase.NONE && annotation.before() != Phase.NONE) {
-            deferredOperation.before(annotation.before().getPhaseId());
-         }
-         else if (annotation.after() != Phase.NONE && annotation.before() == Phase.NONE) {
-            deferredOperation.after(annotation.after().getPhaseId());
-         }
-         else {
-            throw new IllegalStateException("Error processing @" + handles().getSimpleName() + " annotation on method "
-                     + method.getDeclaringClass().getName() + "#" + method.getName()
-                     + ": You cannot use 'before' and 'after' at the same time.");
-         }
-
-         // append this operation to the rule
-         Operation composite = context.getRuleBuilder().getOperationBuilder().and(deferredOperation);
-         context.getRuleBuilder().perform(composite);
-
+      // wrap the operation if it shouldn't be executed on postbacks
+      if (!annotation.onPostback()) {
+         invocation = new IgnorePostbackOperation(invocation);
       }
+
+      // the action invocation must be deferred to get executed inside the JSF lifecycle
+      PhaseOperation<?> deferredOperation = PhaseAction.enqueue(invocation);
+
+      // queue the operation for a specific time in the JSF lifecycle
+      if (annotation.after() == Phase.NONE && annotation.before() == Phase.NONE) {
+         deferredOperation.after(javax.faces.event.PhaseId.RESTORE_VIEW);
+      }
+      else if (annotation.after() == Phase.NONE && annotation.before() != Phase.NONE) {
+         deferredOperation.before(annotation.before().getPhaseId());
+      }
+      else if (annotation.after() != Phase.NONE && annotation.before() == Phase.NONE) {
+         deferredOperation.after(annotation.after().getPhaseId());
+      }
+      else {
+         throw new IllegalStateException("Error processing @" + handles().getSimpleName() + " annotation on method "
+                  + method.getDeclaringClass().getName() + "#" + method.getName()
+                  + ": You cannot use 'before' and 'after' at the same time.");
+      }
+
+      // append this operation to the rule
+      Operation composite = context.getRuleBuilder().getOperationBuilder().and(deferredOperation);
+      context.getRuleBuilder().perform(composite);
 
    }
 

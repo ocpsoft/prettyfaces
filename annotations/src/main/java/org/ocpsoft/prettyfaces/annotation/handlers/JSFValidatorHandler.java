@@ -1,6 +1,5 @@
 package org.ocpsoft.prettyfaces.annotation.handlers;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
 import javax.el.ELContext;
@@ -14,9 +13,8 @@ import javax.faces.validator.ValidatorException;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
 import org.ocpsoft.prettyfaces.core.util.NullComponent;
-import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
-import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
+import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.bind.Validator;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -26,7 +24,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author Christian Kaltepoth
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
+public class JSFValidatorHandler extends FieldAnnotationHandler<JSFValidator>
 {
 
    private final Logger log = Logger.getLogger(JSFValidatorHandler.class);
@@ -39,43 +37,37 @@ public class JSFValidatorHandler implements AnnotationHandler<JSFValidator>
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public void process(ClassContext classContext, AnnotatedElement element, JSFValidator annotation)
+   public void process(FieldContext context, Field field, JSFValidator annotation)
    {
 
-      if (element instanceof Field && classContext instanceof FieldContext) {
+      // locate the binding previously created by @ParameterBinding
+      BindingBuilder bindingBuilder = context.getBindingBuilder();
+      if (bindingBuilder == null) {
+         throw new IllegalStateException("No binding found for field: " + field.getName());
+      }
 
-         Field field = (Field) element;
-         FieldContext context = (FieldContext) classContext;
+      // validation using a JSF validatorId
+      if (annotation.validatorId().trim().length() > 0) {
+         JSFRewriteValidator validator = new JSFRewriteValidator(annotation.validatorId());
+         bindingBuilder.validatedBy(validator);
 
-         // locate the binding previously created by @ParameterBinding
-         BindingBuilder bindingBuilder = context.getBindingBuilder();
-         if (bindingBuilder == null) {
-            throw new IllegalStateException("No binding found for field: " + field.getName());
+         if (log.isTraceEnabled()) {
+            log.trace("Attaching JSF validator [{}] to field [{}] of class [{}]", new Object[] {
+                     annotation.validatorId(), field.getName(), field.getDeclaringClass().getName()
+            });
          }
+      }
 
-         // validation using a JSF validatorId
-         if (annotation.validatorId().trim().length() > 0) {
-            JSFRewriteValidator validator = new JSFRewriteValidator(annotation.validatorId());
-            bindingBuilder.validatedBy(validator);
+      // validation using a JSF validator method
+      else if (annotation.validateWith().trim().length() > 0) {
 
-            if (log.isTraceEnabled()) {
-               log.trace("Attaching JSF validator [{}] to field [{}] of class [{}]", new Object[] {
-                        annotation.validatorId(), field.getName(), field.getDeclaringClass().getName()
-               });
-            }
-         }
+         JSFMethodRewriteValidator validator = new JSFMethodRewriteValidator(annotation.validateWith());
+         bindingBuilder.validatedBy(validator);
 
-         // validation using a JSF validator method
-         else if (annotation.validateWith().trim().length() > 0) {
-
-            JSFMethodRewriteValidator validator = new JSFMethodRewriteValidator(annotation.validateWith());
-            bindingBuilder.validatedBy(validator);
-
-            if (log.isTraceEnabled()) {
-               log.trace("Attaching JSF method validator expression [{}] to field [{}] of class [{}]", new Object[] {
-                        annotation.validateWith(), field.getName(), field.getDeclaringClass().getName()
-               });
-            }
+         if (log.isTraceEnabled()) {
+            log.trace("Attaching JSF method validator expression [{}] to field [{}] of class [{}]", new Object[] {
+                     annotation.validateWith(), field.getName(), field.getDeclaringClass().getName()
+            });
          }
       }
    }
