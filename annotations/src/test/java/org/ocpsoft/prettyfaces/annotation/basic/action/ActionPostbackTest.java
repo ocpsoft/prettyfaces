@@ -7,13 +7,12 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 @RunWith(Arquillian.class)
-public class ActionPostbackTest extends PrettyFacesTestBase
+public class ActionPostbackTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
@@ -29,8 +28,7 @@ public class ActionPostbackTest extends PrettyFacesTestBase
    {
 
       // initial load of page
-      WebClient client = new WebClient();
-      HtmlPage firstPage = client.getPage(getFullUrl("/action"));
+      HtmlPage firstPage = getWebClient("/action").getPage();
 
       // first page visit
       String firstPageContent = firstPage.getWebResponse().getContentAsString();

@@ -7,10 +7,10 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
 
 @RunWith(Arquillian.class)
-public class BasicMappingTest extends PrettyFacesTestBase
+public class BasicMappingTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
@@ -25,7 +25,7 @@ public class BasicMappingTest extends PrettyFacesTestBase
    public void testBasicMapping() throws Exception
    {
 
-      String page = getPageAsString("/basic/hello");
+      String page = get("/basic/hello").getResponseContent();
 
       assertTrue(page.contains("Parameter = [hello]"));
       assertTrue(page.contains("Action invoked = [true]"));

@@ -2,16 +2,15 @@ package org.ocpsoft.prettyfaces.annotation.jaas;
 
 import static junit.framework.Assert.assertEquals;
 
-import org.apache.http.HttpResponse;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
 
 @RunWith(Arquillian.class)
-public class JaasRolesTest extends PrettyFacesTestBase
+public class JaasRolesTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
@@ -26,8 +25,7 @@ public class JaasRolesTest extends PrettyFacesTestBase
    public void testJAASAnonymousUser() throws Exception
    {
 
-      HttpResponse response = get("/admin/something");
-      assertEquals(404, response.getStatusLine().getStatusCode());
+      assertEquals(404, get("/admin/something").getStatusCode());
 
    }
 

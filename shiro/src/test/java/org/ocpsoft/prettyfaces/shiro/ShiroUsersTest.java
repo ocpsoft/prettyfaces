@@ -1,28 +1,28 @@
 package org.ocpsoft.prettyfaces.shiro;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
+import org.ocpsoft.rewrite.test.HttpAction;
 
 @RunWith(Arquillian.class)
-public class ShiroUsersTest extends PrettyFacesTestBase
+public class ShiroUsersTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
    public static WebArchive createDeployment()
    {
-
-      // web.xml have to be removed first because we bundle a different one
-      WebArchive baseDeployment = PrettyFacesTestBase.getBaseDeployment();
+      // web.xml has to be removed first because we bundle a different one
+      WebArchive baseDeployment = PrettyFacesTest.getBaseDeployment();
       baseDeployment.delete("/WEB-INF/web.xml");
 
       return baseDeployment
@@ -39,75 +39,72 @@ public class ShiroUsersTest extends PrettyFacesTestBase
    @Test
    public void testShiroAsAnonymousUser() throws Exception
    {
-      HttpClient client = new DefaultHttpClient();
-      HttpResponse response = get(client, "/admin/something");
-      assertEquals(404, response.getStatusLine().getStatusCode());
-      readBody(response);
+      HttpAction<HttpGet> action = get("/admin/something");
+      Assert.assertEquals(404, action.getStatusCode());
+      Assert.assertTrue(action.getResponseContent().contains("404"));
    }
 
    @Test
    public void testShiroAsAuthorizedUser() throws Exception
    {
-
       HttpClient client = new DefaultHttpClient();
 
       // before login
-      HttpResponse beforeLogin = get(client, "/admin/something");
-      assertEquals(404, beforeLogin.getStatusLine().getStatusCode());
-      readBody(beforeLogin);
+      HttpAction<HttpGet> beforeLogin = get(client, "/admin/something");
+      Assert.assertEquals(404, beforeLogin.getStatusCode());
+      Assert.assertTrue(beforeLogin.getResponseContent().contains("404"));
 
       // login as admin
-      HttpResponse login = get(client, "/login?user=ck");
-      assertEquals(200, login.getStatusLine().getStatusCode());
-      readBody(login);
+      HttpAction<HttpGet> login = get(client, "/login?user=ck");
+      Assert.assertEquals(200, login.getStatusCode());
+      Assert.assertFalse(login.getResponseContent().contains("404"));
 
       // page is available
-      HttpResponse afterLogin = get(client, "/admin/something");
-      assertEquals(200, afterLogin.getStatusLine().getStatusCode());
-      assertTrue(readBody(afterLogin).contains("Protected admin page"));
+      HttpAction<HttpGet> afterLogin = get(client, "/admin/something");
+      Assert.assertEquals(200, afterLogin.getStatusCode());
+      Assert.assertTrue(afterLogin.getResponseContent().contains("Protected admin page"));
 
       // logout as admin
-      HttpResponse logout = get(client, "/logout");
-      assertEquals(200, logout.getStatusLine().getStatusCode());
-      readBody(logout);
+      HttpAction<HttpGet> logout = get(client, "/logout");
+      assertEquals(200, logout.getStatusCode());
+      Assert.assertFalse(logout.getResponseContent().contains("404"));
 
       // after logout
-      HttpResponse afterLogout = get(client, "/admin/something");
-      assertEquals(404, afterLogout.getStatusLine().getStatusCode());
-      readBody(afterLogout);
+      HttpAction<HttpGet> afterLogout = get(client, "/admin/something");
+      assertEquals(404, afterLogout.getStatusCode());
+      Assert.assertTrue(afterLogout.getResponseContent().contains("404"));
 
    }
 
    @Test
    public void testShiroAsOtherUser() throws Exception
    {
-
       HttpClient client = new DefaultHttpClient();
 
       // before login
-      HttpResponse beforeLogin = get(client, "/admin/something");
-      assertEquals(404, beforeLogin.getStatusLine().getStatusCode());
-      readBody(beforeLogin);
+      HttpAction<HttpGet> beforeLogin = get(client, "/admin/something");
+      Assert.assertEquals(404, beforeLogin.getStatusCode());
+      Assert.assertTrue(beforeLogin.getResponseContent().contains("404"));
 
-      // login as admin
-      HttpResponse login = get(client, "/login?user=somebody");
-      assertEquals(200, login.getStatusLine().getStatusCode());
-      readBody(login);
+      // login as someone else
+      HttpAction<HttpGet> login = get(client, "/login?user=somebody");
+      assertEquals(200, login.getStatusCode());
+      Assert.assertFalse(login.getResponseContent().contains("404"));
 
       // wrong role
-      HttpResponse afterLogin = get(client, "/admin/something");
-      assertEquals(404, afterLogin.getStatusLine().getStatusCode());
-      readBody(afterLogin);
+      HttpAction<HttpGet> afterLogin = get(client, "/admin/something");
+      Assert.assertEquals(404, afterLogin.getStatusCode());
+      Assert.assertTrue(afterLogin.getResponseContent().contains("404"));
 
-      // logout as admin
-      HttpResponse logout = get(client, "/logout");
-      assertEquals(200, logout.getStatusLine().getStatusCode());
-      readBody(logout);
+      // logout as someone else
+      HttpAction<HttpGet> logout = get(client, "/logout");
+      assertEquals(200, logout.getStatusCode());
+      Assert.assertFalse(logout.getResponseContent().contains("404"));
 
       // after logout
-      HttpResponse afterLogout = get(client, "/admin/something");
-      assertEquals(404, afterLogout.getStatusLine().getStatusCode());
-      readBody(afterLogout);
+      HttpAction<HttpGet> afterLogout = get(client, "/admin/something");
+      assertEquals(404, afterLogout.getStatusCode());
+      Assert.assertTrue(afterLogout.getResponseContent().contains("404"));
 
    }
 
