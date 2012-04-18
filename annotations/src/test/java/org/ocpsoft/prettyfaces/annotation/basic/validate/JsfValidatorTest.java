@@ -36,9 +36,8 @@ public class JsfValidatorTest extends PrettyFacesTest
    public void testValidationFailed() throws Exception
    {
       HttpAction<HttpGet> action = get("/validate/abc");
-      String responseContent = action.getResponseContent();
       Assert.assertEquals(404, action.getStatusCode());
-      Assert.assertTrue(responseContent.contains("404"));
+      Assert.assertTrue(action.getResponseContent().contains("404"));
    }
 
 }

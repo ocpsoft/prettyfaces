@@ -8,10 +8,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.prettyfaces.annotation.basic.convert.UppercaseConverter;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
 
 @RunWith(Arquillian.class)
-public class QueryParameterConversionTest extends PrettyFacesTestBase
+public class QueryParameterConversionTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
@@ -26,15 +26,13 @@ public class QueryParameterConversionTest extends PrettyFacesTestBase
    @Test
    public void testQueryParameterConversion() throws Exception
    {
-      String page = getPageAsString("/page?q=abcd");
-      assertTrue(page.contains("Query Parameter = [ABCD]"));
+      assertTrue(get("/page?q=abcd").getResponseContent().contains("Query Parameter = [ABCD]"));
    }
 
    @Test
    public void testQueryParameterConversionWithMissingParameter() throws Exception
    {
-      String page = getPageAsString("/page");
-      assertTrue(page.contains("Query Parameter = []"));
+      assertTrue(get("/page").getResponseContent().contains("Query Parameter = []"));
    }
 
 }

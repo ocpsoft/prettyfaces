@@ -7,10 +7,10 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
 
 @RunWith(Arquillian.class)
-public class QueryParameterTest extends PrettyFacesTestBase
+public class QueryParameterTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
@@ -24,22 +24,19 @@ public class QueryParameterTest extends PrettyFacesTestBase
    @Test
    public void testQueryParameterBinding() throws Exception
    {
-      String page = getPageAsString("/page?q=christian");
-      assertTrue(page.contains("Query Parameter = [christian]"));
+      assertTrue(get("/page?q=christian").getResponseContent().contains("Query Parameter = [christian]"));
    }
 
    @Test
    public void testMissingQueryParameterValue() throws Exception
    {
-      String page = getPageAsString("/page");
-      assertTrue(page.contains("Query Parameter = []"));
+      assertTrue(get("/page").getResponseContent().contains("Query Parameter = []"));
    }
 
    @Test
    public void testMultipleQueryParameterValues() throws Exception
    {
-      String page = getPageAsString("/page?q=abc&q=123");
-      assertTrue(page.contains("Query Parameter = [abc]"));
+      assertTrue(get("/page?q=abc&q=123").getResponseContent().contains("Query Parameter = [abc]"));
    }
 
 }

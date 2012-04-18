@@ -3,10 +3,6 @@ package org.ocpsoft.prettyfaces.annotation.basic.queryparam;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -14,10 +10,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.prettyfaces.annotation.basic.validate.EvenLengthValidator;
-import org.ocpsoft.prettyfaces.test.PrettyFacesTestBase;
+import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
 
 @RunWith(Arquillian.class)
-public class QueryParameterValidationTest extends PrettyFacesTestBase
+public class QueryParameterValidationTest extends PrettyFacesTest
 {
 
    @Deployment(testable = false)
@@ -32,17 +28,13 @@ public class QueryParameterValidationTest extends PrettyFacesTestBase
    @Test
    public void testValidQueryParameter() throws Exception
    {
-      String page = getPageAsString("/page?q=abcd");
-      assertTrue(page.contains("Query Parameter = [abcd]"));
+      assertTrue(get("/page?q=abcd").getResponseContent().contains("Query Parameter = [abcd]"));
    }
 
    @Test
    public void testInvalidQueryParameter() throws Exception
    {
-      HttpClient client = new DefaultHttpClient();
-      HttpGet get = new HttpGet(getFullUrl("/page?q=abc"));
-      HttpResponse response = client.execute(get);
-      assertEquals(404, response.getStatusLine().getStatusCode());
+      assertEquals(404, get("/page?q=abc").getStatusCode());
    }
 
    @Test
@@ -50,8 +42,7 @@ public class QueryParameterValidationTest extends PrettyFacesTestBase
    // doesn't work for some reason
    public void testMissingQueryParameter() throws Exception
    {
-      String page = getPageAsString("/page");
-      assertTrue(page.contains("Query Parameter = []"));
+      assertTrue(get("/page").getResponseContent().contains("Query Parameter = []"));
    }
 
 }

@@ -52,8 +52,6 @@ public class PrettyFacesTest extends RewriteTestBase
                .setWebXML("jetty-web.xml")
                .addAsWebInfResource("faces-config.xml", "faces-config.xml");
 
-      System.out.println(deployment.toString(true));
-
       return deployment;
 
    }
