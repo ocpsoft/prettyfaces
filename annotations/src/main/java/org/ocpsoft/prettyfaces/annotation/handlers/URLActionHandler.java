@@ -8,10 +8,10 @@ import org.ocpsoft.prettyfaces.annotation.Phase;
 import org.ocpsoft.prettyfaces.annotation.URLAction;
 import org.ocpsoft.rewrite.annotation.api.MethodContext;
 import org.ocpsoft.rewrite.annotation.spi.MethodAnnotationHandler;
-import org.ocpsoft.rewrite.bind.El;
 import org.ocpsoft.rewrite.config.Invoke;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.el.El;
 import org.ocpsoft.rewrite.event.Rewrite;
 import org.ocpsoft.rewrite.faces.config.PhaseAction;
 import org.ocpsoft.rewrite.faces.config.PhaseOperation;
@@ -70,7 +70,7 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
 
    /**
     * This operation wraps another operation and delegates events only if the current request is NOT a JSF postback.
-    * 
+    *
     * @author Christian Kaltepoth
     */
    private final class IgnorePostbackOperation implements Operation
