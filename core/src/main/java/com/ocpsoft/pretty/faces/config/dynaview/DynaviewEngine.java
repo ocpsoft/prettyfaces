@@ -104,6 +104,7 @@ public class DynaviewEngine
       }
       catch (Exception e)
       {
+         log.error("Failed to process dynaview", e);
          PrettyRedirector prettyRedirector = new PrettyRedirector();
          prettyRedirector.send404(facesContext);
          throw new PrettyException("Could not forward to view: " + viewId + "", e);
