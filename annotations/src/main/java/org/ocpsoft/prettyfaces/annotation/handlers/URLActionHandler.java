@@ -29,14 +29,8 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
    public void process(MethodContext context, Method method, URLAction annotation)
    {
 
-      // FIXME: dirty way to build the EL expression
-      String simpleClassName = method.getDeclaringClass().getSimpleName();
-      String beanName = String.valueOf(simpleClassName.charAt(0)).toLowerCase()
-               + simpleClassName.substring(1);
-      String expression = "#{" + beanName + "." + method.getName() + "}";
-
       // create Operation for executing this method
-      Operation invocation = Invoke.binding(El.retrievalMethod(expression));
+      Operation invocation = Invoke.binding(El.retrievalMethod(method) );
 
       // wrap the operation if it shouldn't be executed on postbacks
       if (!annotation.onPostback()) {

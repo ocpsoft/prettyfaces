@@ -37,17 +37,11 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
          param = annotation.value();
       }
 
-      // FIXME: dirty way to build the EL expression
-      String simpleClassName = field.getDeclaringClass().getSimpleName();
-      String beanName = String.valueOf(simpleClassName.charAt(0)).toLowerCase()
-               + simpleClassName.substring(1);
-      String expression = "#{" + beanName + "." + field.getName() + "}";
-
       // add bindings to conditions by walking over the condition tree
-      context.getRuleBuilder().accept(new AddBindingVisitor(context, param, expression));
+      context.getRuleBuilder().accept(new AddBindingVisitor(context, param, field));
 
       if (log.isTraceEnabled()) {
-         log.trace("Binding parameter [{}] to EL expression: {}", param, expression);
+         log.trace("Binding parameter [{}] to field [{}]", param, field);
       }
 
    }
@@ -55,14 +49,14 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
    private final class AddBindingVisitor implements Visitor<Condition>
    {
       private final String param;
-      private final String expression;
       private final FieldContext context;
+      private final Field field;
 
-      public AddBindingVisitor(FieldContext context, String paramName, String expression)
+      public AddBindingVisitor(FieldContext context, String paramName, Field field)
       {
          this.context = context;
          this.param = paramName;
-         this.expression = expression;
+         this.field = field;
       }
 
       @Override
@@ -73,7 +67,7 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
             Parameterized parameterized = (Parameterized) condition;
 
             // build an deferred EL binding
-            El elBinding = El.property(expression);
+            El elBinding = El.property(field);
             PhaseBinding deferredBinding = PhaseBinding.to(elBinding).after(PhaseId.RESTORE_VIEW);
 
             // add the parameter and the binding
