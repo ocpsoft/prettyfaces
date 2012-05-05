@@ -35,6 +35,11 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <jboss.spec.version>1.0.0.Final</jboss.spec.version>
       <version.rewrite>1.0.6-SNAPSHOT</version.rewrite>
+      <version.logging>1.0.1.Final</version.logging>
+      <version.arquillian>1.0.0.Final</version.arquillian>
+      <version.arquillian.jetty>1.0.0.CR1</version.arquillian.jetty>
+      <version.jetty>8.1.2.v20120308</version.jetty>
+      <version.jbossas>7.1.1.Final</version.jbossas>
    </properties>
 
    <repositories>
@@ -77,6 +82,18 @@
          <scope>test</scope>
       </dependency>
    </dependencies>
+   
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${version.arquillian}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
 
    <developers>
       <developer>
@@ -146,6 +163,137 @@
          </plugin>
       </plugins>
    </build>
+   
+   <profiles>
+      <profile>
+         <id>JETTY_EMBEDDED_8.X</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-jetty-embedded-7</artifactId>
+               <version>${version.arquillian.jetty}</version>
+               <scope>test</scope>
+               <exclusions>
+                  <!-- Don't include the old version of arquillian-container-spi -->
+                  <exclusion>
+                     <groupId>org.jboss.arquillian.container</groupId>
+                     <artifactId>arquillian-container-spi</artifactId>
+                  </exclusion>
+               </exclusions>
+            </dependency>
+            <dependency>
+               <groupId>org.eclipse.jetty</groupId>
+               <artifactId>jetty-webapp</artifactId>
+               <version>${version.jetty}</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.eclipse.jetty</groupId>
+               <artifactId>jetty-plus</artifactId>
+               <version>${version.jetty}</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-simple</artifactId>
+               <version>1.5.10</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-log4j12</artifactId>
+               <version>1.5.10</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.ocpsoft.logging</groupId>
+               <artifactId>logging-adapter-slf4j</artifactId>
+               <version>${version.logging}</version>
+               <scope>test</scope>
+            </dependency>
+
+            <dependency>
+               <groupId>org.glassfish.web</groupId>
+               <artifactId>el-impl</artifactId>
+               <version>2.2</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>javax.servlet.jsp</groupId>
+               <artifactId>jsp-api</artifactId>
+               <version>2.2</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+
+      <profile>
+         <id>JBOSS_AS_MANAGED_7.X</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-dependency-plugin</artifactId>
+                  <extensions>false</extensions>
+                  <executions>
+                     <execution>
+                        <id>unpack</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                           <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                           <artifactItems>
+                              <artifactItem>
+                                 <groupId>org.jboss.as</groupId>
+                                 <artifactId>jboss-as-dist</artifactId>
+                                 <version>${version.jbossas}</version>
+                                 <type>zip</type>
+                                 <overWrite>false</overWrite>
+                                 <outputDirectory>../target</outputDirectory>
+                              </artifactItem>
+                           </artifactItems>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.spec</groupId>
+               <artifactId>jboss-javaee-web-6.0</artifactId>
+               <version>3.0.1.Final</version>
+               <type>pom</type>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.as</groupId>
+               <artifactId>jboss-as-arquillian-container-managed</artifactId>
+               <version>${version.jbossas}</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+
+      <profile>
+         <id>JBOSS_AS_REMOTE_7.X</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.spec</groupId>
+               <artifactId>jboss-javaee-web-6.0</artifactId>
+               <version>3.0.1.Final</version>
+               <type>pom</type>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.as</groupId>
+               <artifactId>jboss-as-arquillian-container-remote</artifactId>
+               <version>${version.jbossas}</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
 
    <reporting>
       <plugins>

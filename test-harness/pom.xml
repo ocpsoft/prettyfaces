@@ -25,22 +25,10 @@
    <url>http://ocpsoft.org/prettyfaces/</url>
 
    <dependencies>
-
-      <!-- Rewrite test harness without Weld -->
       <dependency>
          <groupId>org.ocpsoft.rewrite</groupId>
          <artifactId>rewrite-test-harness</artifactId>
          <version>${version.rewrite}</version>
-         <exclusions>
-            <exclusion>
-               <groupId>org.jboss.weld.servlet</groupId>
-               <artifactId>weld-servlet-core</artifactId>
-            </exclusion>
-            <exclusion>
-               <groupId>org.jboss.weld</groupId>
-               <artifactId>weld-core</artifactId>
-            </exclusion>
-         </exclusions>
       </dependency>
    </dependencies>
 

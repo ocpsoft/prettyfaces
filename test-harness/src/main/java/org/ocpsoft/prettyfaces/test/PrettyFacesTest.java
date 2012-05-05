@@ -2,15 +2,12 @@ package org.ocpsoft.prettyfaces.test;
 
 import java.io.File;
 
-import javax.el.ExpressionFactory;
-
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.ocpsoft.rewrite.test.RewriteTest;
 import org.ocpsoft.rewrite.test.RewriteTestBase;
-
-import com.sun.el.ExpressionFactoryImpl;
 
 public class PrettyFacesTest extends RewriteTestBase
 {
@@ -35,23 +32,17 @@ public class PrettyFacesTest extends RewriteTestBase
                .addAsLibraries(rewriteImplAnnotations)
                .addAsLibraries(rewriteIntegrationFaces)
 
-               /*
-                * JSF implementation
-                */
-               .addAsLibraries(resolveDependencies("org.glassfish:javax.faces:jar:2.1.7"))
-
-               /*
-                * Set the EL implementation
-                */
-               .addAsLibraries(resolveDependencies("org.glassfish.web:el-impl:jar:2.2"))
-               .addAsServiceProvider(ExpressionFactory.class, ExpressionFactoryImpl.class)
-
-               /*
-                * Set up container configuration
-                */
-               .setWebXML("jetty-web.xml")
                .addAsWebInfResource("faces-config.xml", "faces-config.xml");
 
+      if(RewriteTest.isJetty())
+      {
+         /*
+          * Set the JSF implementation
+          */
+         deployment.addAsLibraries(resolveDependencies("org.glassfish:javax.faces:jar:2.1.7"));
+         deployment.setWebXML("jetty-web.xml");
+      }
+      
       return deployment;
 
    }
