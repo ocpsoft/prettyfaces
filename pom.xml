@@ -26,6 +26,7 @@
 
    <modules>
       <module>test-harness</module>
+      <module>compat</module>
       <module>core</module>
       <module>annotations</module>
       <module>shiro</module>
