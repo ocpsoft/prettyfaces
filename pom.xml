@@ -43,6 +43,7 @@
       <version.arquillian.jetty>1.0.0.CR1</version.arquillian.jetty>
       <version.jetty>8.1.2.v20120308</version.jetty>
       <version.jbossas>7.1.1.Final</version.jbossas>
+      <container.download.dir>${java.io.tmpdir}/rewrite-arquillian-containers</container.download.dir>
    </properties>
 
    <repositories>
@@ -88,6 +89,44 @@
 
    <dependencyManagement>
       <dependencies>
+
+         <dependency>
+            <groupId>org.ocpsoft.prettyfaces</groupId>
+            <artifactId>prettyfaces-core</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.ocpsoft.prettyfaces</groupId>
+            <artifactId>prettyfaces-annotations</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.ocpsoft.prettyfaces</groupId>
+            <artifactId>prettyfaces-test-harness</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>org.ocpsoft.rewrite</groupId>
+            <artifactId>rewrite-impl-servlet</artifactId>
+            <version>${version.rewrite}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.ocpsoft.rewrite</groupId>
+            <artifactId>rewrite-config-annotations-impl</artifactId>
+            <version>${version.rewrite}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.ocpsoft.rewrite</groupId>
+            <artifactId>rewrite-integration-faces</artifactId>
+            <version>${version.rewrite}</version>
+         </dependency>
+
          <!-- We are overriding version of ShrinkWrap Maven Resolver from 
             Arquillian BOM -->
          <dependency>
@@ -169,12 +208,14 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12</version>
             <configuration>
                <argLine>-Xms256m -Xmx512m</argLine>
             </configuration>
          </plugin>
       </plugins>
    </build>
+
 
    <profiles>
       <profile>
@@ -220,10 +261,36 @@
             <dependency>
                <groupId>org.ocpsoft.logging</groupId>
                <artifactId>logging-adapter-slf4j</artifactId>
-               <version>${version.logging}</version>
                <scope>test</scope>
             </dependency>
 
+            <!-- Weld servlet, EL and JSP required for testing CDI injections -->
+            <!-- Don't use 'org.jboss.weld.servlet:weld-servlet' as it has 
+               an incompatible slf4j version shaded in -->
+            <dependency>
+               <groupId>org.jboss.weld.servlet</groupId>
+               <artifactId>weld-servlet-core</artifactId>
+               <version>1.1.4.Final</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.weld</groupId>
+               <artifactId>weld-core</artifactId>
+               <version>1.1.4.Final</version>
+               <scope>test</scope>
+            </dependency>
+
+            <dependency>
+               <groupId>javax.enterprise</groupId>
+               <artifactId>cdi-api</artifactId>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.glassfish</groupId>
+               <artifactId>javax.faces</artifactId>
+               <version>2.1.7</version>
+               <scope>test</scope>
+            </dependency>
             <dependency>
                <groupId>org.glassfish.web</groupId>
                <artifactId>el-impl</artifactId>
@@ -244,6 +311,16 @@
          <build>
             <plugins>
                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <version>2.12</version>
+                  <configuration>
+                     <systemPropertyVariables>
+                        <arquillian.launch>jbossas_managed</arquillian.launch>
+                     </systemPropertyVariables>
+                  </configuration>
+               </plugin>
+               <plugin>
                   <artifactId>maven-dependency-plugin</artifactId>
                   <extensions>false</extensions>
                   <executions>
@@ -261,10 +338,29 @@
                                  <version>${version.jbossas}</version>
                                  <type>zip</type>
                                  <overWrite>false</overWrite>
-                                 <outputDirectory>../target</outputDirectory>
+                                 <outputDirectory>${project.build.directory}/container</outputDirectory>
                               </artifactItem>
                            </artifactItems>
                         </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <version>1.7</version>
+                  <executions>
+                     <execution>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                           <target>
+                              <copy
+                                 file="${user.dir}/test-harness/src/main/resources/jbossas-managed-standalone.xml"
+                                 todir="${project.build.directory}/container/jboss-as-${version.jbossas}/standalone/configuration" />
+                           </target>
+                        </configuration>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
                      </execution>
                   </executions>
                </plugin>
@@ -305,6 +401,183 @@
             </dependency>
          </dependencies>
       </profile>
+
+      <profile>
+         <id>GLASSFISH_MANAGED_3.1</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <version>1.7</version>
+                  <executions>
+                     <execution>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
+                        <configuration>
+                           <target>
+                              <mkdir dir="${container.download.dir}" />
+                              <get dest="${container.download.dir}"
+                                 verbose="true" skipexisting="true"
+                                 src="http://download.java.net/glassfish/${version.glassfish}/release/glassfish-${version.glassfish}-web.zip" />
+                              <unzip
+                                 src="${container.download.dir}/glassfish-${version.glassfish}-web.zip"
+                                 dest="${project.build.directory}/container" />
+                           </target>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                     <systemProperties>
+                        <arquillian.launch>glassfish_managed</arquillian.launch>
+                     </systemProperties>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-glassfish-managed-3.1</artifactId>
+               <version>${version.arquillian.glassfish}</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.spec</groupId>
+               <artifactId>jboss-javaee-6.0</artifactId>
+               <version>${version.jboss.spec}</version>
+               <type>pom</type>
+               <scope>provided</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+
+      <profile>
+         <id>GLASSFISH_REMOTE_3.1</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-glassfish-remote-3.1</artifactId>
+               <version>${version.arquillian.glassfish}</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.spec</groupId>
+               <artifactId>jboss-javaee-6.0</artifactId>
+               <version>${version.jboss.spec}</version>
+               <type>pom</type>
+               <scope>provided</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+
+      <profile>
+         <id>TOMCAT_MANAGED_7_WELD</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <version>1.7</version>
+                  <executions>
+                     <execution>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
+                        <configuration>
+                           <target>
+                              <mkdir dir="${container.download.dir}" />
+                              <get dest="${container.download.dir}"
+                                 verbose="true" skipexisting="true"
+                                 src="http://archive.apache.org/dist/tomcat/tomcat-7/v${version.tomcat}/bin/apache-tomcat-${version.tomcat}.zip" />
+                              <unzip
+                                 src="${container.download.dir}/apache-tomcat-${version.tomcat}.zip"
+                                 dest="${project.build.directory}/container" />
+                              <move
+                                 file="${project.build.directory}/container/apache-tomcat-${version.tomcat}"
+                                 tofile="${project.build.directory}/container/apache-tomcat-7" />
+                              <echo
+                                 file="${project.build.directory}/container/apache-tomcat-7/conf/tomcat-users.xml">
+                                 <![CDATA[
+                                 <?xml version="1.0" encoding="UTF-8"?>
+                                 <tomcat-users>
+                                    <role rolename="manager-script"/>
+                                    <user username="arquillian" password="arquillian" roles="manager-script"/>
+                                 </tomcat-users>
+                                 ]]>
+                              </echo>
+                           </target>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                     <systemProperties>
+                        <arquillian.launch>tomcat_managed</arquillian.launch>
+                        <rewrite.test.cdi>weld</rewrite.test.cdi>
+                     </systemProperties>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-tomcat-managed-7</artifactId>
+               <version>${version.arquillian.tomcat}</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+         <repositories>
+            <!-- We current need this because we have to use the SNAPSHOTS 
+               for the Tomcat container adapter -->
+            <repository>
+               <id>arquillian-snapshots</id>
+               <url>https://repository-arquillian.forge.cloudbees.com/snapshot/</url>
+               <releases>
+                  <enabled>false</enabled>
+               </releases>
+               <snapshots>
+                  <enabled>true</enabled>
+               </snapshots>
+            </repository>
+         </repositories>
+      </profile>
+
+      <profile>
+         <id>TOMCAT_MANAGED_7_OWB</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                     <systemProperties>
+                        <arquillian.launch>tomcat_managed</arquillian.launch>
+                        <rewrite.test.cdi>owb</rewrite.test.cdi>
+                     </systemProperties>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-tomcat-managed-7</artifactId>
+               <version>${version.arquillian.tomcat}</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+
    </profiles>
 
    <reporting>

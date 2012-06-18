@@ -2,11 +2,15 @@ package org.ocpsoft.prettyfaces.shiro;
 
 import static junit.framework.Assert.assertEquals;
 
+import java.io.File;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,15 +30,23 @@ public class ShiroUsersTest extends PrettyFacesTest
       baseDeployment.delete("/WEB-INF/web.xml");
 
       return baseDeployment
-               .addClass(AdminPageBean.class)
-               .addClass(LoginServlet.class)
-               .addClass(LogoutServlet.class)
-               .addClass(ShiroTestRealm.class)
-               .addAsLibraries(resolveDependencies("org.apache.shiro:shiro-core:jar:1.2.0"))
+               .addAsLibraries(getPrettyFacesShiroArchive())
+               .addClasses(AdminPageBean.class, LoginServlet.class, LogoutServlet.class, ShiroTestRealm.class)
+               .addAsLibraries(resolveDependencies("org.apache.shiro:shiro-web"))
                .setWebXML("shiro-web.xml")
                .addAsWebInfResource("shiro.ini")
                .addAsWebResource("protected-page.xhtml");
    }
+   
+   protected static JavaArchive getPrettyFacesShiroArchive()
+   {
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "prettyfaces-shiro.jar")
+               .addAsResource(new File("../shiro/target/classes/org"))
+               .addAsResource(new File("../shiro/target/classes/META-INF"));
+      
+      return archive;
+   }
+
 
    @Test
    public void testShiroAsAnonymousUser() throws Exception
