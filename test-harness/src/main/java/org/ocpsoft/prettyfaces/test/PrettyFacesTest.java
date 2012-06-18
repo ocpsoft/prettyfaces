@@ -2,7 +2,6 @@ package org.ocpsoft.prettyfaces.test;
 
 import java.io.File;
 
-import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -13,9 +12,6 @@ public class PrettyFacesTest extends RewriteTestBase
 {
    public static WebArchive getBaseDeployment()
    {
-      GenericArchive rewriteImplServlet = resolveDependency("org.ocpsoft.rewrite:rewrite-impl-servlet:jar:1.0.6-SNAPSHOT");
-      GenericArchive rewriteImplAnnotations = resolveDependency("org.ocpsoft.rewrite:rewrite-config-annotations-impl:jar:1.0.6-SNAPSHOT");
-      GenericArchive rewriteIntegrationFaces = resolveDependency("org.ocpsoft.rewrite:rewrite-integration-faces:jar:1.0.6-SNAPSHOT");
 
       WebArchive deployment = ShrinkWrap
                .create(WebArchive.class, "rewrite-test.war")
@@ -28,9 +24,9 @@ public class PrettyFacesTest extends RewriteTestBase
                /*
                 * Rewrite
                 */
-               .addAsLibraries(rewriteImplServlet)
-               .addAsLibraries(rewriteImplAnnotations)
-               .addAsLibraries(rewriteIntegrationFaces)
+               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-impl-servlet"))
+               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-config-annotations-impl"))
+               .addAsLibraries(resolveDependencies("org.ocpsoft.rewrite:rewrite-integration-faces"))
 
                .addAsWebInfResource("faces-config.xml", "faces-config.xml");
 
@@ -39,7 +35,6 @@ public class PrettyFacesTest extends RewriteTestBase
          /*
           * Set the JSF implementation
           */
-         deployment.addAsLibraries(resolveDependencies("org.glassfish:javax.faces:jar:2.1.7"));
          deployment.setWebXML("jetty-web.xml");
       }
       
@@ -49,8 +44,12 @@ public class PrettyFacesTest extends RewriteTestBase
 
    protected static JavaArchive getPrettyFacesArchive()
    {
-      return ShrinkWrap.create(JavaArchive.class, "prettyfaces.jar")
-               .addAsResource(new File("../annotations/target/classes"));
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "prettyfaces.jar")
+               .addAsResource(new File("../core/target/classes/org"))
+               .addAsResource(new File("../annotations/target/classes/org"))
+               .addAsResource(new File("../annotations/target/classes/META-INF"));
+      
+      return archive;
    }
 
 }

@@ -1,10 +1,9 @@
 package org.ocpsoft.prettyfaces.annotation.basic.action;
 
-import static junit.framework.Assert.assertTrue;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
@@ -32,18 +31,18 @@ public class ActionPostbackTest extends PrettyFacesTest
 
       // first page visit
       String firstPageContent = firstPage.getWebResponse().getContentAsString();
-      assertTrue(firstPageContent.contains("actionOnPostbackDefault = [true]"));
-      assertTrue(firstPageContent.contains("actionOnPostbackTrue = [true]"));
-      assertTrue(firstPageContent.contains("actionOnPostbackFalse = [true]"));
+      Assert.assertTrue(firstPageContent.contains("actionOnPostbackDefault = [true]"));
+      Assert.assertTrue(firstPageContent.contains("actionOnPostbackTrue = [true]"));
+      Assert.assertTrue(firstPageContent.contains("actionOnPostbackFalse = [true]"));
 
       // click the reload button
       HtmlPage secondPage = firstPage.getElementById("form:reload").click();
 
       // first page visit
       String secondPageContent = secondPage.getWebResponse().getContentAsString();
-      assertTrue(secondPageContent.contains("actionOnPostbackDefault = [true]"));
-      assertTrue(secondPageContent.contains("actionOnPostbackTrue = [true]"));
-      assertTrue(secondPageContent.contains("actionOnPostbackFalse = [false]"));
+      Assert.assertTrue(secondPageContent.contains("actionOnPostbackDefault = [true]"));
+      Assert.assertTrue(secondPageContent.contains("actionOnPostbackTrue = [true]"));
+      Assert.assertTrue(secondPageContent.contains("actionOnPostbackFalse = [false]"));
 
    }
 
