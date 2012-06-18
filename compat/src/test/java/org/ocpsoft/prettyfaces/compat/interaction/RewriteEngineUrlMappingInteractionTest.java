@@ -1,12 +1,8 @@
 package org.ocpsoft.prettyfaces.compat.interaction;
 
-import java.io.File;
-
 import org.apache.http.client.methods.HttpGet;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,19 +18,9 @@ public class RewriteEngineUrlMappingInteractionTest extends PrettyFacesTest
    {
       WebArchive archive = getBaseDeployment()
                .addClasses(InteractionDynaViewBean.class)
-               .addAsLibraries(getPrettyFacesCompatArchive())
                .addAsLibraries(resolveDependencies("com.ocpsoft:prettyfaces-jsf2"))
                .addAsWebResource("interaction/interaction-page.xhtml", "page.xhtml")
                .addAsWebInfResource("interaction/interaction-pretty-config.xml", "pretty-config.xml");
-
-      return archive;
-   }
-
-   protected static JavaArchive getPrettyFacesCompatArchive()
-   {
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "prettyfaces-compat.jar")
-               .addAsResource(new File("../compat/target/classes/org"))
-               .addAsResource(new File("../compat/target/classes/META-INF"));
 
       return archive;
    }
