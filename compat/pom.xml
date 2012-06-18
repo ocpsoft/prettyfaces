@@ -35,13 +35,17 @@
       <dependency>
          <groupId>org.ocpsoft.rewrite</groupId>
          <artifactId>rewrite-impl-servlet</artifactId>
-         <version>${version.rewrite}</version>
       </dependency>
       
       <dependency>
          <groupId>org.ocpsoft.prettyfaces</groupId>
          <artifactId>prettyfaces-test-harness</artifactId>
-         <version>${project.version}</version>
+         <scope>test</scope>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.ocpsoft.prettyfaces</groupId>
+         <artifactId>prettyfaces-annotations</artifactId>
          <scope>test</scope>
       </dependency>
 

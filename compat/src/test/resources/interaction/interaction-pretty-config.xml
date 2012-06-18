@@ -1,0 +1,37 @@
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.3.3"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.3.3 http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.3.3.xsd">
+
+   <!-- Simple URL mapping
+   <url-mapping>
+      <pattern value="/page" />
+      <view-id value="/page.jsf" />
+   </url-mapping>
+ -->
+ 
+   <!-- Dynaview URL mapping -->
+   <url-mapping>
+      <pattern value="/dyna/#{interactionDynaViewBean.value}" />
+      <view-id value="#{interactionDynaViewBean.viewId}" />
+   </url-mapping>
+
+   <!-- Directly accessing view-ids should redirect to the pretty URL -->
+   <rewrite match="/(.*)\.jsf" substitute="/$1" redirect="302" />
+
+   <!-- Some URL that forwards to the mapping -->
+   <rewrite match="/rewrite-forwards-to-page-mapping"
+      substitute="/page" redirect="chain" />
+
+   <!-- Some URL that redirects to the mapping -->
+   <rewrite match="/rewrite-redirects-to-page-mapping"
+      substitute="/page" redirect="302" />
+
+   <!-- Some URL that forwards to the dynaview -->
+   <rewrite match="/rewrite-forwards-to-dynaview" substitute="/dyna/page"
+      redirect="chain" />
+
+   <!-- Some URL that redirects to the dynaview -->
+   <rewrite match="/rewrite-redirects-to-dynaview" substitute="/dyna/page"
+      redirect="302" />
+
+</pretty-config>
