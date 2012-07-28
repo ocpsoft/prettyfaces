@@ -18,7 +18,7 @@ public class BasicMappingTest extends PrettyFacesTest
    {
       return getBaseDeployment()
                .addClass(BasicMappingBean.class)
-               .addAsWebResource("basic/basic.xhtml", "basic.xhtml");
+               .addAsWebResource("basic/basic-mapping.xhtml", "basic.xhtml");
    }
 
    @Test
