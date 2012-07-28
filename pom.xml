@@ -37,7 +37,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <jboss.spec.version>1.0.0.Final</jboss.spec.version>
-      <version.rewrite>1.0.6-SNAPSHOT</version.rewrite>
+      <version.rewrite>2.0.0-SNAPSHOT</version.rewrite>
       <version.logging>1.0.1.Final</version.logging>
       <version.arquillian>1.0.0.Final</version.arquillian>
       <version.arquillian.jetty>1.0.0.CR1</version.arquillian.jetty>
