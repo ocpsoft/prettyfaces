@@ -3,8 +3,10 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.Method;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
 
-import org.ocpsoft.prettyfaces.annotation.Phase;
+import org.ocpsoft.prettyfaces.annotation.AfterPhase;
+import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.URLAction;
 import org.ocpsoft.rewrite.annotation.api.MethodContext;
 import org.ocpsoft.rewrite.annotation.spi.MethodAnnotationHandler;
@@ -39,21 +41,24 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
 
       // the action invocation must be deferred to get executed inside the JSF lifecycle
       PhaseOperation<?> deferredOperation = PhaseAction.enqueue(invocation);
-
+      
       // queue the operation for a specific time in the JSF lifecycle
-      if (annotation.after() == Phase.NONE && annotation.before() == Phase.NONE) {
-         deferredOperation.after(javax.faces.event.PhaseId.RESTORE_VIEW);
+      BeforePhase beforePhase = method.getAnnotation(BeforePhase.class);
+      AfterPhase afterPhase = method.getAnnotation(AfterPhase.class);
+      if (beforePhase == null && afterPhase == null) {
+         deferredOperation.after(PhaseId.RESTORE_VIEW);
       }
-      else if (annotation.after() == Phase.NONE && annotation.before() != Phase.NONE) {
-         deferredOperation.before(annotation.before().getPhaseId());
+      else if (beforePhase == null && afterPhase != null) {
+         deferredOperation.after(afterPhase.value().getPhaseId());
       }
-      else if (annotation.after() != Phase.NONE && annotation.before() == Phase.NONE) {
-         deferredOperation.after(annotation.after().getPhaseId());
+      else if (beforePhase != null && afterPhase == null) {
+         deferredOperation.before(beforePhase.value().getPhaseId());
       }
       else {
          throw new IllegalStateException("Error processing @" + handles().getSimpleName() + " annotation on method "
                   + method.getDeclaringClass().getName() + "#" + method.getName()
-                  + ": You cannot use 'before' and 'after' at the same time.");
+                  + ": You cannot use @" + BeforePhase.class.getSimpleName() + " and @"
+                  + AfterPhase.class.getSimpleName() + " at the same time.");
       }
 
       // append this operation to the rule
