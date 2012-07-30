@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Inherited
 @Documented
-@Target(ElementType.METHOD)
+@Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BeforePhase
 {

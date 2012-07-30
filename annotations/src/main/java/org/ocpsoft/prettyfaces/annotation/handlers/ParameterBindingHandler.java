@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import javax.faces.event.PhaseId;
 
 import org.ocpsoft.logging.Logger;
+import org.ocpsoft.prettyfaces.annotation.AfterPhase;
+import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
@@ -46,7 +48,7 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
 
    }
 
-   private final class AddBindingVisitor implements Visitor<Condition>
+   private static class AddBindingVisitor implements Visitor<Condition>
    {
       private final String param;
       private final FieldContext context;
@@ -68,8 +70,27 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
 
             // build an deferred EL binding
             El elBinding = El.property(field);
-            PhaseBinding deferredBinding = PhaseBinding.to(elBinding).after(PhaseId.RESTORE_VIEW);
+            PhaseBinding deferredBinding = PhaseBinding.to(elBinding);
 
+            // select the phase to perform the binding in
+            BeforePhase beforePhase = field.getAnnotation(BeforePhase.class);
+            AfterPhase afterPhase = field.getAnnotation(AfterPhase.class);
+            if (beforePhase == null && afterPhase == null) {
+               deferredBinding.after(PhaseId.RESTORE_VIEW);
+            }
+            else if (beforePhase == null && afterPhase != null) {
+               deferredBinding.after(afterPhase.value().getPhaseId());
+            }
+            else if (beforePhase != null && afterPhase == null) {
+               deferredBinding.before(beforePhase.value().getPhaseId());
+            }
+            else {
+               throw new IllegalStateException("Error processing @" + ParameterBinding.class.getSimpleName()
+                        + " annotation on field " + field.getDeclaringClass().getName() + "#" + field.getName()
+                        + ": You cannot use @" + BeforePhase.class.getSimpleName() + " and @"
+                        + AfterPhase.class.getSimpleName() + " at the same time.");
+            }
+            
             // add the parameter and the binding
             parameterized.where(param).bindsTo(deferredBinding);
 
