@@ -50,6 +50,9 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
 
    private static class AddBindingVisitor implements Visitor<Condition>
    {
+
+      private final Logger log = Logger.getLogger(AddBindingVisitor.class);
+
       private final String param;
       private final FieldContext context;
       private final Field field;
@@ -90,12 +93,28 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
                         + ": You cannot use @" + BeforePhase.class.getSimpleName() + " and @"
                         + AfterPhase.class.getSimpleName() + " at the same time.");
             }
-            
-            // add the parameter and the binding
-            parameterized.where(param).bindsTo(deferredBinding);
 
-            // register the binding builder in the field context
-            context.setBindingBuilder(elBinding);
+            // the parameter may not exist in the Parameterized instance
+            try {
+
+               // add the parameter and the binding
+               parameterized.where(param).bindsTo(deferredBinding);
+
+               // register the binding builder in the field context
+               context.setBindingBuilder(elBinding);
+
+               if (log.isDebugEnabled()) {
+                  log.debug("Added binding for parameter [{}] to: {}", param, parameterized);
+               }
+
+            }
+
+            // TODO: does not work correct. Never thrown?
+            catch (IllegalArgumentException e) {
+               if (log.isTraceEnabled()) {
+                  log.trace("Parameter [{}] not found on: {}", param, parameterized);
+               }
+            }
 
          }
       }
