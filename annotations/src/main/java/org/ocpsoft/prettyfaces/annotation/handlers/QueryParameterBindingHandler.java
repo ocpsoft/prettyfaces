@@ -14,7 +14,6 @@ import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.Bindable;
 import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.Bindings;
-import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.el.El;
 import org.ocpsoft.rewrite.faces.config.PhaseBinding;
@@ -34,6 +33,12 @@ public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryPa
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_STRUCTURAL;
+   }
+
+   @Override
    public void process(FieldContext context, Field field, QueryParameterBinding annotation)
    {
 
@@ -47,8 +52,7 @@ public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryPa
 
       // add the binding condition
       QueryParameterBindingCondition bindingCondition = new QueryParameterBindingCondition(queryParam);
-      Condition conjunction = context.getRuleBuilder().getConditionBuilder().and(bindingCondition);
-      context.getRuleBuilder().when(conjunction);
+      context.getRuleBuilder().when(bindingCondition);
 
       // build an deferred EL binding
       El elBinding = El.property(field);

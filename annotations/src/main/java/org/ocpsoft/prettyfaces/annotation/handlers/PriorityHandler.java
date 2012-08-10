@@ -16,6 +16,12 @@ public class PriorityHandler implements AnnotationHandler<Priority>
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_ENRICHING;
+   }
+
+   @Override
    public void process(ClassContext context, AnnotatedElement element, Priority annotation)
    {
       context.getRuleBuilder().withPriority(annotation.value());

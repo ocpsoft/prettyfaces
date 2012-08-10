@@ -28,11 +28,17 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_STRUCTURAL;
+   }
+
+   @Override
    public void process(MethodContext context, Method method, URLAction annotation)
    {
 
       // create Operation for executing this method
-      Operation invocation = Invoke.binding(El.retrievalMethod(method) );
+      Operation invocation = Invoke.binding(El.retrievalMethod(method));
 
       // wrap the operation if it shouldn't be executed on postbacks
       if (!annotation.onPostback()) {
@@ -41,7 +47,7 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
 
       // the action invocation must be deferred to get executed inside the JSF lifecycle
       PhaseOperation<?> deferredOperation = PhaseAction.enqueue(invocation);
-      
+
       // queue the operation for a specific time in the JSF lifecycle
       BeforePhase beforePhase = method.getAnnotation(BeforePhase.class);
       AfterPhase afterPhase = method.getAnnotation(AfterPhase.class);
@@ -62,14 +68,13 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
       }
 
       // append this operation to the rule
-      Operation composite = context.getRuleBuilder().getOperationBuilder().and(deferredOperation);
-      context.getRuleBuilder().perform(composite);
+      context.getRuleBuilder().perform(deferredOperation);
 
    }
 
    /**
     * This operation wraps another operation and delegates events only if the current request is NOT a JSF postback.
-    *
+    * 
     * @author Christian Kaltepoth
     */
    private final class IgnorePostbackOperation implements Operation

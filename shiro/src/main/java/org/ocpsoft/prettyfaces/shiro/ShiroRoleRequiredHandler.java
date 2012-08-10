@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.shiro.SecurityUtils;
+import org.ocpsoft.prettyfaces.annotation.handlers.HandlerConstants;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
 import org.ocpsoft.rewrite.config.Condition;
@@ -18,6 +19,12 @@ public class ShiroRoleRequiredHandler implements AnnotationHandler<ShiroRoleRequ
    public Class<ShiroRoleRequired> handles()
    {
       return ShiroRoleRequired.class;
+   }
+
+   @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_ENRICHING;
    }
 
    @Override

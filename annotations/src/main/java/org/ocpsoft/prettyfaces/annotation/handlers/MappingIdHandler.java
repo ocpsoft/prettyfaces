@@ -16,6 +16,12 @@ public class MappingIdHandler implements AnnotationHandler<MappingId>
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_ENRICHING;
+   }
+
+   @Override
    public void process(ClassContext context, AnnotatedElement element, MappingId annotation)
    {
       context.getRuleBuilder().withId(annotation.value());

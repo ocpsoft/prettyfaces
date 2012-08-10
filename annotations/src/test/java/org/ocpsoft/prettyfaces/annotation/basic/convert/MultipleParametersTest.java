@@ -5,7 +5,6 @@ import static junit.framework.Assert.assertTrue;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.prettyfaces.test.PrettyFacesTest;
@@ -25,7 +24,6 @@ public class MultipleParametersTest extends PrettyFacesTest
    }
 
    @Test
-   @Ignore // doesn't work correctly. Bug in AddBindingVisitor?
    public void testBasicJoin() throws Exception
    {
 

@@ -36,6 +36,12 @@ public class JSFValidatorHandler extends FieldAnnotationHandler<JSFValidator>
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_ENRICHING;
+   }
+
+   @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public void process(FieldContext context, Field field, JSFValidator annotation)
    {

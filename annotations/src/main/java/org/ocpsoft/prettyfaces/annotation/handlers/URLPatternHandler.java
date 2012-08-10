@@ -5,7 +5,6 @@ import java.lang.reflect.AnnotatedElement;
 import org.ocpsoft.prettyfaces.annotation.URLPattern;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.servlet.config.Path;
 
 public class URLPatternHandler implements AnnotationHandler<URLPattern>
@@ -18,10 +17,15 @@ public class URLPatternHandler implements AnnotationHandler<URLPattern>
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_ENRICHING;
+   }
+
+   @Override
    public void process(ClassContext context, AnnotatedElement element, URLPattern annotation)
    {
-      ConditionBuilder condition = context.getRuleBuilder().getConditionBuilder().and(Path.matches(annotation.value()));
-      context.getRuleBuilder().when(condition);
+      context.getRuleBuilder().when(Path.matches(annotation.value()));
    }
 
 }

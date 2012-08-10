@@ -28,6 +28,12 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_STRUCTURAL;
+   }
+
+   @Override
    public void process(FieldContext context, Field field, ParameterBinding annotation)
    {
 
@@ -68,6 +74,7 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
       @SuppressWarnings("rawtypes")
       public void visit(Condition condition)
       {
+
          if (condition instanceof Parameterized) {
             Parameterized parameterized = (Parameterized) condition;
 
@@ -104,15 +111,15 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
                context.setBindingBuilder(elBinding);
 
                if (log.isDebugEnabled()) {
-                  log.debug("Added binding for parameter [{}] to: {}", param, parameterized);
+                  log.debug("Added binding for parameter [{}] to: {}", param, parameterized.getClass().getSimpleName());
                }
 
             }
 
-            // TODO: does not work correct. Never thrown?
+            // parameter does not exist
             catch (IllegalArgumentException e) {
                if (log.isTraceEnabled()) {
-                  log.trace("Parameter [{}] not found on: {}", param, parameterized);
+                  log.trace("Parameter [{}] not found on: {}", param, parameterized.getClass().getSimpleName());
                }
             }
 

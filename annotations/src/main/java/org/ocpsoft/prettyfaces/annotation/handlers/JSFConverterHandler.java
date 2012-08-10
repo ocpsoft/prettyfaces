@@ -30,6 +30,12 @@ public class JSFConverterHandler extends FieldAnnotationHandler<JSFConverter>
    }
 
    @Override
+   public int priority()
+   {
+      return HandlerConstants.WEIGHT_TYPE_ENRICHING;
+   }
+
+   @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public void process(FieldContext context, Field field, JSFConverter annotation)
    {
