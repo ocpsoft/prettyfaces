@@ -14,6 +14,7 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Visitor;
 import org.ocpsoft.rewrite.el.El;
 import org.ocpsoft.rewrite.faces.config.PhaseBinding;
+import org.ocpsoft.rewrite.param.Parameter;
 import org.ocpsoft.rewrite.param.Parameterized;
 
 public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBinding>
@@ -105,10 +106,15 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
             try {
 
                // add the parameter and the binding
-               parameterized.where(param).bindsTo(deferredBinding);
+               Parameter parameter = parameterized.where(param);
 
-               // register the binding builder in the field context
+               // TODO: is this a good or a bad pattern? :)
+               context.put(Parameter.class, parameter);
+               
+               // add the binding
+               parameter.bindsTo(deferredBinding);
                context.setBindingBuilder(elBinding);
+               
 
                if (log.isDebugEnabled()) {
                   log.debug("Added binding for parameter [{}] to: {}", param, parameterized.getClass().getSimpleName());
