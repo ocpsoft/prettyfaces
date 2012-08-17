@@ -6,11 +6,11 @@ import javax.faces.bean.RequestScoped;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/validate/{value}")
+@PathPattern("/validate/{value}")
 @ForwardTo("/faces/validate.xhtml")
 public class JsfValidatorBean
 {

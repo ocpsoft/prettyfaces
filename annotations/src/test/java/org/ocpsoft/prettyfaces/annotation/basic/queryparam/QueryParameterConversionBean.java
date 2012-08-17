@@ -6,11 +6,11 @@ import javax.faces.bean.RequestScoped;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.JSFConverter;
 import org.ocpsoft.prettyfaces.annotation.QueryParameterBinding;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/page")
+@PathPattern("/page")
 @ForwardTo("/faces/query-param-conversion.xhtml")
 public class QueryParameterConversionBean
 {

@@ -6,11 +6,11 @@ import javax.faces.bean.RequestScoped;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.prettyfaces.annotation.RequestAction;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/basic/{value}")
+@PathPattern("/basic/{value}")
 @ForwardTo("/faces/basic.xhtml")
 public class BasicMappingBean
 {

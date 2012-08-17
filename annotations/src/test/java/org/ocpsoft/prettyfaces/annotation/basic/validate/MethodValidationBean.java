@@ -10,11 +10,11 @@ import javax.faces.validator.ValidatorException;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/validate/{value}")
+@PathPattern("/validate/{value}")
 @ForwardTo("/faces/method-validation.xhtml")
 public class MethodValidationBean
 {

@@ -12,11 +12,11 @@ import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.Phase;
 import org.ocpsoft.prettyfaces.annotation.RequestAction;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/action")
+@PathPattern("/action")
 @ForwardTo("/faces/action-phases.xhtml")
 public class ActionPhasesBean
 {

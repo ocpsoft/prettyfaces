@@ -1,7 +1,7 @@
 org.ocpsoft.prettyfaces.annotation.handlers.ForwardToHandler
 org.ocpsoft.prettyfaces.annotation.handlers.JSFValidatorHandler
 org.ocpsoft.prettyfaces.annotation.handlers.ParameterBindingHandler
-org.ocpsoft.prettyfaces.annotation.handlers.URLPatternHandler
+org.ocpsoft.prettyfaces.annotation.handlers.PathPatternHandler
 org.ocpsoft.prettyfaces.annotation.handlers.MappingIdHandler
 org.ocpsoft.prettyfaces.annotation.handlers.PriorityHandler
 org.ocpsoft.prettyfaces.annotation.handlers.RequestActionHandler

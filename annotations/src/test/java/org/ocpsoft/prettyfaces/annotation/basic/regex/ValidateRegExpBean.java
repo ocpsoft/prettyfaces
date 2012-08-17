@@ -5,12 +5,12 @@ import javax.faces.bean.RequestScoped;
 
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 import org.ocpsoft.prettyfaces.annotation.ValidateRegExp;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/check/{value}")
+@PathPattern("/check/{value}")
 @ForwardTo("/faces/validate-regexp.xhtml")
 public class ValidateRegExpBean
 {

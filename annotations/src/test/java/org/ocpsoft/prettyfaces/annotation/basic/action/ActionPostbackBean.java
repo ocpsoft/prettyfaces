@@ -5,11 +5,11 @@ import javax.faces.bean.RequestScoped;
 
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.RequestAction;
-import org.ocpsoft.prettyfaces.annotation.URLPattern;
+import org.ocpsoft.prettyfaces.annotation.PathPattern;
 
 @ManagedBean
 @RequestScoped
-@URLPattern("/action")
+@PathPattern("/action")
 @ForwardTo("/faces/action-postback.xhtml")
 public class ActionPostbackBean
 {
