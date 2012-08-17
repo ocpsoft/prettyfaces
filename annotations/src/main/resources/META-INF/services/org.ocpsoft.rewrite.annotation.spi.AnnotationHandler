@@ -10,4 +10,4 @@ org.ocpsoft.prettyfaces.annotation.handlers.RolesRequiredHandler
 org.ocpsoft.prettyfaces.annotation.handlers.QueryParameterBindingHandler
 org.ocpsoft.prettyfaces.annotation.handlers.JoinHandler
 org.ocpsoft.prettyfaces.annotation.handlers.HostnameHandler
-org.ocpsoft.prettyfaces.annotation.handlers.ValidateRegExpHandler
+org.ocpsoft.prettyfaces.annotation.handlers.MatchesHandler

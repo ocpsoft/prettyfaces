@@ -6,7 +6,7 @@ import javax.faces.bean.RequestScoped;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.prettyfaces.annotation.PathPattern;
-import org.ocpsoft.prettyfaces.annotation.ValidateRegExp;
+import org.ocpsoft.prettyfaces.annotation.Matches;
 
 @ManagedBean
 @RequestScoped
@@ -16,7 +16,7 @@ public class ValidateRegExpBean
 {
 
    @ParameterBinding
-   @ValidateRegExp("[a-z]{2}")
+   @Matches("[a-z]{2}")
    private String value;
 
    public String getValue()

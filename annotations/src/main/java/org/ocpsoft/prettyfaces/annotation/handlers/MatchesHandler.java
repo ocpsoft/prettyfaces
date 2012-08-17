@@ -3,7 +3,7 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.Field;
 
 import org.ocpsoft.logging.Logger;
-import org.ocpsoft.prettyfaces.annotation.ValidateRegExp;
+import org.ocpsoft.prettyfaces.annotation.Matches;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.param.Parameter;
@@ -12,14 +12,14 @@ import org.ocpsoft.rewrite.param.RegexConstraint;
 /**
  * @author Christian Kaltepoth
  */
-public class ValidateRegExpHandler extends FieldAnnotationHandler<ValidateRegExp>
+public class MatchesHandler extends FieldAnnotationHandler<Matches>
 {
-   private final Logger log = Logger.getLogger(ValidateRegExpHandler.class);
+   private final Logger log = Logger.getLogger(MatchesHandler.class);
 
    @Override
-   public Class<ValidateRegExp> handles()
+   public Class<Matches> handles()
    {
-      return ValidateRegExp.class;
+      return Matches.class;
    }
 
    @Override
@@ -30,7 +30,7 @@ public class ValidateRegExpHandler extends FieldAnnotationHandler<ValidateRegExp
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public void process(FieldContext context, Field field, ValidateRegExp annotation)
+   public void process(FieldContext context, Field field, Matches annotation)
    {
 
       // obtain the parameter for the current field
