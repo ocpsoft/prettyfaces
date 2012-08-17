@@ -7,7 +7,7 @@ import javax.faces.event.PhaseId;
 
 import org.ocpsoft.prettyfaces.annotation.AfterPhase;
 import org.ocpsoft.prettyfaces.annotation.BeforePhase;
-import org.ocpsoft.prettyfaces.annotation.URLAction;
+import org.ocpsoft.prettyfaces.annotation.RequestAction;
 import org.ocpsoft.rewrite.annotation.api.MethodContext;
 import org.ocpsoft.rewrite.annotation.spi.MethodAnnotationHandler;
 import org.ocpsoft.rewrite.config.Invoke;
@@ -18,13 +18,13 @@ import org.ocpsoft.rewrite.event.Rewrite;
 import org.ocpsoft.rewrite.faces.config.PhaseAction;
 import org.ocpsoft.rewrite.faces.config.PhaseOperation;
 
-public class URLActionHandler extends MethodAnnotationHandler<URLAction>
+public class RequestActionHandler extends MethodAnnotationHandler<RequestAction>
 {
 
    @Override
-   public Class<URLAction> handles()
+   public Class<RequestAction> handles()
    {
-      return URLAction.class;
+      return RequestAction.class;
    }
 
    @Override
@@ -34,7 +34,7 @@ public class URLActionHandler extends MethodAnnotationHandler<URLAction>
    }
 
    @Override
-   public void process(MethodContext context, Method method, URLAction annotation)
+   public void process(MethodContext context, Method method, RequestAction annotation)
    {
 
       // create Operation for executing this method

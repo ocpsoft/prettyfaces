@@ -4,7 +4,7 @@ org.ocpsoft.prettyfaces.annotation.handlers.ParameterBindingHandler
 org.ocpsoft.prettyfaces.annotation.handlers.URLPatternHandler
 org.ocpsoft.prettyfaces.annotation.handlers.MappingIdHandler
 org.ocpsoft.prettyfaces.annotation.handlers.PriorityHandler
-org.ocpsoft.prettyfaces.annotation.handlers.URLActionHandler
+org.ocpsoft.prettyfaces.annotation.handlers.RequestActionHandler
 org.ocpsoft.prettyfaces.annotation.handlers.JSFConverterHandler
 org.ocpsoft.prettyfaces.annotation.handlers.RolesRequiredHandler
 org.ocpsoft.prettyfaces.annotation.handlers.QueryParameterBindingHandler

@@ -5,7 +5,7 @@ import javax.faces.bean.RequestScoped;
 
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
-import org.ocpsoft.prettyfaces.annotation.URLAction;
+import org.ocpsoft.prettyfaces.annotation.RequestAction;
 import org.ocpsoft.prettyfaces.annotation.URLPattern;
 
 @ManagedBean
@@ -20,7 +20,7 @@ public class BasicMappingBean
 
    private boolean actionInvoked = false;
 
-   @URLAction
+   @RequestAction
    public void action()
    {
       actionInvoked = true;

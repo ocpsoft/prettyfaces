@@ -11,7 +11,7 @@ import org.ocpsoft.prettyfaces.annotation.AfterPhase;
 import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
 import org.ocpsoft.prettyfaces.annotation.Phase;
-import org.ocpsoft.prettyfaces.annotation.URLAction;
+import org.ocpsoft.prettyfaces.annotation.RequestAction;
 import org.ocpsoft.prettyfaces.annotation.URLPattern;
 
 @ManagedBean
@@ -23,20 +23,20 @@ public class ActionPhasesBean
 
    private final List<String> log = new ArrayList<String>();
 
-   @URLAction
+   @RequestAction
    public void actionDefaultPhase()
    {
       log.add("actionDefaultPhase:" + FacesContext.getCurrentInstance().getCurrentPhaseId().toString());
    }
 
-   @URLAction
+   @RequestAction
    @BeforePhase(Phase.RENDER_RESPONSE)
    public void actionBeforeRenderResponse()
    {
       log.add("actionBeforeRenderResponse:" + FacesContext.getCurrentInstance().getCurrentPhaseId().toString());
    }
 
-   @URLAction
+   @RequestAction
    @AfterPhase(Phase.INVOKE_APPLICATION)
    public void actionAfterInvokeApplication()
    {

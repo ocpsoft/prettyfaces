@@ -4,7 +4,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 import org.ocpsoft.prettyfaces.annotation.ForwardTo;
-import org.ocpsoft.prettyfaces.annotation.URLAction;
+import org.ocpsoft.prettyfaces.annotation.RequestAction;
 import org.ocpsoft.prettyfaces.annotation.URLPattern;
 
 @ManagedBean
@@ -18,19 +18,19 @@ public class ActionPostbackBean
    private boolean actionOnPostbackTrue = false;
    private boolean actionOnPostbackFalse = false;
 
-   @URLAction
+   @RequestAction
    public void action1()
    {
       actionOnPostbackDefault = true;
    }
 
-   @URLAction(onPostback = true)
+   @RequestAction(onPostback = true)
    public void action2()
    {
       actionOnPostbackTrue = true;
    }
 
-   @URLAction(onPostback = false)
+   @RequestAction(onPostback = false)
    public void action3()
    {
       actionOnPostbackFalse = true;
