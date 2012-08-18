@@ -13,6 +13,7 @@ import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.Bindable;
 import org.ocpsoft.rewrite.bind.Binding;
+import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.bind.Bindings;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.el.El;
@@ -60,7 +61,7 @@ public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryPa
       bindingCondition.bindsTo(deferredBinding);
 
       // register the binding builder in the field context
-      context.setBindingBuilder(elBinding);
+      context.put(BindingBuilder.class, elBinding);
 
       if (log.isTraceEnabled()) {
          log.trace("Binding query parameter [{}] to to field [{}]", queryParam, field);

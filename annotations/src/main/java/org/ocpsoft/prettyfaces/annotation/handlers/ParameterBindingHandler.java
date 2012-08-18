@@ -10,6 +10,7 @@ import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
+import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Visitor;
 import org.ocpsoft.rewrite.el.El;
@@ -108,13 +109,12 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
                // add the parameter and the binding
                Parameter parameter = parameterized.where(param);
 
-               // TODO: is this a good or a bad pattern? :)
+               // add the parameter to the context
                context.put(Parameter.class, parameter);
                
                // add the binding
                parameter.bindsTo(deferredBinding);
-               context.setBindingBuilder(elBinding);
-               
+               context.put(BindingBuilder.class, elBinding);
 
                if (log.isDebugEnabled()) {
                   log.debug("Added binding for parameter [{}] to: {}", param, parameterized.getClass().getSimpleName());

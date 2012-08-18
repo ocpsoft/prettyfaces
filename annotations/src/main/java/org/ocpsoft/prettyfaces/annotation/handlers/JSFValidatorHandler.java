@@ -47,7 +47,7 @@ public class JSFValidatorHandler extends FieldAnnotationHandler<JSFValidator>
    {
 
       // locate the binding previously created by @ParameterBinding
-      BindingBuilder bindingBuilder = context.getBindingBuilder();
+      BindingBuilder bindingBuilder = (BindingBuilder) context.get(BindingBuilder.class);
       if (bindingBuilder == null) {
          throw new IllegalStateException("No binding found for field: " + field.getName());
       }
