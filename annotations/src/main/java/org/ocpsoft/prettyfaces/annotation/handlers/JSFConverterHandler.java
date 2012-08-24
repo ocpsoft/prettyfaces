@@ -9,6 +9,7 @@ import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFConverter;
 import org.ocpsoft.prettyfaces.core.util.NullComponent;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.bind.Converter;
@@ -37,8 +38,9 @@ public class JSFConverterHandler extends FieldAnnotationHandler<JSFConverter>
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public void process(FieldContext context, Field field, JSFConverter annotation)
+   public void process(FieldContext context, JSFConverter annotation, HandlerChain chain)
    {
+      Field field = context.getJavaField();
 
       // locate the binding previously created by @ParameterBinding
       BindingBuilder bindingBuilder = (BindingBuilder) context.get(BindingBuilder.class);
@@ -55,6 +57,9 @@ public class JSFConverterHandler extends FieldAnnotationHandler<JSFConverter>
                   converterId, field.getName(), field.getDeclaringClass().getName()
          });
       }
+      
+      chain.proceed(context);
+      
    }
 
    private static class JSFRewriteConverter<T> implements Converter<T>

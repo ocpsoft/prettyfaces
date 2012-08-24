@@ -8,6 +8,7 @@ import javax.faces.event.PhaseId;
 import org.ocpsoft.prettyfaces.annotation.AfterPhase;
 import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.RequestAction;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.api.MethodContext;
 import org.ocpsoft.rewrite.annotation.spi.MethodAnnotationHandler;
 import org.ocpsoft.rewrite.config.Invoke;
@@ -34,10 +35,11 @@ public class RequestActionHandler extends MethodAnnotationHandler<RequestAction>
    }
 
    @Override
-   public void process(MethodContext context, Method method, RequestAction annotation)
+   public void process(MethodContext context, RequestAction annotation, HandlerChain chain)
    {
 
       // create Operation for executing this method
+      Method method = context.getJavaMethod();
       Operation invocation = Invoke.binding(El.retrievalMethod(method));
 
       // wrap the operation if it shouldn't be executed on postbacks
@@ -69,6 +71,8 @@ public class RequestActionHandler extends MethodAnnotationHandler<RequestAction>
 
       // append this operation to the rule
       context.getRuleBuilder().perform(deferredOperation);
+      
+      chain.proceed(context);
 
    }
 

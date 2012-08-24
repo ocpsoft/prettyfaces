@@ -14,6 +14,7 @@ import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.JSFValidator;
 import org.ocpsoft.prettyfaces.core.util.NullComponent;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.bind.Validator;
@@ -43,8 +44,9 @@ public class JSFValidatorHandler extends FieldAnnotationHandler<JSFValidator>
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public void process(FieldContext context, Field field, JSFValidator annotation)
+   public void process(FieldContext context, JSFValidator annotation, HandlerChain chain)
    {
+      Field field = context.getJavaField();
 
       // locate the binding previously created by @ParameterBinding
       BindingBuilder bindingBuilder = (BindingBuilder) context.get(BindingBuilder.class);
@@ -76,6 +78,8 @@ public class JSFValidatorHandler extends FieldAnnotationHandler<JSFValidator>
             });
          }
       }
+      
+      chain.proceed(context);
    }
 
    /**

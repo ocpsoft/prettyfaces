@@ -1,9 +1,8 @@
 package org.ocpsoft.prettyfaces.annotation.handlers;
 
-import java.lang.reflect.AnnotatedElement;
-
 import org.ocpsoft.prettyfaces.annotation.PathPattern;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
 import org.ocpsoft.rewrite.servlet.config.Path;
 
@@ -23,9 +22,10 @@ public class PathPatternHandler implements AnnotationHandler<PathPattern>
    }
 
    @Override
-   public void process(ClassContext context, AnnotatedElement element, PathPattern annotation)
+   public void process(ClassContext context, PathPattern annotation, HandlerChain chain)
    {
       context.getRuleBuilder().when(Path.matches(annotation.value()));
+      chain.proceed(context);
    }
 
 }

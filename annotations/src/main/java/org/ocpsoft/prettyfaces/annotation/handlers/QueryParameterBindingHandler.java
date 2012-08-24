@@ -10,6 +10,7 @@ import javax.faces.event.PhaseId;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.prettyfaces.annotation.QueryParameterBinding;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.Bindable;
 import org.ocpsoft.rewrite.bind.Binding;
@@ -40,10 +41,11 @@ public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryPa
    }
 
    @Override
-   public void process(FieldContext context, Field field, QueryParameterBinding annotation)
+   public void process(FieldContext context, QueryParameterBinding annotation, HandlerChain chain)
    {
 
       // default name is the name of the field
+      Field field = context.getJavaField();
       String queryParam = field.getName();
 
       // but the name specified in the annotation is preferred
@@ -66,6 +68,8 @@ public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryPa
       if (log.isTraceEnabled()) {
          log.trace("Binding query parameter [{}] to to field [{}]", queryParam, field);
       }
+      
+      chain.proceed(context);
 
    }
 
