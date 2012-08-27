@@ -3,10 +3,8 @@ package org.ocpsoft.prettyfaces.annotation.handlers;
 import java.lang.reflect.Method;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 
-import org.ocpsoft.prettyfaces.annotation.AfterPhase;
-import org.ocpsoft.prettyfaces.annotation.BeforePhase;
+import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.prettyfaces.annotation.RequestAction;
 import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.api.MethodContext;
@@ -16,8 +14,6 @@ import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.el.El;
 import org.ocpsoft.rewrite.event.Rewrite;
-import org.ocpsoft.rewrite.faces.config.PhaseAction;
-import org.ocpsoft.rewrite.faces.config.PhaseOperation;
 
 public class RequestActionHandler extends MethodAnnotationHandler<RequestAction>
 {
@@ -40,39 +36,16 @@ public class RequestActionHandler extends MethodAnnotationHandler<RequestAction>
 
       // create Operation for executing this method
       Method method = context.getJavaMethod();
-      Operation invocation = Invoke.binding(El.retrievalMethod(method));
+      Operation rawOperation = Invoke.binding(El.retrievalMethod(method));
 
-      // wrap the operation if it shouldn't be executed on postbacks
-      if (!annotation.onPostback()) {
-         invocation = new IgnorePostbackOperation(invocation);
-      }
-
-      // the action invocation must be deferred to get executed inside the JSF lifecycle
-      PhaseOperation<?> deferredOperation = PhaseAction.enqueue(invocation);
-
-      // queue the operation for a specific time in the JSF lifecycle
-      BeforePhase beforePhase = method.getAnnotation(BeforePhase.class);
-      AfterPhase afterPhase = method.getAnnotation(AfterPhase.class);
-      if (beforePhase == null && afterPhase == null) {
-         deferredOperation.after(PhaseId.RESTORE_VIEW);
-      }
-      else if (beforePhase == null && afterPhase != null) {
-         deferredOperation.after(afterPhase.value().getPhaseId());
-      }
-      else if (beforePhase != null && afterPhase == null) {
-         deferredOperation.before(beforePhase.value().getPhaseId());
-      }
-      else {
-         throw new IllegalStateException("Error processing @" + handles().getSimpleName() + " annotation on method "
-                  + method.getDeclaringClass().getName() + "#" + method.getName()
-                  + ": You cannot use @" + BeforePhase.class.getSimpleName() + " and @"
-                  + AfterPhase.class.getSimpleName() + " at the same time.");
-      }
+      // let subsequent handlers enrich the operation
+      context.put(Operation.class, rawOperation);
+      chain.proceed(context);
+      Operation enrichedOperation = (Operation) context.get(Operation.class);
+      Assert.notNull(enrichedOperation, "Operation was removed from context");
 
       // append this operation to the rule
-      context.getRuleBuilder().perform(deferredOperation);
-      
-      chain.proceed(context);
+      context.getRuleBuilder().perform(enrichedOperation);
 
    }
 
