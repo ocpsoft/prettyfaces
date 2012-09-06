@@ -11,3 +11,5 @@ org.ocpsoft.prettyfaces.annotation.handlers.QueryParameterBindingHandler
 org.ocpsoft.prettyfaces.annotation.handlers.JoinHandler
 org.ocpsoft.prettyfaces.annotation.handlers.HostnameHandler
 org.ocpsoft.prettyfaces.annotation.handlers.MatchesHandler
+org.ocpsoft.prettyfaces.annotation.handlers.AfterPhaseHandler
+org.ocpsoft.prettyfaces.annotation.handlers.BeforePhaseHandler

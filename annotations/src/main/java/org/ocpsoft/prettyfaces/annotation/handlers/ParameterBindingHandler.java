@@ -9,6 +9,7 @@ import org.ocpsoft.prettyfaces.annotation.AfterPhase;
 import org.ocpsoft.prettyfaces.annotation.BeforePhase;
 import org.ocpsoft.prettyfaces.annotation.ParameterBinding;
 import org.ocpsoft.rewrite.annotation.api.FieldContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.FieldAnnotationHandler;
 import org.ocpsoft.rewrite.bind.BindingBuilder;
 import org.ocpsoft.rewrite.config.Condition;
@@ -36,10 +37,11 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
    }
 
    @Override
-   public void process(FieldContext context, Field field, ParameterBinding annotation)
+   public void process(FieldContext context, ParameterBinding annotation, HandlerChain chain)
    {
 
       // default name is the name of the field
+      Field field = context.getJavaField();
       String param = field.getName();
 
       // but the name specified in the annotation is preferred
@@ -53,6 +55,8 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
       if (log.isTraceEnabled()) {
          log.trace("Binding parameter [{}] to field [{}]", param, field);
       }
+      
+      chain.proceed();
 
    }
 

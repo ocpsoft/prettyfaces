@@ -1,12 +1,12 @@
 package org.ocpsoft.prettyfaces.shiro;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.shiro.SecurityUtils;
 import org.ocpsoft.prettyfaces.annotation.handlers.HandlerConstants;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -28,12 +28,13 @@ public class ShiroRoleRequiredHandler implements AnnotationHandler<ShiroRoleRequ
    }
 
    @Override
-   public void process(ClassContext context, AnnotatedElement element, ShiroRoleRequired annotation)
+   public void process(ClassContext context, ShiroRoleRequired annotation, HandlerChain chain)
    {
 
       Condition roleCondition = new ShiroRoleCondition(annotation.value());
       Condition conjunction = context.getRuleBuilder().getConditionBuilder().and(roleCondition);
       context.getRuleBuilder().when(conjunction);
+      chain.proceed();
    }
 
    /**

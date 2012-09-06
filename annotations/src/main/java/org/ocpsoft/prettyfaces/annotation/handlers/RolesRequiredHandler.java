@@ -1,9 +1,8 @@
 package org.ocpsoft.prettyfaces.annotation.handlers;
 
-import java.lang.reflect.AnnotatedElement;
-
 import org.ocpsoft.prettyfaces.annotation.RolesRequired;
 import org.ocpsoft.rewrite.annotation.api.ClassContext;
+import org.ocpsoft.rewrite.annotation.api.HandlerChain;
 import org.ocpsoft.rewrite.annotation.spi.AnnotationHandler;
 import org.ocpsoft.rewrite.servlet.config.JAASRoles;
 
@@ -23,8 +22,9 @@ public class RolesRequiredHandler implements AnnotationHandler<RolesRequired>
    }
 
    @Override
-   public void process(ClassContext context, AnnotatedElement element, RolesRequired annotation)
+   public void process(ClassContext context, RolesRequired annotation, HandlerChain chain)
    {
       context.getRuleBuilder().when(JAASRoles.required(annotation.value()));
+      chain.proceed();
    }
 }
