@@ -40,7 +40,7 @@ public class RequestActionHandler extends MethodAnnotationHandler<RequestAction>
 
       // let subsequent handlers enrich the operation
       context.put(Operation.class, rawOperation);
-      chain.proceed(context);
+      chain.proceed();
       Operation enrichedOperation = (Operation) context.get(Operation.class);
       Assert.notNull(enrichedOperation, "Operation was removed from context");
 

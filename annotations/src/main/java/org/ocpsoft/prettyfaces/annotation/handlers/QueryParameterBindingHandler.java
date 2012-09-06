@@ -69,7 +69,7 @@ public class QueryParameterBindingHandler extends FieldAnnotationHandler<QueryPa
          log.trace("Binding query parameter [{}] to to field [{}]", queryParam, field);
       }
       
-      chain.proceed(context);
+      chain.proceed();
 
    }
 

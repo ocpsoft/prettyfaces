@@ -26,7 +26,7 @@ public class JoinHandler implements AnnotationHandler<Join>
       context.setBaseRule(org.ocpsoft.rewrite.servlet.config.rule.Join
                .path(annotation.path())
                .to(annotation.to()));
-      chain.proceed(context);
+      chain.proceed();
    }
 
 }

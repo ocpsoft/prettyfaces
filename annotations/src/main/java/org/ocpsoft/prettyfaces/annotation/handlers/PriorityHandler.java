@@ -24,7 +24,7 @@ public class PriorityHandler implements AnnotationHandler<Priority>
    public void process(ClassContext context, Priority annotation, HandlerChain chain)
    {
       context.getRuleBuilder().withPriority(annotation.value());
-      chain.proceed(context);
+      chain.proceed();
    }
 
 }

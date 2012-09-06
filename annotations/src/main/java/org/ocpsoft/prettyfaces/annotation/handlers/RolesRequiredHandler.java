@@ -25,6 +25,6 @@ public class RolesRequiredHandler implements AnnotationHandler<RolesRequired>
    public void process(ClassContext context, RolesRequired annotation, HandlerChain chain)
    {
       context.getRuleBuilder().when(JAASRoles.required(annotation.value()));
-      chain.proceed(context);
+      chain.proceed();
    }
 }

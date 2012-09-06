@@ -25,6 +25,6 @@ public class ForwardToHandler implements AnnotationHandler<ForwardTo>
    public void process(ClassContext context, ForwardTo annotation, HandlerChain chain)
    {
       context.getRuleBuilder().perform(Forward.to(annotation.value()));
-      chain.proceed(context);
+      chain.proceed();
    }
 }

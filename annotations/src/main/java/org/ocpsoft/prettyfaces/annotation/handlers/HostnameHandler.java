@@ -25,6 +25,6 @@ public class HostnameHandler implements AnnotationHandler<Hostname>
    public void process(ClassContext context, Hostname annotation, HandlerChain chain)
    {
       context.getRuleBuilder().when(Domain.matches(annotation.value()));
-      chain.proceed(context);
+      chain.proceed();
    }
 }

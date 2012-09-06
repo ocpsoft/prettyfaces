@@ -24,7 +24,7 @@ public class MappingIdHandler implements AnnotationHandler<MappingId>
    public void process(ClassContext context, MappingId annotation, HandlerChain chain)
    {
       context.getRuleBuilder().withId(annotation.value());
-      chain.proceed(context);
+      chain.proceed();
    }
 
 }

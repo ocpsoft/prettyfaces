@@ -34,7 +34,7 @@ public class ShiroRoleRequiredHandler implements AnnotationHandler<ShiroRoleRequ
       Condition roleCondition = new ShiroRoleCondition(annotation.value());
       Condition conjunction = context.getRuleBuilder().getConditionBuilder().and(roleCondition);
       context.getRuleBuilder().when(conjunction);
-      chain.proceed(context);
+      chain.proceed();
    }
 
    /**

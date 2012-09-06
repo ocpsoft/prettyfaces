@@ -56,7 +56,7 @@ public class ParameterBindingHandler extends FieldAnnotationHandler<ParameterBin
          log.trace("Binding parameter [{}] to field [{}]", param, field);
       }
       
-      chain.proceed(context);
+      chain.proceed();
 
    }
 

@@ -58,7 +58,7 @@ public class JSFConverterHandler extends FieldAnnotationHandler<JSFConverter>
          });
       }
       
-      chain.proceed(context);
+      chain.proceed();
       
    }
 

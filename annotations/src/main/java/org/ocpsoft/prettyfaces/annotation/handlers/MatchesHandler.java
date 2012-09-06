@@ -47,7 +47,7 @@ public class MatchesHandler extends FieldAnnotationHandler<Matches>
          log.trace("Parameter [{}] has been constrained by [{}]", parameter.getName(), expr);
       }
 
-      chain.proceed(context);
+      chain.proceed();
 
    }
 

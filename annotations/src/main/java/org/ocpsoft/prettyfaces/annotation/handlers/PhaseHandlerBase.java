@@ -30,7 +30,7 @@ public abstract class PhaseHandlerBase<A extends Annotation> implements Annotati
          handleMethodAnnotation((MethodContext) context, annotation);
       }
 
-      chain.proceed(context);
+      chain.proceed();
    }
 
    protected void handleMethodAnnotation(MethodContext context, A annotation)

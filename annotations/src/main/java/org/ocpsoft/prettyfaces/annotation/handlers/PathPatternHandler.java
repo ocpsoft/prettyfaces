@@ -25,7 +25,7 @@ public class PathPatternHandler implements AnnotationHandler<PathPattern>
    public void process(ClassContext context, PathPattern annotation, HandlerChain chain)
    {
       context.getRuleBuilder().when(Path.matches(annotation.value()));
-      chain.proceed(context);
+      chain.proceed();
    }
 
 }

@@ -79,7 +79,7 @@ public class JSFValidatorHandler extends FieldAnnotationHandler<JSFValidator>
          }
       }
       
-      chain.proceed(context);
+      chain.proceed();
    }
 
    /**
