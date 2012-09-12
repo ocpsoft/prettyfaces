@@ -44,12 +44,13 @@ public class WebXmlParser
 
    private static final String FACES_SERVLET = "javax.faces.webapp.FacesServlet";
    private static final String WEB_XML_PATH = "/WEB-INF/web.xml";
+   public static final String CONFIG_FORCE_PARSING = "com.ocpsoft.pretty.DISABLE_SERVLET_3.0_SUPPORT";
 
    String facesMapping = null;
 
    public void parse(final ServletContext context) throws IOException, SAXException
    {
-      if (context.getMajorVersion() >= 3)
+      if (context.getMajorVersion() >= 3 && !forceParsing(context))
       {
          Map<String, ? extends ServletRegistration> servlets = context.getServletRegistrations();
          if (servlets != null)
@@ -92,6 +93,17 @@ public class WebXmlParser
       }
 
       log.trace("Completed parsing web.xml");
+   }
+
+   private boolean forceParsing(ServletContext context)
+   {
+      String forceParsing = context.getInitParameter(CONFIG_FORCE_PARSING);
+      if ((forceParsing != null) && forceParsing.trim().equalsIgnoreCase("true"))
+      {
+         log.debug("Servlet 3.0 API has been disabled! PrettyFaces will parse web.xml manually.");
+         return true;
+      }
+      return false;
    }
 
    private void processConfig(final WebXml webXml)
