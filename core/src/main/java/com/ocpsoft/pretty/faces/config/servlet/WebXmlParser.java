@@ -50,7 +50,10 @@ public class WebXmlParser
 
    public void parse(final ServletContext context) throws IOException, SAXException
    {
-      if (context.getMajorVersion() >= 3 && !forceParsing(context))
+      /*
+       * forceParsing must come first to avoid bug with WebLogic not fully implementing the servlet spec.
+       */
+      if (!forceParsing(context) && context.getMajorVersion() >= 3)
       {
          Map<String, ? extends ServletRegistration> servlets = context.getServletRegistrations();
          if (servlets != null)
