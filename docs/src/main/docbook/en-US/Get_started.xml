@@ -59,7 +59,10 @@
 		<para>
 			If you are using a Servlet 3.0 compliant container, you may skip this
 			step because PrettyFaces will automatically register the required Servlet
-			Filter; otherwise, make sure PrettyFilter is the first filter in your
+			Filter.  However, you must set metadata-completed="false" in your web-app.
+		</para>
+		<para>
+			Otherwise, make sure PrettyFilter is the first filter in your
 			web.xml file. (The dispatcher elements are required to ensure
 			PrettyFaces intercepts both internal and external requests.)
 		</para>
